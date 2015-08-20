@@ -3,7 +3,11 @@
     <pre class='prettyprint lang-javascript'>
         $.ajax({
             type: 'GET',
-            url: 'http://faostat3.fao.org/api/groups/faostat/E/',
+            url: 'http://faostat3.fao.org/api/groups/',
+            data: {
+                'datasource': 'faostat',
+                'lang': 'E'
+            }
             success: function (response) {
                 /* Do something. */
             }

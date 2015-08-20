@@ -31,6 +31,13 @@ define(['jquery',
         Handlebars.registerPartial('home_db_updates', $(templates).filter('#home_db_updates').html());
         Handlebars.registerPartial('home_news', $(templates).filter('#home_news').html());
         Handlebars.registerPartial('home_coming_up', $(templates).filter('#home_coming_up').html());
+        Handlebars.registerPartial('download', $(templates).filter('#download').html());
+        Handlebars.registerPartial('download_groups_domains', $(templates).filter('#download_groups_domains').html());
+        Handlebars.registerPartial('download_metadata', $(templates).filter('#download_metadata').html());
+        Handlebars.registerPartial('download_bulk', $(templates).filter('#download_bulk').html());
+        Handlebars.registerPartial('download_filters', $(templates).filter('#download_filters').html());
+        Handlebars.registerPartial('download_codelists', $(templates).filter('#download_codelists').html());
+        Handlebars.registerPartial('download_data', $(templates).filter('#download_data').html());
 
         /* Snippets. */
         Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
