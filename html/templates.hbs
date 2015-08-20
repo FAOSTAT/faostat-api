@@ -97,6 +97,7 @@
     </div>
 </script>
 
+<!-- Introduction > Languages. -->
 <script type='text/x-handlebars-template' id='introduction_languages'>
     <div class='bs-docs-section'>
         <h2 id='introduction-laguages'>
@@ -127,6 +128,37 @@
                         <tr>
                             <td>Spanish</td>
                             <td>S</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- Introduction > Datasources. -->
+<script type='text/x-handlebars-template' id='introduction_datasources'>
+    <div class='bs-docs-section'>
+        <h2 id='introduction-laguages'>
+            Datasources
+        </h2>
+        <p>
+            FAOSTAT provides several different datasources. Please refer to the table below
+            for the codes required by the <kbd>datasource</kbd> parameter.
+        </p>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    <thead>
+                    <tr>
+                        <th>Datasource</th>
+                        <th>Code</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Production</td>
+                            <td>faostat</td>
                         </tr>
                     </tbody>
                 </table>
@@ -177,9 +209,7 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <code class='language-js' data-lang='js'>
-                    var pippo = "pippo";
-                </code>
+                {{> home_groups_in}}
             </div>
         </div>
         <div class='row'>

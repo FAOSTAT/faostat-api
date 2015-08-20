@@ -8,6 +8,7 @@ require.config({
 
     shim: {
         bootstrap: ['jquery'],
+        prettify: ['jquery'],
         underscore: {
             exports: '_'
         }
