@@ -1,0 +1,76 @@
+<script type='text/x-handlebars-template' id='structure'>
+    <div class='container-fluid bs-docs-container'>
+        <div class='row'>
+            <div class='header-row'>
+                <div class='faostat-logo-text'>
+                    <b>FAO</b>STAT<b> API</b>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-2'>
+                <nav class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'>
+                    <ul class='nav bs-docs-sidenav'>
+                        <li>
+                            <a href='#introduction'>
+                                Introduction
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#home'>
+                                Home
+                            </a>
+                            <ul class='nav'>
+                                <li>
+                                    <a href='#home-groups'>
+                                        Groups List
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href='#browse'>
+                                Browse
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#download'>
+                                Download
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#compare'>
+                                Compare
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#search'>
+                                Search
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#analysis'>
+                                Analysis
+                            </a>
+                        </li>
+                        <li>
+                            <a href='#standards'>
+                                Methods & Standards
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class='col-lg-10'>
+                {{> home_groups}}
+            </div>
+        </div>
+        <div class='row'>
+            <div class='header-row'>
+                <div class='faostat-logo-text'>
+                    © FAO 2015
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
