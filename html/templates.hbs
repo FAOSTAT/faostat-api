@@ -151,7 +151,7 @@
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
                     <thead>
                     <tr>
-                        <th>Datasource</th>
+                        <th>Database</th>
                         <th>Code</th>
                     </tr>
                     </thead>
@@ -184,13 +184,14 @@
         </h2>
         <p>
             Retrieve the list of available FAOSTAT groups. This function is used to generate the header
-            of the main page containing the links to the Download and Browse sections for each group.
+            of the main page containing the links to the Download and Browse sections for each group. The same
+            function is also invoked to populate the drop-down sections of the main menu.
         </p>
         <div class='row'>
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    /groupsanddomains/{datasource}/{lang}/
+                    http://faostat3.fao.org/api/groups/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -215,10 +216,28 @@
         <div class='row'>
             <div class='col-lg-6'>
                 <h4>Outputs</h4>
+                <p>
+                    The output is an array of objects. Please refer to the table below for the structure
+                    of the single object.
+                </p>
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
                     {{> table_headers}}
                     <tbody>
-                        {{> table_commons}}
+                        <tr>
+                            <td><kbd>code</kbd></td>
+                            <td>Group code.</td>
+                            <td><var>Q</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>label</kbd></td>
+                            <td>Group label.</td>
+                            <td><var>Production</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>order</kbd></td>
+                            <td>Order of the group.</td>
+                            <td><var>110</var></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -227,23 +246,218 @@
                 {{> home_groups_out}}
             </div>
         </div>
-        <h1 id='browse' class='page-header'>
-            Browse
-        </h1>
-        <h1 id='download' class='page-header'>
-            Download
-        </h1>
-        <h1 id='compare' class='page-header'>
-            Compare
-        </h1>
-        <h1 id='search' class='page-header'>
-            Search
-        </h1>
-        <h1 id='analysis' class='page-header'>
-            Analysis
-        </h1>
-        <h1 id='standards' class='page-header'>
-            Methods & Standards
-        </h1>
+    </div>
+</script>
+
+<!-- Home > DB Updates. -->
+<script type='text/x-handlebars-template' id='home_db_updates'>
+    <div class='bs-docs-section'>
+        <h2 id='home-db-updates'>
+            Database Updates
+        </h2>
+        <p>
+            Retrieve the list of the latest data updates.
+        </p>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Endpoint</h4>
+                <code>
+                    http://faostat3.fao.org/api/dbupdates/
+                </code>
+            </div>
+            <div class='col-lg-6'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Inputs</h4>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    {{> table_commons}}
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Input Example</h4>
+                <!--{{> home_groups_in}}-->
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Outputs</h4>
+                <p>
+                    The output is an array of objects. Please refer to the table below for the structure
+                    of the single object.
+                </p>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    <!--<tr>-->
+                        <!--<td><kbd>code</kbd></td>-->
+                        <!--<td>Group code.</td>-->
+                        <!--<td><var>Q</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td><kbd>label</kbd></td>-->
+                        <!--<td>Group label.</td>-->
+                        <!--<td><var>Production</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td><kbd>order</kbd></td>-->
+                        <!--<td>Order of the group.</td>-->
+                        <!--<td><var>110</var></td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Output Example</h4>
+                <!--{{> home_groups_out}}-->
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- Home > What's New. -->
+<script type='text/x-handlebars-template' id='home_news'>
+    <div class='bs-docs-section'>
+        <h2 id='home-news'>
+            What's New
+        </h2>
+        <p>
+            Latest FAOSTAT news.
+        </p>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Endpoint</h4>
+                <code>
+                    http://faostat3.fao.org/api/news/
+                </code>
+            </div>
+            <div class='col-lg-6'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Inputs</h4>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    {{> table_commons}}
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Input Example</h4>
+                <!--{{> home_groups_in}}-->
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Outputs</h4>
+                <p>
+                    The output is an array of objects. Please refer to the table below for the structure
+                    of the single object.
+                </p>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    <!--<tr>-->
+                    <!--<td><kbd>code</kbd></td>-->
+                    <!--<td>Group code.</td>-->
+                    <!--<td><var>Q</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<td><kbd>label</kbd></td>-->
+                    <!--<td>Group label.</td>-->
+                    <!--<td><var>Production</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<td><kbd>order</kbd></td>-->
+                    <!--<td>Order of the group.</td>-->
+                    <!--<td><var>110</var></td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Output Example</h4>
+                <!--{{> home_groups_out}}-->
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- Home > Coming Up. -->
+<script type='text/x-handlebars-template' id='home_coming_up'>
+    <div class='bs-docs-section'>
+        <h2 id='home-coming-up'>
+            Coming Up
+        </h2>
+        <p>
+            List of coming up events.
+        </p>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Endpoint</h4>
+                <code>
+                    http://faostat3.fao.org/api/comingup/
+                </code>
+            </div>
+            <div class='col-lg-6'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Inputs</h4>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    {{> table_commons}}
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Input Example</h4>
+                <!--{{> home_groups_in}}-->
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <h4>Outputs</h4>
+                <p>
+                    The output is an array of objects. Please refer to the table below for the structure
+                    of the single object.
+                </p>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    <!--<tr>-->
+                    <!--<td><kbd>code</kbd></td>-->
+                    <!--<td>Group code.</td>-->
+                    <!--<td><var>Q</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<td><kbd>label</kbd></td>-->
+                    <!--<td>Group label.</td>-->
+                    <!--<td><var>Production</var></td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                    <!--<td><kbd>order</kbd></td>-->
+                    <!--<td>Order of the group.</td>-->
+                    <!--<td><var>110</var></td>-->
+                    <!--</tr>-->
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-6'>
+                <h4>Output Example</h4>
+                <!--{{> home_groups_out}}-->
+            </div>
+        </div>
     </div>
 </script>

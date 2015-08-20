@@ -28,6 +28,9 @@ define(['jquery',
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
         Handlebars.registerPartial('home', $(templates).filter('#home').html());
         Handlebars.registerPartial('home_groups', $(templates).filter('#home_groups').html());
+        Handlebars.registerPartial('home_db_updates', $(templates).filter('#home_db_updates').html());
+        Handlebars.registerPartial('home_news', $(templates).filter('#home_news').html());
+        Handlebars.registerPartial('home_coming_up', $(templates).filter('#home_coming_up').html());
 
         /* Snippets. */
         Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
