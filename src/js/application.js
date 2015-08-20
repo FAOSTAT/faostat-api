@@ -2,7 +2,9 @@ define(['jquery',
         'handlebars',
         'text!templates/index.hbs',
         'text!templates/templates.hbs',
-        'text!templates/snippets.hbs', 'prettify'], function($, Handlebars, index, templates, snippets) {
+        'text!templates/snippets.hbs',
+        'prettify',
+        'bootstrap'], function($, Handlebars, index, templates, snippets) {
 
     'use strict';
 
@@ -38,6 +40,13 @@ define(['jquery',
         Handlebars.registerPartial('download_filters', $(templates).filter('#download_filters').html());
         Handlebars.registerPartial('download_codelists', $(templates).filter('#download_codelists').html());
         Handlebars.registerPartial('download_data', $(templates).filter('#download_data').html());
+        Handlebars.registerPartial('standards', $(templates).filter('#standards').html());
+        Handlebars.registerPartial('standards_methodologies', $(templates).filter('#standards_methodologies').html());
+        Handlebars.registerPartial('standards_methodology', $(templates).filter('#standards_methodology').html());
+        Handlebars.registerPartial('standards_classification', $(templates).filter('#standards_classification').html());
+        Handlebars.registerPartial('standards_units', $(templates).filter('#standards_units').html());
+        Handlebars.registerPartial('standards_glossary', $(templates).filter('#standards_glossary').html());
+        Handlebars.registerPartial('standards_abbreviations', $(templates).filter('#standards_abbreviations').html());
 
         /* Snippets. */
         Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
@@ -50,6 +59,7 @@ define(['jquery',
         var html = template(dynamic_data);
         $('#' + this.CONFIG.placeholder_id).html(html);
 
+        /* Make source code looks pretty. */
         prettyPrint();
 
     };
