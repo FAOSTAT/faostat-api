@@ -31,6 +31,7 @@ define(['jquery',
 
         /* Snippets. */
         Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
+        Handlebars.registerPartial('home_groups_out', $(snippets).filter('#home_groups_out').html());
 
         /* Load template. */
         var source = $(index).filter('#structure').html();
