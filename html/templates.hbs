@@ -1,4 +1,92 @@
-<script type='text/x-handlebars-template' id='home_groups'>
+<!-- Navigation menu. -->
+<script type='text/x-handlebars-template' id='menu'>
+    <nav class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'>
+        <ul class='nav bs-docs-sidenav'>
+            <li>
+                <a href='#introduction'>
+                    Introduction
+                </a>
+            </li>
+            <li>
+                <a href='#home'>
+                    Home
+                </a>
+                <ul class='nav'>
+                    <li>
+                        <a href='#home-groups'>
+                            Groups List
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href='#browse'>
+                    Browse
+                </a>
+            </li>
+            <li>
+                <a href='#download'>
+                    Download
+                </a>
+            </li>
+            <li>
+                <a href='#compare'>
+                    Compare
+                </a>
+            </li>
+            <li>
+                <a href='#search'>
+                    Search
+                </a>
+            </li>
+            <li>
+                <a href='#analysis'>
+                    Analysis
+                </a>
+            </li>
+            <li>
+                <a href='#standards'>
+                    Methods & Standards
+                </a>
+            </li>
+        </ul>
+    </nav>
+</script>
+
+<!-- Table headers. -->
+<script type='text/x-handlebars-template' id='table_headers'>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+    </thead>
+</script>
+
+<!-- Table commons. -->
+<script type='text/x-handlebars-template' id='table_commons'>
+    <tr>
+        <td><kbd>api_key</kbd></td>
+        <td>N.A.</td>
+        <td><var>N.A.</var></td>
+    </tr>
+    <tr>
+        <td><kbd>datasource</kbd></td>
+        <td>Name code of one of the available FAOSTAT datasources.</td>
+        <td><var>faostat</var></td>
+    </tr>
+    <tr>
+        <td><kbd>lang</kbd></td>
+        <td>Code of one of the available FAOSTAT languages.</td>
+        <td>
+            <var>E</var>
+        </td>
+    </tr>
+</script>
+
+<!-- Introduction. -->
+<script type='text/x-handlebars-template' id='introduction'>
     <div class='bs-docs-section'>
         <h1 id='introduction' class='page-header'>
             Introduction
@@ -6,9 +94,59 @@
         <p>
             Welcome to the FAOSTAT API's home page!
         </p>
+    </div>
+</script>
+
+<script type='text/x-handlebars-template' id='introduction_languages'>
+    <div class='bs-docs-section'>
+        <h2 id='introduction-laguages'>
+            Languages
+        </h2>
+        <p>
+            FAOSTAT data is available in three languages: English, French and Spanish. Please refer to the table below
+            for the codes required by the <kbd>lang</kbd> parameter.
+        </p>
+        <div class='row'>
+            <div class='col-lg-6'>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>English</td>
+                            <td>E</td>
+                        </tr>
+                        <tr>
+                            <td>French</td>
+                            <td>F</td>
+                        </tr>
+                        <tr>
+                            <td>Spanish</td>
+                            <td>S</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- Home. -->
+<script type='text/x-handlebars-template' id='home'>
+    <div class='bs-docs-section'>
         <h1 id='home' class='page-header'>
             Home
         </h1>
+    </div>
+</script>
+
+<!-- Home > Groups. -->
+<script type='text/x-handlebars-template' id='home_groups'>
+    <div class='bs-docs-section'>
         <h2 id='home-groups'>
             Groups List
         </h2>
@@ -18,21 +156,22 @@
         </p>
         <div class='row'>
             <div class='col-lg-6'>
+                <h4>Endpoint</h4>
+                <code>
+                    /groupsanddomains/{datasource}/{lang}/
+                </code>
+            </div>
+            <div class='col-lg-6'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-6'>
                 <h4>Inputs</h4>
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Example</th>
-                    </tr>
-                    </thead>
+                    {{> table_headers}}
                     <tbody>
-                    <tr>
-                        <td>asd</td>
-                        <td>fgh</td>
-                        <td>jkl</td>
-                    </tr>
+                        {{> table_commons}}
                     </tbody>
                 </table>
             </div>
@@ -47,19 +186,9 @@
             <div class='col-lg-6'>
                 <h4>Outputs</h4>
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Example</th>
-                    </tr>
-                    </thead>
+                    {{> table_headers}}
                     <tbody>
-                    <tr>
-                        <td>asd</td>
-                        <td>fgh</td>
-                        <td>jkl</td>
-                    </tr>
+                        {{> table_commons}}
                     </tbody>
                 </table>
             </div>
