@@ -1,0 +1,29 @@
+body {
+  background-color: #f5f5f5;
+}
+
+.container {
+  background-color: #ffffff;
+}
+
+.header-row {
+  background-color: #174c74;
+  max-height: 51px;
+  padding: 8px;
+}
+
+.faostat-logo {
+  width: 35px;
+  height: 35px;
+}
+
+.faostat-logo-text {
+  font-size: 22px;
+  color: #ffffff;
+  font-weight: 100;
+  b {
+    font-weight: 900;
+  }
+  //position: relative;
+  //top: 3px;
+}
