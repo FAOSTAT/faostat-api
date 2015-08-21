@@ -15,6 +15,11 @@
 	</properties>
 	<repositories>
 		<repository>
+			<id>FENIXAPPS</id>
+			<name>FENIXAPPS</name>
+			<url>http://fenixapps.fao.org/artifactory/fenix-developers</url>
+		</repository>
+		<repository>
 			<id>maven2-repository.java.net</id>
 			<name>Java.net Repository for Maven</name>
 			<url>http://download.java.net/maven/2/</url>
