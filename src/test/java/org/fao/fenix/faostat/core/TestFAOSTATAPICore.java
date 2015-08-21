@@ -1,6 +1,10 @@
 package org.fao.fenix.faostat.core;
 
+import com.google.gson.Gson;
 import junit.framework.TestCase;
+import org.fao.fenix.faostat.beans.DatasourceBean;
+
+import javax.xml.crypto.Data;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>

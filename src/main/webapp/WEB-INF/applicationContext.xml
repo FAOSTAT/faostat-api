@@ -12,4 +12,8 @@
 
     <context:component-scan base-package="org.fao.fenix.faostat.rest.*" />
 
+	<bean id="datasourcePool" class="org.fao.fenix.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
+		<constructor-arg value="/json" />
+	</bean>
+
 </beans>
