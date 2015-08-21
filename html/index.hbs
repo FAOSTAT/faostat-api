@@ -1,6 +1,6 @@
 <script type='text/x-handlebars-template' id='structure'>
-    <div class='container-fluid bs-docs-container'>
-        <div class='row'>
+    <div class='container-fluid bs-docs-container  bg-primary'>
+        <div class='row' id='api_header'>
             <div class='header-row'>
                 <div class='faostat-logo-text'>
                     <b>FAO</b>STAT<b> API</b>
@@ -11,10 +11,11 @@
             <div class='col-lg-2' id='menu_holder'>
                 {{> menu}}
             </div>
-            <div class='col-lg-10'>
+            <div class='col-lg-10 bg-muted'>
                 {{> introduction}}
                 {{> introduction_datasources}}
                 {{> introduction_languages}}
+                {{> introduction_http_codes}}
                 {{> home}}
                 {{> home_groups}}
                 {{> home_db_updates}}

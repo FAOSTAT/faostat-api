@@ -3,8 +3,8 @@ define(['jquery',
         'text!templates/index.hbs',
         'text!templates/templates.hbs',
         'text!templates/snippets.hbs',
-        'prettify',
-        'bootstrap'], function($, Handlebars, index, templates, snippets) {
+        'codemirror',
+        'bootstrap'], function($, Handlebars, index, templates, snippets, CodeMirror) {
 
     'use strict';
 
@@ -23,9 +23,11 @@ define(['jquery',
 
         /* Register partials. */
         Handlebars.registerPartial('menu', $(templates).filter('#menu').html());
+        Handlebars.registerPartial('base_url', $(templates).filter('#base_url').html());
         Handlebars.registerPartial('introduction', $(templates).filter('#introduction').html());
         Handlebars.registerPartial('introduction_datasources', $(templates).filter('#introduction_datasources').html());
         Handlebars.registerPartial('introduction_languages', $(templates).filter('#introduction_languages').html());
+        Handlebars.registerPartial('introduction_http_codes', $(templates).filter('#introduction_http_codes').html());
         Handlebars.registerPartial('table_headers', $(templates).filter('#table_headers').html());
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
         Handlebars.registerPartial('home', $(templates).filter('#home').html());
@@ -60,7 +62,11 @@ define(['jquery',
         $('#' + this.CONFIG.placeholder_id).html(html);
 
         /* Make source code looks pretty. */
-        prettyPrint();
+        //var opts = {
+        //    lineNumbers: true,
+        //    mode: 'javascript'
+        //};
+        //CodeMirror.fromTextArea(document.getElementById('home_groups_in_snippet'), opts);
 
     };
 

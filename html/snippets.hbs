@@ -1,18 +1,16 @@
 <!-- Home > Groups > IN. -->
 <script type='text/x-handlebars-template' id='home_groups_in'>
-    <pre class='prettyprint lang-javascript'>
+    <!--<textarea id='home_groups_in_snippet'>-->
         $.ajax({
-            type: 'GET',
-            url: 'http://faostat3.fao.org/api/groups/',
+            type: "GET",
+            url: "http://faostat3.fao.org/api/groups/",
             data: {
-                'datasource': 'faostat',
-                'lang': 'E'
-            }
-            success: function (response) {
-                /* Do something. */
-            }
-        }
-    </pre>
+                datasource: "faostat",
+                lang: "E"
+            },
+            success: function() {}
+        });
+    <!--</textarea>-->
 </script>
 
 <!-- Home > Groups > OUT. -->

@@ -25,3 +25,42 @@ body {
     font-weight: 900;
   }
 }
+
+.bs-docs-sidebar .nav>li>a {
+  color: #ffffff;
+}
+
+.bg-muted {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.bg-example {
+  background-color: #4c555a;
+  color: #ffffff;
+}
+
+.bs-docs-sidebar .nav .nav {
+  display: block;
+}
+
+.affix#api_header {
+  top: 0;
+  padding: 8px;
+  max-height: 51px;
+  position: fixed;
+  background-color: #174c74;
+  color: #fff;
+  z-index: 999;
+  h3 {
+    color: #fff;
+  }
+}
+
+.affix-top#api_header {
+  position: static;
+}
+
+.affix-bottom#api_header {
+  position: static;
+}
