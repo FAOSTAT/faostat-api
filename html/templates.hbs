@@ -148,7 +148,7 @@
 </script>
 
 <!-- Navigation menu. -->
-<script type='text/x-handlebars-template' id='base_url'>http://faostat3.fao.org/api/v1.0/</script>
+<script type='text/x-handlebars-template' id='base_url'>http://faostat3.fao.org/api/v1.0/{datasource}/{lang}/</script>
 
 <!-- Table headers. -->
 <script type='text/x-handlebars-template' id='table_headers'>
@@ -568,7 +568,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}comingup/
+                    {{>base_url}}comingups/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -710,7 +710,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}metadata/
+                    {{>base_url}}metadata/{faostat_code}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -776,7 +776,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}bulkdownloads/
+                    {{>base_url}}bulkdownloads/{faostat_code}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -844,7 +844,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}filters/
+                    {{>base_url}}filters/{faostat_code}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -910,7 +910,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}codelists/
+                    {{>base_url}}codelists/{faostat_code}/{filter_code}/{sub_filter_code}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -1117,7 +1117,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}methodology/
+                    {{>base_url}}methodologies/{methodology_id}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -1178,7 +1178,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}classification/
+                    {{>base_url}}classifications/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -1406,5 +1406,43 @@
                 <!--{{> home_groups_out}}-->
             </div>
         </div>
+    </div>
+</script>
+
+<!-- Compare. -->
+<script type='text/x-handlebars-template' id='compare'>
+    <div class='bs-docs-section'>
+        <h1 id='compare' class='page-header'>
+            Compare
+        </h1>
+    </div>
+</script>
+
+<!-- Search. -->
+<script type='text/x-handlebars-template' id='search'>
+    <div class='bs-docs-section'>
+        <h1 id='search' class='page-header'>
+            Search
+        </h1>
+    </div>
+</script>
+
+<!-- Analysis. -->
+<script type='text/x-handlebars-template' id='analysis'>
+    <div class='bs-docs-section'>
+        <h1 id='analysis' class='page-header'>
+            Analysis
+        </h1>
+    </div>
+</script>
+
+<!-- Browse. -->
+<script type='text/x-handlebars-template' id='browse'>
+    <div class='bs-docs-section'>
+        <h1 id='browse' class='page-header'>
+            <a href='#browse'>
+                Browse
+            </a>
+        </h1>
     </div>
 </script>

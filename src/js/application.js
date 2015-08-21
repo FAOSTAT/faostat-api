@@ -49,6 +49,10 @@ define(['jquery',
         Handlebars.registerPartial('standards_units', $(templates).filter('#standards_units').html());
         Handlebars.registerPartial('standards_glossary', $(templates).filter('#standards_glossary').html());
         Handlebars.registerPartial('standards_abbreviations', $(templates).filter('#standards_abbreviations').html());
+        Handlebars.registerPartial('compare', $(templates).filter('#compare').html());
+        Handlebars.registerPartial('search', $(templates).filter('#search').html());
+        Handlebars.registerPartial('analysis', $(templates).filter('#analysis').html());
+        Handlebars.registerPartial('browse', $(templates).filter('#browse').html());
 
         /* Snippets. */
         Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
