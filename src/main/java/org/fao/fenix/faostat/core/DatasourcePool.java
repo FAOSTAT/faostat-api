@@ -26,9 +26,9 @@ public class DatasourcePool {
         datasources = new HashMap<String, DatasourceBean>();
         try {
             this.setDatasourcePath(datasourcePath.getFile().getPath());
-        } catch (IOException e) {
-            throw new Exception(e.getMessage());
-        }
+        } catch (IOException e) {                                                               /* pragma: no cover */
+            throw new Exception(e.getMessage());                                                /* pragma: no cover */
+        }                                                                                       /* pragma: no cover */
     }
 
     public DatasourceBean getDatasource(String id) {

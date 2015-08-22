@@ -21,10 +21,18 @@ public class TestFAOSTATAPICore extends JerseyTest {
                 .requestListenerClass(RequestContextListener.class).build());
     }
 
+    FAOSTATAPICore c;
+
     @Test
     public void testGetSchema() {
-        FAOSTATAPICore c = ContextLoaderListener.getCurrentWebApplicationContext().getBean(FAOSTATAPICore.class);
+        c = ContextLoaderListener.getCurrentWebApplicationContext().getBean(FAOSTATAPICore.class);
         assertNotNull(c.getSchema());
+    }
+
+    @Test
+    public void testGetJSONSchemaPool() {
+        c = ContextLoaderListener.getCurrentWebApplicationContext().getBean(FAOSTATAPICore.class);
+        assertNotNull(c.getJsonSchemaPool());
     }
 
 }
