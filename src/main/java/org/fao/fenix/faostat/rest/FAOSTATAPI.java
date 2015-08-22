@@ -1,6 +1,9 @@
 package org.fao.fenix.faostat.rest;
 
+import com.sun.jersey.api.core.InjectParam;
+import org.fao.fenix.faostat.core.DatasourcePool;
 import org.fao.fenix.faostat.core.FAOSTATAPICore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
@@ -17,6 +20,9 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0")
 public class FAOSTATAPI {
 
+    @InjectParam
+    DatasourcePool datasourcePool;
+
     @GET
     @Path("{name}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -26,7 +32,7 @@ public class FAOSTATAPI {
         FAOSTATAPICore c = new FAOSTATAPICore();
 
         /* Stream result */
-        return Response.status(200).entity(c.sayHallo(name)).build();
+        return Response.status(200).entity(datasourcePool.getDatasource(name.toUpperCase()).getUrl()).build();
 
     }
 
