@@ -32,7 +32,7 @@ public class FAOSTATAPI {
         FAOSTATAPICore c = new FAOSTATAPICore();
 
         /* Stream result */
-        return Response.status(200).entity(datasourcePool.getDatasource(name.toUpperCase()).getUrl()).build();
+        return Response.status(200).entity(c.sayHallo(name)).build();
 
     }
 
