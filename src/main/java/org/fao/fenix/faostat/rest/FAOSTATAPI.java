@@ -1,5 +1,6 @@
 package org.fao.fenix.faostat.rest;
 
+import com.sun.jersey.api.core.InjectParam;
 import org.fao.fenix.faostat.core.FAOSTATAPICore;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +18,16 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0")
 public class FAOSTATAPI {
 
+    @InjectParam
+    FAOSTATAPICore faostatapiCore;
+
     @GET
-    @Path("{name}")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sayHello(@PathParam("name") String name) {
+    public Response getSchema(@PathParam("name") String name) {
 
-        try {
-
-            /* Load core library. */
-            FAOSTATAPICore c = new FAOSTATAPICore();
-
-            /* Stream result */
-            return Response.status(200).entity(c.sayHallo(name)).build();
-
-        } catch (Exception e) {
-            return Response.status(500).entity(e.getMessage()).build();
-        }
+        /* Stream result */
+        return Response.status(200).entity(faostatapiCore.getSchema()).build();
 
     }
 

@@ -10,9 +10,13 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.fao.fenix.faostat.rest.*" />
+    <context:component-scan base-package="org.fao.fenix.faostat.*" />
 
 	<bean id="datasourcePool" class="org.fao.fenix.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
+		<constructor-arg value="/json" />
+	</bean>
+
+	<bean id="jsonSchemaPool" class="org.fao.fenix.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>
 

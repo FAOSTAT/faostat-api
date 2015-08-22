@@ -9,7 +9,7 @@ public class DatasourceBean {
 
     private String id;
 
-    private DRIVER driver;
+    private String driver;
 
     private String url;
 
@@ -27,11 +27,11 @@ public class DatasourceBean {
 
     private boolean delete;
 
-    public DRIVER getDriver() {
+    public String getDriver() {
         return driver;
     }
 
-    public void setDriver(DRIVER driver) {
+    public void setDriver(String driver) {
         this.driver = driver;
     }
 
