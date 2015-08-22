@@ -12,9 +12,9 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestFAOSTATAPICore extends JerseyTest {
+public class TestJSONSchemaPool extends JerseyTest {
 
-    public TestFAOSTATAPICore() {
+    public TestJSONSchemaPool() {
         super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
@@ -23,8 +23,8 @@ public class TestFAOSTATAPICore extends JerseyTest {
 
     @Test
     public void testGetSchema() {
-        FAOSTATAPICore c = ContextLoaderListener.getCurrentWebApplicationContext().getBean(FAOSTATAPICore.class);
-        assertNotNull(c.getSchema());
+        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
+        assertNotNull(j.getSchema());
     }
 
 }

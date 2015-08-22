@@ -31,8 +31,8 @@ public class TestDatasourceBean extends TestCase {
         assertEquals(true, b.isCreate());
         b.setDelete(true);
         assertEquals(true, b.isDelete());
-        b.setDriver(DRIVER.SQLSERVER2000);
-        assertEquals(DRIVER.SQLSERVER2000, b.getDriver());
+        b.setDriver("driver");
+        assertEquals("driver", b.getDriver());
         b.setRetrieve(true);
         assertEquals(true, b.isRetrieve());
         b.setUpdate(true);
