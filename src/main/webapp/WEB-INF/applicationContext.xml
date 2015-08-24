@@ -20,4 +20,8 @@
 		<constructor-arg value="/json" />
 	</bean>
 
+	<bean id="faostatapiCore" class="org.fao.fenix.faostat.core.FAOSTATAPICore">
+		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
+	</bean>
+
 </beans>
