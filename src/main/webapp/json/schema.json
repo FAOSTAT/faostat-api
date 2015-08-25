@@ -53,7 +53,7 @@
   },
   "links": [
     {
-      "href": "/v1.0/{lang}/groups/",
+      "href": "{lang}/groups/",
       "method": "GET",
       "rel": "groups",
       "description": "List of available FAOSTAT domains.",
