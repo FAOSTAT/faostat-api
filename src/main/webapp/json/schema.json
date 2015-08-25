@@ -34,8 +34,64 @@
         "fr",
         "es"
       ]
+    },
+    "code": {
+      "type": "string",
+      "title": "Code",
+      "description": "Object's code."
+    },
+    "label": {
+      "type": "string",
+      "title": "Label",
+      "description": "Object's label."
+    },
+    "ord": {
+      "type": "integer",
+      "title": "Ord",
+      "description": "Object's order."
     }
   },
-  "links": {
-  }
+  "links": [
+    {
+      "href": "/v1.0/{lang}/groups/",
+      "method": "GET",
+      "rel": "groups",
+      "description": "List of available FAOSTAT domains.",
+      "title": "Groups",
+      "schema": {
+        "type": "object",
+        "name": "Groups Input",
+        "description": "Input of 'groups' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "array",
+        "title": "Groups Output",
+        "description": "Output of 'groups' service.",
+        "items": {
+          "type": "object",
+          "title": "Group",
+          "description": "FAOSTAT group.",
+          "properties": {
+            "code": {
+              "$ref": "#/definitions/code"
+            },
+            "label": {
+              "$ref": "#/definitions/label"
+            },
+            "ord": {
+              "$ref": "#/definitions/ord"
+            }
+          }
+        }
+      }
+    }
+  ]
 }
