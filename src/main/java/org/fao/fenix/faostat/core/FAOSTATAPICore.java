@@ -1,6 +1,8 @@
 package org.fao.fenix.faostat.core;
 
 import com.sun.jersey.api.core.InjectParam;
+import org.fao.fenix.faostat.beans.DatasourceBean;
+import org.fao.fenix.faostat.jdbc.JDBCIterable;
 
 import java.io.IOException;
 
@@ -13,14 +15,21 @@ public class FAOSTATAPICore {
     JSONSchemaPool jsonSchemaPool;
 
     @InjectParam
+    DatasourcePool datasourcePool;
+
+    @InjectParam
     QueriesPool queriesPool;
 
     public String getSchema() {
         return jsonSchemaPool.getSchema();
     }
 
-    public String getGroups(String lang) throws IOException {
-        return this.getQueriesPool().getQuery("groups", lang);
+    public JDBCIterable getGroups(String lang) throws IOException, Exception {
+        String query = this.getQueriesPool().getQuery("groups", lang);
+        DatasourceBean dsb = this.getDatasourcePool().getDatasource("HOME-TEST");
+        JDBCIterable i = new JDBCIterable();
+        i.query(dsb, query);
+        return i;
     }
 
     public void setJsonSchemaPool(JSONSchemaPool jsonSchemaPool) {
@@ -53,6 +62,14 @@ public class FAOSTATAPICore {
             case "S": return "es";
             default: return "en";
         }
+    }
+
+    public DatasourcePool getDatasourcePool() {
+        return datasourcePool;
+    }
+
+    public void setDatasourcePool(DatasourcePool datasourcePool) {
+        this.datasourcePool = datasourcePool;
     }
 
 }
