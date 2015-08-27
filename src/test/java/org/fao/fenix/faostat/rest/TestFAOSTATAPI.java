@@ -28,7 +28,7 @@ public class TestFAOSTATAPI extends JerseyTest {
     }
 
     @Test
-    public void testHello(){
+    public void testGetSchema(){
         ws = resource().path("v1.0/");
         ClientResponse response = ws.get(ClientResponse.class);
         assertEquals(200, response.getStatus());
