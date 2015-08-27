@@ -31,10 +31,6 @@
 		<constructor-arg value="${datasource}" />
 	</bean>
 
-	<!--<bean id="schemaPool" class="org.fao.fenix.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">-->
-		<!--<constructor-arg value="/json" />-->
-	<!--</bean>-->
-
 	<bean id="jsonSchemaPool" class="org.fao.fenix.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>
