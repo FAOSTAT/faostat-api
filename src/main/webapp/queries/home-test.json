@@ -1,0 +1,7 @@
+{
+  "groups": {
+    "en": "SELECT GroupCode, GroupNameE, Ord FROM Groups ORDER BY Ord",
+    "fr": "SELECT GroupCode, GroupNameF, Ord FROM Groups ORDER BY Ord",
+    "es": "SELECT GroupCode, GroupNameS, Ord FROM Groups ORDER BY Ord"
+  }
+}

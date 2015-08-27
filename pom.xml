@@ -12,6 +12,7 @@
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<jersey.version>2.14</jersey.version>
 		<jackson.version>1.9.13</jackson.version>
+		<handlebars.version>2.2.3</handlebars.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -165,6 +166,11 @@
 			<groupId>org.fao.fenix</groupId>
 			<artifactId>fenix-cross-domain</artifactId>
 			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jknack</groupId>
+			<artifactId>handlebars</artifactId>
+			<version>${handlebars.version}</version>
 		</dependency>
 	</dependencies>
 </project>

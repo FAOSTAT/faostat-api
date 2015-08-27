@@ -12,8 +12,15 @@
 
     <context:component-scan base-package="org.fao.fenix.faostat.*" />
 
+	<context:property-placeholder location="/WEB-INF/faostat-api.properties"/>
+
 	<bean id="datasourcePool" class="org.fao.fenix.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
+	</bean>
+
+	<bean id="queriesPool" class="org.fao.fenix.faostat.core.QueriesPool" lazy-init="false" init-method="init">
+		<constructor-arg value="/queries" />
+		<constructor-arg value="${datasource}" />
 	</bean>
 
 	<bean id="jsonSchemaPool" class="org.fao.fenix.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
@@ -22,6 +29,7 @@
 
 	<bean id="faostatapiCore" class="org.fao.fenix.faostat.core.FAOSTATAPICore">
 		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
+		<property name="queriesPool" ref="queriesPool"/>
 	</bean>
 
 </beans>

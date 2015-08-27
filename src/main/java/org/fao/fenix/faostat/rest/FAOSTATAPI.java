@@ -4,10 +4,7 @@ import com.sun.jersey.api.core.InjectParam;
 import org.fao.fenix.faostat.core.FAOSTATAPICore;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -28,6 +25,21 @@ public class FAOSTATAPI {
 
         /* Stream result */
         return Response.status(200).entity(faostatapiCore.getSchema()).build();
+
+    }
+
+    @GET
+    @Path("/{lang}/groups/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getGroups(@PathParam("lang") String lang,
+                              @QueryParam("datasource") String datasource,
+                              @QueryParam("api_key") String api_key,
+                              @QueryParam("client_key") String client_key) {
+
+        String query = faostatapiCore.getGroups(lang);
+
+        /* Stream result */
+        return Response.status(200).entity(query).build();
 
     }
 
