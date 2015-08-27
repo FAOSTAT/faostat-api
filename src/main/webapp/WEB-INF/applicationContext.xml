@@ -12,7 +12,14 @@
 
     <context:component-scan base-package="org.fao.fenix.faostat.*" />
 
-	<context:property-placeholder location="/WEB-INF/faostat-api.properties"/>
+	<context:property-placeholder location="/WEB-INF/faostat-api.config"/>
+
+	<bean id="defaultOptionsBean" class="org.fao.fenix.faostat.beans.DefaultOptionsBean">
+		<constructor-arg value="${datasource}" />
+		<constructor-arg value="${apiKey}" />
+		<constructor-arg value="${clientKey}" />
+		<constructor-arg value="${outputType}" />
+	</bean>
 
 	<bean id="datasourcePool" class="org.fao.fenix.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />

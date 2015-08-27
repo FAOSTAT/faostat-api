@@ -1,6 +1,7 @@
 package org.fao.fenix.faostat.rest;
 
 import com.sun.jersey.api.core.InjectParam;
+import org.fao.fenix.faostat.beans.DefaultOptionsBean;
 import org.fao.fenix.faostat.core.FAOSTATAPICore;
 import org.fao.fenix.faostat.jdbc.JDBCIterable;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ import java.io.*;
 @Component
 @Path("/v1.0")
 public class FAOSTATAPI {
+
+    @InjectParam
+    DefaultOptionsBean o;
 
     @InjectParam
     FAOSTATAPICore faostatapiCore;
@@ -37,14 +41,18 @@ public class FAOSTATAPI {
     public Response getGroups(@PathParam("lang") String lang,
                               @QueryParam("datasource") String datasource,
                               @QueryParam("api_key") String api_key,
-                              @QueryParam("client_key") String client_key) {
+                              @QueryParam("client_key") String client_key,
+                              @QueryParam("output_type") String output_type) {
 
 
+        /* Store user preferences. */
+        this.storeUserOptions(datasource, api_key, client_key, output_type);
 
+        /* Query the DB and return the results. */
         try {
 
             /* Fetch the iterable for the required query. */
-            final JDBCIterable i = faostatapiCore.getGroups(lang);
+            final JDBCIterable i = this.getFaostatapiCore().getJDBCIterable("groups", this.getO().getDatasource(), lang);
 
             /* Initiate the output stream. */
             StreamingOutput stream = new StreamingOutput() {
@@ -74,12 +82,33 @@ public class FAOSTATAPI {
             /* Stream result */
             return Response.status(200).entity(stream).build();
 
-        } catch (IOException e) {
-            return Response.status(500).entity(e.getMessage()).build();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
+    }
+
+    private void storeUserOptions(String datasource, String apiKey, String clientKey, String outputType) {
+        this.getO().setDatasource(datasource);
+        this.getO().setApiKey(apiKey);
+        this.getO().setClientKey(clientKey);
+        this.getO().setOutputType(outputType);
+    }
+
+    public FAOSTATAPICore getFaostatapiCore() {
+        return faostatapiCore;
+    }
+
+    public void setFaostatapiCore(FAOSTATAPICore faostatapiCore) {
+        this.faostatapiCore = faostatapiCore;
+    }
+
+    public DefaultOptionsBean getO() {
+        return o;
+    }
+
+    public void setO(DefaultOptionsBean o) {
+        this.o = o;
     }
 
 }

@@ -4,8 +4,6 @@ import com.sun.jersey.api.core.InjectParam;
 import org.fao.fenix.faostat.beans.DatasourceBean;
 import org.fao.fenix.faostat.jdbc.JDBCIterable;
 
-import java.io.IOException;
-
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
@@ -24,9 +22,13 @@ public class FAOSTATAPICore {
         return jsonSchemaPool.getSchema();
     }
 
-    public JDBCIterable getGroups(String lang) throws IOException, Exception {
-        String query = this.getQueriesPool().getQuery("groups", lang);
-        DatasourceBean dsb = this.getDatasourcePool().getDatasource("HOME-TEST");
+    public JDBCIterable getJDBCIterable(String queryCode, String datasource, String lang) throws Exception {
+        String query = this.getQueriesPool().getQuery(queryCode, lang);
+        if (query == null)
+            throw new Exception("Query \'" + queryCode + "' not found.");
+        DatasourceBean dsb = this.getDatasourcePool().getDatasource(datasource);
+        if (dsb == null)
+            throw new Exception("Datasource \'" + datasource + "' not found.");
         JDBCIterable i = new JDBCIterable();
         i.query(dsb, query);
         return i;
