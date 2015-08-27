@@ -1,5 +1,7 @@
 package org.fao.fenix.faostat.core;
 
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
 import com.google.gson.Gson;
 import org.fao.fenix.faostat.beans.DatasourceBean;
 import org.springframework.core.io.Resource;
@@ -19,13 +21,17 @@ public class QueriesPool {
 
     private String queriesPath;
 
-    private Map<String, Map<String, String>> queries;
+    private Map<String, String> queries;
 
     private String datasource;
 
+    private Handlebars handlebars;
+
+    private Template template;
+
     public QueriesPool(Resource queriesPath, String datasource) throws Exception {
-        queries = new HashMap<String, Map<String, String>>();
         this.setDatasource(datasource);
+        this.setHandlebars(new Handlebars());
         try {
             this.setQueriesPath(queriesPath.getFile().getPath());
         } catch (IOException e) {                                                               /* pragma: no cover */
@@ -33,8 +39,10 @@ public class QueriesPool {
         }                                                                                       /* pragma: no cover */
     }
 
-    public String getQuery(String id, String lang) {
-        return this.getQueries().get(id.toLowerCase()).get(lang.toLowerCase());
+    public String getQuery(String id, String lang) throws IOException {
+        String query = this.getQueries().get(id);
+        this.setTemplate(this.getHandlebars().compileInline(query));
+        return this.getTemplate().apply(iso2faostat(lang));
     }
 
     public void init() throws IOException {
@@ -42,8 +50,16 @@ public class QueriesPool {
         String path = this.queriesPath + File.separator + this.getDatasource() + ".json";
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         String s = new String(encoded, Charset.defaultCharset());
-        Map<String, Map<String, String>> queries = g.fromJson(s, Map.class);
+        Map<String, String> queries = g.fromJson(s, Map.class);
         this.setQueries(queries);
+    }
+
+    private String iso2faostat(String lang) {
+        switch (lang.toLowerCase()) {
+            case "fr": return "F";
+            case "es": return "S";
+            default: return "E";
+        }
     }
 
     public void setQueriesPath(String queriesPath) {
@@ -58,12 +74,28 @@ public class QueriesPool {
         this.datasource = datasource;
     }
 
-    public Map<String, Map<String, String>> getQueries() {
+    public Map<String, String> getQueries() {
         return queries;
     }
 
-    public void setQueries(Map<String, Map<String, String>> queries) {
+    public void setQueries(Map<String, String> queries) {
         this.queries = queries;
+    }
+
+    public Handlebars getHandlebars() {
+        return handlebars;
+    }
+
+    public void setHandlebars(Handlebars handlebars) {
+        this.handlebars = handlebars;
+    }
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
 }

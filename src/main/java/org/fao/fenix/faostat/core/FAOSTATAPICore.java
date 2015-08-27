@@ -2,6 +2,8 @@ package org.fao.fenix.faostat.core;
 
 import com.sun.jersey.api.core.InjectParam;
 
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
@@ -17,9 +19,8 @@ public class FAOSTATAPICore {
         return jsonSchemaPool.getSchema();
     }
 
-    public String getGroups(String lang) {
-        String out = queriesPool.getQuery("groups", lang);
-        return out;
+    public String getGroups(String lang) throws IOException {
+        return this.getQueriesPool().getQuery("groups", lang);
     }
 
     public void setJsonSchemaPool(JSONSchemaPool jsonSchemaPool) {

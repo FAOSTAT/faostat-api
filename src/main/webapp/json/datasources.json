@@ -6,5 +6,13 @@
     "dbName": "Warehouse",
     "username": "Warehouse",
     "password": "w@reh0use"
+  },
+  {
+    "id": "HOME-TEST",
+    "driver": "MySQL",
+    "url": "jdbc:mysql://localhost:3306/faostat",
+    "dbName": "faostat",
+    "username": "root",
+    "password": ""
   }
 ]

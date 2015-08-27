@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -36,10 +37,17 @@ public class FAOSTATAPI {
                               @QueryParam("api_key") String api_key,
                               @QueryParam("client_key") String client_key) {
 
-        String query = faostatapiCore.getGroups(lang);
+        try {
 
-        /* Stream result */
-        return Response.status(200).entity(query).build();
+            /* Fetch query from configuration file. */
+            String query = faostatapiCore.getGroups(lang);
+
+            /* Stream result */
+            return Response.status(200).entity(query).build();
+
+        } catch (IOException e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
 
     }
 
