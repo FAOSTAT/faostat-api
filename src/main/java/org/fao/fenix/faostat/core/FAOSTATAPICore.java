@@ -2,7 +2,12 @@ package org.fao.fenix.faostat.core;
 
 import com.sun.jersey.api.core.InjectParam;
 import org.fao.fenix.faostat.beans.DatasourceBean;
+import org.fao.fenix.faostat.beans.DefaultOptionsBean;
 import org.fao.fenix.faostat.jdbc.JDBCIterable;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -22,13 +27,65 @@ public class FAOSTATAPICore {
         return jsonSchemaPool.getSchema();
     }
 
-    public JDBCIterable getJDBCIterable(String queryCode, String datasource, String lang) throws Exception {
+    public StreamingOutput createOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        final JDBCIterable i = getJDBCIterable(queryCode, o.getDatasource(), o.getLang());
+
+        /* Initiate the output stream. */
+        StreamingOutput stream = new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Initiate the array. */
+                writer.write("[");
+
+                /* Generate an array of objects of arrays. */
+                switch (o.getOutputType()) {
+
+                    case "arrays":
+                        while (i.hasNext()) {
+                            writer.write(i.nextArray());
+                            if (i.hasNext())
+                                writer.write(",");
+                        }
+                        break;
+                    default:
+                        while (i.hasNext()) {
+                            writer.write(i.nextJSON());
+                            if (i.hasNext())
+                                writer.write(",");
+                        }
+                        break;
+
+                }
+
+                /* Close the array. */
+                writer.write("]");
+
+                /* Flush the writer. */
+                writer.flush();
+
+            }
+
+        };
+
+        /* Return stream. */
+        return stream;
+
+    }
+
+    private JDBCIterable getJDBCIterable(String queryCode, String datasource, String lang) throws Exception {
         String query = this.getQueriesPool().getQuery(queryCode, lang);
         if (query == null)
             throw new Exception("Query \'" + queryCode + "' not found.");
-        DatasourceBean dsb = this.getDatasourcePool().getDatasource(datasource);
+        DatasourceBean dsb = this.getDatasourcePool().getDatasource(datasource.toUpperCase());
         if (dsb == null)
-            throw new Exception("Datasource \'" + datasource + "' not found.");
+            throw new Exception("Datasource \'" + datasource.toUpperCase() + "' not found.");
         JDBCIterable i = new JDBCIterable();
         i.query(dsb, query);
         return i;

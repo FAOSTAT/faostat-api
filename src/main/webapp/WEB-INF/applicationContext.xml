@@ -16,6 +16,7 @@
 
 	<bean id="defaultOptionsBean" class="org.fao.fenix.faostat.beans.DefaultOptionsBean">
 		<constructor-arg value="${datasource}" />
+		<constructor-arg value="${lang}" />
 		<constructor-arg value="${apiKey}" />
 		<constructor-arg value="${clientKey}" />
 		<constructor-arg value="${outputType}" />

@@ -13,11 +13,22 @@ public class DefaultOptionsBean {
 
     private String outputType;
 
-    public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {
-        this.setDatasource(datasource);
+    private String lang;
+
+    public DefaultOptionsBean(String datasource, String lang, String apiKey, String clientKey, String outputType) {
+        this.setLang(lang);
         this.setApiKey(apiKey);
         this.setClientKey(clientKey);
         this.setOutputType(outputType);
+        this.setDatasource(datasource);
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public String getDatasource() {

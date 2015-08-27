@@ -46,38 +46,13 @@ public class FAOSTATAPI {
 
 
         /* Store user preferences. */
-        this.storeUserOptions(datasource, api_key, client_key, output_type);
+        this.storeUserOptions(datasource, lang, api_key, client_key, output_type);
 
         /* Query the DB and return the results. */
         try {
 
-            /* Fetch the iterable for the required query. */
-            final JDBCIterable i = this.getFaostatapiCore().getJDBCIterable("groups", this.getO().getDatasource(), lang);
-
-            /* Initiate the output stream. */
-            StreamingOutput stream = new StreamingOutput() {
-
-                @Override
-                public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                    /* Initiate the buffer writer. */
-                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                    /* Write the content. */
-                    writer.write("[");
-                    while (i.hasNext()) {
-                        writer.write(i.nextJSON());
-                        if (i.hasNext())
-                            writer.write(",");
-                    }
-                    writer.write("]");
-
-                    /* Flush the writer. */
-                    writer.flush();
-
-                }
-
-            };
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = this.getFaostatapiCore().createOutputStream("groups", this.getO());
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -88,11 +63,12 @@ public class FAOSTATAPI {
 
     }
 
-    private void storeUserOptions(String datasource, String apiKey, String clientKey, String outputType) {
-        this.getO().setDatasource(datasource);
-        this.getO().setApiKey(apiKey);
-        this.getO().setClientKey(clientKey);
-        this.getO().setOutputType(outputType);
+    private void storeUserOptions(String datasource, String lang, String apiKey, String clientKey, String outputType) {
+        this.getO().setDatasource(datasource != null ? datasource : this.getO().getDatasource());
+        this.getO().setLang(lang != null ? lang : this.getO().getLang());
+        this.getO().setApiKey(apiKey != null ? apiKey : this.getO().getApiKey());
+        this.getO().setClientKey(clientKey != null ? clientKey : this.getO().getClientKey());
+        this.getO().setOutputType(outputType != null ? outputType : this.getO().getOutputType());
     }
 
     public FAOSTATAPICore getFaostatapiCore() {
