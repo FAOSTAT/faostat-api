@@ -33,31 +33,27 @@ public class JDBCIterable implements Iterator<List<String>> {
             case MYSQL:
                 queryMySQL(db, sql);
                 break;
-//            case SQLSERVER2000:
-//                querySQLServer(db, sql);
-//                break;
+            case SQLSERVER2000:
+                querySQLServer(db, sql);
+                break;
             default:
                 throw new Exception(db.getDriver().toUpperCase() + " driver has not been implemented (yet).");
         }
     }
 
-//    public void querySQLServer(DatasourceBean db, String sql) throws IllegalAccessException, InstantiationException, SQLException {
-//
-//        // Clean the query
-//        validate(sql);
-//        sql = sql.replaceAll("-", "_");
-//
-//        // Open connections
-//        SQLServerDriver.class.newInstance();
-//        this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
-//        this.setStatement(this.getConnection().createStatement());
-//
-//        this.getStatement().executeQuery(sql);
-//        this.setResultSet(this.getStatement().getResultSet());
-//
-//        this.setColumns(this.getResultSet().getMetaData().getColumnCount());
-//
-//    }
+    public void querySQLServer(DatasourceBean db, String sql) throws IllegalAccessException, InstantiationException, SQLException {
+
+        /* Open connections. */
+        SQLServerDriver.class.newInstance();
+        this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
+        this.setStatement(this.getConnection().createStatement());
+
+        this.getStatement().executeQuery(sql);
+        this.setResultSet(this.getStatement().getResultSet());
+
+        this.setColumns(this.getResultSet().getMetaData().getColumnCount());
+
+    }
 
     public void queryMySQL(DatasourceBean db, String sql) throws IOException, InstantiationException, SQLException, ClassNotFoundException {
 

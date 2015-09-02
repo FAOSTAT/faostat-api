@@ -1,0 +1,3 @@
+{
+  "groups": "SELECT D.GroupCode, D.GroupName{{this}}, D.DomainCode, D.DomainName{{this}}, D.Ord FROM Domain D ORDER BY D.Ord"
+}
