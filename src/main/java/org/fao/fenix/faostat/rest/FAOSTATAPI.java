@@ -3,14 +3,12 @@ package org.fao.fenix.faostat.rest;
 import com.sun.jersey.api.core.InjectParam;
 import org.fao.fenix.faostat.beans.DefaultOptionsBean;
 import org.fao.fenix.faostat.core.FAOSTATAPICore;
-import org.fao.fenix.faostat.jdbc.JDBCIterable;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -53,6 +51,34 @@ public class FAOSTATAPI {
 
             /* Query the DB and create an output stream. */
             StreamingOutput stream = this.getFaostatapiCore().createOutputStream("groups", this.getO());
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+    @GET
+    @Path("/{lang}/groupsanddomains/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getGroupsAndDomains(@PathParam("lang") String lang,
+                                        @QueryParam("datasource") String datasource,
+                                        @QueryParam("api_key") String api_key,
+                                        @QueryParam("client_key") String client_key,
+                                        @QueryParam("output_type") String output_type) {
+
+
+        /* Store user preferences. */
+        this.storeUserOptions(datasource, lang, api_key, client_key, output_type);
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = this.getFaostatapiCore().createOutputStream("groupsanddomains", this.getO());
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

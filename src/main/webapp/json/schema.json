@@ -19,10 +19,7 @@
       "title": "Datasource",
       "description": "Name code of the datasource.",
       "enum": [
-        "faostat",
-        "faostatdb",
-        "faostatprod",
-        "faostatproddiss"
+        "faostat"
       ]
     },
     "lang": {
@@ -72,22 +69,89 @@
         }
       },
       "targetSchema": {
-        "type": "array",
-        "title": "Groups Output",
-        "description": "Output of 'groups' service.",
-        "items": {
-          "type": "object",
-          "title": "Group",
-          "description": "FAOSTAT group.",
-          "properties": {
-            "code": {
-              "$ref": "#/definitions/code"
-            },
-            "label": {
-              "$ref": "#/definitions/label"
-            },
-            "ord": {
-              "$ref": "#/definitions/ord"
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'groups' service."
+          },
+          "data": {
+            "type": "array",
+            "title": "Data",
+            "description": "Data for the 'groups' service.",
+            "items": {
+              "type": "object",
+              "title": "Group",
+              "description": "FAOSTAT group.",
+              "properties": {
+                "GroupCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "GroupNameE": {
+                  "$ref": "#/definitions/label"
+                },
+                "Ord": {
+                  "$ref": "#/definitions/ord"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/groupsanddomains/",
+      "method": "GET",
+      "rel": "groupsanddomains",
+      "description": "List of available FAOSTAT groups and domains.",
+      "title": "Groups and Domains",
+      "schema": {
+        "type": "object",
+        "name": "Groups and Domains Input",
+        "description": "Input of 'groupsanddomains' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'groupsanddomains' service."
+          },
+          "data": {
+            "type": "array",
+            "title": "Data",
+            "description": "Data for the 'groupsanddomains' service.",
+            "items": {
+              "type": "object",
+              "title": "Domain",
+              "description": "FAOSTAT domain.",
+              "properties": {
+                "GroupCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "GroupNameE": {
+                  "$ref": "#/definitions/label"
+                },
+                "DomainCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "DomainNameE": {
+                  "$ref": "#/definitions/label"
+                },
+                "Ord": {
+                  "$ref": "#/definitions/ord"
+                }
+              }
             }
           }
         }

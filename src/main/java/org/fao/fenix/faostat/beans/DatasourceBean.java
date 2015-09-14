@@ -1,7 +1,5 @@
 package org.fao.fenix.faostat.beans;
 
-import org.fao.fenix.faostat.constants.DRIVER;
-
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */

@@ -41,8 +41,14 @@ public class FAOSTATAPICore {
                 /* Initiate the buffer writer. */
                 Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 
+                /* Initiate the output. */
+                writer.write("{");
+
+                /* Add metadata. */
+                writer.write("\"metadata\": {},");
+
                 /* Initiate the array. */
-                writer.write("[");
+                writer.write("\"data\": [");
 
                 /* Generate an array of objects of arrays. */
                 switch (o.getOutputType()) {
@@ -66,6 +72,9 @@ public class FAOSTATAPICore {
 
                 /* Close the array. */
                 writer.write("]");
+
+                /* Close the object. */
+                writer.write("}");
 
                 /* Flush the writer. */
                 writer.flush();

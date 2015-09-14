@@ -1,3 +1,4 @@
 {
-  "groups": "SELECT D.GroupCode, D.GroupName{{this}}, D.DomainCode, D.DomainName{{this}}, D.Ord FROM Domain D ORDER BY D.Ord"
+  "groups": "SELECT D.GroupCode, D.GroupName{{this}}, D.Ord FROM Domain D GROUP BY D.GroupCode, D.GroupName{{this}}, D.Ord ORDER BY D.Ord",
+  "groupsanddomains": "SELECT D.GroupCode, D.GroupName{{this}}, D.DomainCode, D.DomainName{{this}}, D.Ord FROM Domain D ORDER BY D.Ord"
 }
