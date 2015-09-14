@@ -2,7 +2,7 @@
   {
     "id": "FAOSTAT",
     "driver": "SQLServer2000",
-    "url": "jdbc:sqlserver://HQWPRFAOSTATDB1\\Dissemination;databaseName=Warehouse;",
+    "url": "jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;",
     "dbName": "Warehouse",
     "username": "Warehouse",
     "password": "w@reh0use"
