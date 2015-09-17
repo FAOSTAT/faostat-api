@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "dsd": [
+      {
+        "ord": 7,
+        "dimension_id": "area",
+        "label": "Geographic Area",
+        "type": "code",
+        "key": "area_code"
+      },
+      {
+        "ord": 8,
+        "dimension_id": "area",
+        "label": "Geographic Area",
+        "type": "label",
+        "key": "area_label"
+      },
+      {
+        "ord": 1,
+        "dimension_id": null,
+        "label": "Value",
+        "type": "value",
+        "key": "quantity"
+      }
+    ]
+  },
+  "data": [
+    {
+      "area_code": "2",
+      "area_label": "Afghanistan",
+      "area_label": "Afghanistan",
+      "quantity": 123.456
+    }
+  ]
+}
+
+
