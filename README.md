@@ -17,3 +17,7 @@ Web
 ---
 
 This module enables users to access FAOSTAT data through REST web services.
+
+Developed with
+==============
+![IntelliJ](http://www.jetbrains.com/idea/docs/logo_intellij_idea.png)
