@@ -1,12 +1,23 @@
 {
-  "dimension": "areas/countries",
-  "domains": ["QC", "QA"],
-  "datasource": "faostat",
-  "lang": "en",
-  "whitelist": [],
-  "blacklist": [],
-  "subdimensions": ["countries"],
-  "showLists": false,
-  "showFullMetadata":true,
-  "ord":true
+  "metadata": {
+    "id": "countries",
+    "#parameter": "TBD if needed",
+    "parameter": "@List1Codes"
+  },
+  "data": [
+    {
+      "ord": 1,
+      "code": "2",
+      "label": "Afghanistan",
+      "description": "bla bla bla",
+      "children": [
+        {
+          "ord": 7,
+          "code": "2A",
+          "label": "Sub Afghanistan",
+          "description": "bla bla bla"
+        }
+      ]
+    }
+  ]
 }
