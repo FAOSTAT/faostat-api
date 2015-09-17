@@ -1,7 +1,6 @@
 package org.fao.fenix.faostat.jdbc;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.fao.fenix.faostat.beans.DatasourceBean;
 import org.fao.fenix.faostat.constants.DRIVER;
 

@@ -3,7 +3,6 @@ package org.fao.fenix.faostat.core;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import com.google.gson.Gson;
-import org.fao.fenix.faostat.beans.DatasourceBean;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

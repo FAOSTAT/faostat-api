@@ -1,12 +1,11 @@
 package org.fao.fenix.faostat.core;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import org.fao.fenix.faostat.beans.DatasourceBean;
-import org.fao.fenix.faostat.constants.DRIVER;
 import org.springframework.core.io.Resource;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
