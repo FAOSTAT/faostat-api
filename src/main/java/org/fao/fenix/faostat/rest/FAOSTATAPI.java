@@ -25,7 +25,7 @@ public class FAOSTATAPI {
 
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Response getSchema(@PathParam("name") String name) {
 
         /* Stream result */
@@ -35,7 +35,7 @@ public class FAOSTATAPI {
 
     @GET
     @Path("/{lang}/groups/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Response getGroups(@PathParam("lang") String lang,
                               @QueryParam("datasource") String datasource,
                               @QueryParam("api_key") String api_key,
@@ -63,7 +63,7 @@ public class FAOSTATAPI {
 
     @GET
     @Path("/{lang}/groupsanddomains/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Response getGroupsAndDomains(@PathParam("lang") String lang,
                                         @QueryParam("datasource") String datasource,
                                         @QueryParam("api_key") String api_key,

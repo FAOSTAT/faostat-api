@@ -20,7 +20,8 @@
       "description": "Name code of the datasource.",
       "enum": [
         "faostat"
-      ]
+      ],
+      "default": "faostat"
     },
     "lang": {
       "type": "string",
@@ -30,7 +31,8 @@
         "en",
         "fr",
         "es"
-      ]
+      ],
+      "default": "en"
     },
     "code": {
       "type": "string",
