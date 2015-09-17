@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "id": "countries",
+    "#parameter": "TBD if needed",
+    "parameter": "@List1Codes"
+  },
+  "data": [
+    {
+      "ord": 1,
+      "code": "2",
+      "label": "Afghanistan",
+      "description": "bla bla bla",
+      "children": [
+        {
+          "ord": 7,
+          "code": "2A",
+          "label": "Sub Afghanistan",
+          "description": "bla bla bla"
+        }
+      ]
+    }
+  ]
+}

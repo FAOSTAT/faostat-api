@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "id": "QC",
+    "description": ""
+  },
+  "data": [
+    {
+      "ord": 1,
+      "id": "area",
+      "label": "Geographic Areas",
+      "parameter": "@List1Codes",
+      "description": "bla bla bla",
+      "href": "/codes/area",
+      "subdimensions": [
+        {
+          "ord": 1,
+          "label": "Countries",
+          "description": "bla bla bla",
+          "href": "/codes/countries"
+        },
+        {
+          "ord": 2,
+          "label": "Regions",
+          "description": "bla bla bla",
+          "href": "/codes/regions"
+        },
+        {
+          "ord": 3,
+          "label": "Special Groups",
+          "description": "bla bla bla",
+          "href": "/codes/specialgroups"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "dimension": "areas/countries",
+  "domains": ["QC", "QA"],
+  "datasource": "faostat",
+  "lang": "en",
+  "whitelist": [],
+  "blacklist": [],
+  "subdimensions": ["countries"],
+  "showLists": false,
+  "showFullMetadata":true,
+  "ord":true
+}
