@@ -1,8 +1,8 @@
-package org.fao.fenix.faostat.jdbc;
+package org.fao.faostat.jdbc;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
-import org.fao.fenix.faostat.beans.DatasourceBean;
-import org.fao.fenix.faostat.constants.DRIVER;
+import org.fao.faostat.beans.DatasourceBean;
+import org.fao.faostat.constants.DRIVER;
 
 import java.io.IOException;
 import java.sql.*;

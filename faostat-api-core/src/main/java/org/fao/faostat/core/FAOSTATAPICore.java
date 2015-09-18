@@ -1,9 +1,9 @@
-package org.fao.fenix.faostat.core;
+package org.fao.faostat.core;
 
 import com.sun.jersey.api.core.InjectParam;
-import org.fao.fenix.faostat.beans.DatasourceBean;
-import org.fao.fenix.faostat.beans.DefaultOptionsBean;
-import org.fao.fenix.faostat.jdbc.JDBCIterable;
+import org.fao.faostat.beans.DatasourceBean;
+import org.fao.faostat.beans.DefaultOptionsBean;
+import org.fao.faostat.jdbc.JDBCIterable;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;

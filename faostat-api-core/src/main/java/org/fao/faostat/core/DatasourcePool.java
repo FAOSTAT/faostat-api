@@ -1,7 +1,7 @@
-package org.fao.fenix.faostat.core;
+package org.fao.faostat.core;
 
 import com.google.gson.Gson;
-import org.fao.fenix.faostat.beans.DatasourceBean;
+import org.fao.faostat.beans.DatasourceBean;
 import org.springframework.core.io.Resource;
 
 import java.io.File;

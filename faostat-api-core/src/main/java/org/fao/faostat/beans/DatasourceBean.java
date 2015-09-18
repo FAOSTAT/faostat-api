@@ -1,4 +1,4 @@
-package org.fao.fenix.faostat.beans;
+package org.fao.faostat.beans;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>

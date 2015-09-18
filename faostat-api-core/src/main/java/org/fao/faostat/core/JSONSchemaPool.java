@@ -1,4 +1,4 @@
-package org.fao.fenix.faostat.core;
+package org.fao.faostat.core;
 
 import org.springframework.core.io.Resource;
 

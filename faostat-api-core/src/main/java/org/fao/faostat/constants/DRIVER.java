@@ -1,4 +1,4 @@
-package org.fao.fenix.faostat.constants;
+package org.fao.faostat.constants;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
