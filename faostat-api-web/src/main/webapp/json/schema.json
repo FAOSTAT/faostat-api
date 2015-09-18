@@ -34,10 +34,42 @@
       ],
       "default": "en"
     },
+    "faostat_code": {
+      "type": "object",
+      "title": "FAOSTAT Code",
+      "description": "Code used in the FAOSTAT codelists.",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/code"
+        },
+        "label": {
+          "$ref": "#/definitions/label"
+        },
+        "ord": {
+          "$ref": "#/definitions/ord"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "children": {
+          "type": "array",
+          "title": "Children",
+          "description": "Hierarchical codes.",
+          "items": {
+            "$ref": "#/definitions/faostat_code"
+          }
+        }
+      }
+    },
     "code": {
       "type": "string",
       "title": "Code",
       "description": "Object's code."
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "Object's description."
     },
     "label": {
       "type": "string",
@@ -51,6 +83,190 @@
     }
   },
   "links": [
+    {
+      "href": "/data/",
+      "method": "GET",
+      "rel": "data",
+      "description": "Extract and filter FAOSTAT data.",
+      "title": "Data",
+      "schema": {
+
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Data Output",
+        "description": "Output of 'data' service.",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'data' service.",
+            "properties": {
+              "dsd": {
+                "type": "array",
+                "title": "DSD",
+                "description": "Data structure definition.",
+                "items": {
+                  "type": "object",
+                  "title": "Column",
+                  "description": "Definition of the column",
+                  "properties": {
+                    "ord": {
+                      "$ref": "#/definitions/ord"
+                    },
+                    "codelist": {
+                      "type": "string",
+                      "title": "Codelist",
+                      "description": "Name of the codelist linked to this column."
+                    },
+                    "label": {
+                      "$ref": "#/definitions/label"
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Type",
+                      "description": "Type of values of this column.",
+                      "enum": [
+                        "value",
+                        "code",
+                        "date"
+                      ]
+                    },
+                    "key": {
+                      "type": "string",
+                      "title": "Key",
+                      "description": "Name of the JSON key for this column."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "data": {
+            "type": "array",
+            "title": "Data",
+            "description": "FAOSTAT Data.",
+            "items": {
+              "type": "object",
+              "title": "Row",
+              "description": "Object representing a single row of the output."
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/codes/{codelist}/",
+      "method": "GET",
+      "rel": "codes",
+      "description": "List of codes for the given codelist.",
+      "title": "Codes",
+      "schema": {
+        "type": "object",
+        "name": "Codes Input",
+        "description": "Input of 'codes' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "codelist": {
+            "type": "string",
+            "title": "Codelist",
+            "description": "Name of the FAOSTAT codelist to be retrieved.",
+            "enum": [
+              "areas",
+              "countries",
+              "regions",
+              "specialgroups",
+              "items",
+              "itemsaggregated",
+              "elements",
+              "years"
+            ]
+          },
+          "domains": {
+            "type": "array",
+            "title": "Domains",
+            "description": "List of FAOSTAT domain codes.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "whitelist": {
+            "type": "array",
+            "title": "Whitelist",
+            "description": "List of codes allowed in the output.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "blacklist": {
+            "type": "array",
+            "title": "Blacklist",
+            "description": "List of codes not allowed in the output.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "subcodelists": {
+            "type": "array",
+            "title": "Sub Codelists",
+            "description": "List of sub codelists to be included in the output.",
+            "items": {
+              "$ref": "#/definitions/code"
+            },
+            "enum": [
+              "areas",
+              "countries",
+              "regions",
+              "specialgroups",
+              "items",
+              "itemsaggregated",
+              "elements",
+              "years"
+            ]
+          },
+          "show_lists": {
+            "type": "boolean",
+            "title": "Show Lists",
+            "description": "Determines whether codes representing lists must be included in the output.",
+            "default": false
+          },
+          "show_full_metadata": {
+            "type": "boolean",
+            "title": "Show Full Metadata",
+            "description": "Determines whether the full metadata must be included in the output. A shorter version will be used otherwise.",
+            "default": true
+          },
+          "ord": {
+            "$ref": "#/definitions/ord"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Codes Output",
+        "description": "Output of 'codes' service.",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'codes' service."
+          },
+          "data": {
+            "type": "array",
+            "title": "Codes",
+            "description": "List of available codes.",
+            "items": {
+              "$ref": "#/definitions/faostat_code"
+            }
+          }
+        }
+      }
+    },
     {
       "href": "{lang}/groups/",
       "method": "GET",
@@ -80,23 +296,10 @@
           },
           "data": {
             "type": "array",
-            "title": "Data",
-            "description": "Data for the 'groups' service.",
+            "title": "Groups",
+            "description": "List of available groups.",
             "items": {
-              "type": "object",
-              "title": "Group",
-              "description": "FAOSTAT group.",
-              "properties": {
-                "GroupCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "GroupNameE": {
-                  "$ref": "#/definitions/label"
-                },
-                "Ord": {
-                  "$ref": "#/definitions/ord"
-                }
-              }
+              "$ref": "#/definitions/faostat_code"
             }
           }
         }
@@ -131,29 +334,10 @@
           },
           "data": {
             "type": "array",
-            "title": "Data",
-            "description": "Data for the 'groupsanddomains' service.",
+            "title": "Groups and Domains",
+            "description": "List of available groups and domains.",
             "items": {
-              "type": "object",
-              "title": "Domain",
-              "description": "FAOSTAT domain.",
-              "properties": {
-                "GroupCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "GroupNameE": {
-                  "$ref": "#/definitions/label"
-                },
-                "DomainCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "DomainNameE": {
-                  "$ref": "#/definitions/label"
-                },
-                "Ord": {
-                  "$ref": "#/definitions/ord"
-                }
-              }
+              "$ref": "#/definitions/faostat_code"
             }
           }
         }
