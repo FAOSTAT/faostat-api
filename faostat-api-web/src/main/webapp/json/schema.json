@@ -80,9 +80,80 @@
       "type": "integer",
       "title": "Ord",
       "description": "Object's order."
+    },
+    "dimension": {
+      "type": "object",
+      "title": "Dimension",
+      "description": "Object representing a single dimension of a FAOSTAT dataset.",
+      "properties": {
+        "ord": {
+          "$ref": "#/definitions/ord"
+        },
+        "id": {
+          "$ref": "#/definitions/code"
+        },
+        "label": {
+          "$ref": "#/definitions/label"
+        },
+        "parameter": {
+          "type": "string",
+          "title": "Procedure Parameter",
+          "description": "Name of the procedure's parameter mapped to this dimenison."
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "service": {
+          "type": "string",
+          "title": "Service",
+          "description": "Relative link to the service capable to provide codes for the current dimension."
+        },
+        "subdimensions": {
+          "type": "array",
+          "title": "Subdimensions",
+          "description": "Codelists composing the current one.",
+          "items": {
+            "$ref": "#/definitions/dimension",
+            "title": "Subdimension"
+          }
+        }
+      }
     }
   },
   "links": [
+    {
+      "href": "/schema/",
+      "method": "GET",
+      "rel": "schema",
+      "description": "Definition of FAOSTAT domain.",
+      "title": "Domain Structure",
+      "schema": {
+
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Schema Output",
+        "description": "Output of 'schema' service.",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'schema' service.",
+            "properties": {
+
+            }
+          },
+          "data": {
+            "type": "array",
+            "title": "Schema",
+            "description": "FAOSTAT domain structure.",
+            "items": {
+              "$ref": "#/definitions/dimension"
+            }
+          }
+        }
+      }
+    },
     {
       "href": "/data/",
       "method": "GET",
