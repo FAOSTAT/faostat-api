@@ -1,14 +1,8 @@
-package org.fao.fenix.faostat.rest;
+package org.fao.faostat.rest;
 
 import com.sun.jersey.api.core.InjectParam;
-import org.fao.fenix.faostat.beans.DefaultOptionsBean;
-import org.fao.fenix.faostat.core.FAOSTATAPICore;
-import org.springframework.stereotype.Component;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import org.fao.faostat.beans.DefaultOptionsBean;
+import org.fao.faostat.core.FAOSTATAPICore;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>

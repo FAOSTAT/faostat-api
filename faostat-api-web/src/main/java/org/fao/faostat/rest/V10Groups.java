@@ -1,4 +1,4 @@
-package org.fao.fenix.faostat.rest;
+package org.fao.faostat.rest;
 
 import org.springframework.stereotype.Component;
 
@@ -11,20 +11,20 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/groupsanddomains/")
+@Path("/v1.0/{lang}/groups/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10GroupsAndDomains extends V10 {
+public class V10Groups extends V10 {
 
-    public V10GroupsAndDomains() {
+    public V10Groups() {
         super();
     }
 
     @GET
-    public Response getGroupsAndDomains(@PathParam("lang") String lang,
-                                        @QueryParam("datasource") String datasource,
-                                        @QueryParam("api_key") String api_key,
-                                        @QueryParam("client_key") String client_key,
-                                        @QueryParam("output_type") String output_type) {
+    public Response getGroups(@PathParam("lang") String lang,
+                              @QueryParam("datasource") String datasource,
+                              @QueryParam("api_key") String api_key,
+                              @QueryParam("client_key") String client_key,
+                              @QueryParam("output_type") String output_type) {
 
 
         /* Store user preferences. */
@@ -34,7 +34,7 @@ public class V10GroupsAndDomains extends V10 {
         try {
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = this.getFaostatapiCore().createOutputStream("groupsanddomains", this.getO());
+            StreamingOutput stream = this.getFaostatapiCore().createOutputStream("groups", this.getO());
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

@@ -1,4 +1,4 @@
-package org.fao.fenix.faostat.beans;
+package org.fao.faostat.beans;
 
 import junit.framework.TestCase;
 

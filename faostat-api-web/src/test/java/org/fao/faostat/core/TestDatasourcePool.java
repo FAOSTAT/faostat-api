@@ -1,10 +1,9 @@
-package org.fao.fenix.faostat.core;
+package org.fao.faostat.core;
 
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.fenix.faostat.beans.DatasourceBean;
-import org.fao.fenix.faostat.constants.DRIVER;
+import org.fao.faostat.beans.DatasourceBean;
 import org.junit.Test;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;

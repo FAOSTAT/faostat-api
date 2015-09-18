@@ -1,8 +1,5 @@
-package org.fao.fenix.faostat.rest;
+package org.fao.faostat.rest;
 
-import com.sun.jersey.api.core.InjectParam;
-import org.fao.fenix.faostat.beans.DefaultOptionsBean;
-import org.fao.fenix.faostat.core.FAOSTATAPICore;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;

@@ -14,7 +14,7 @@
 
 	<context:property-placeholder location="classpath:faostat-api.config"/>
 
-	<bean id="defaultOptionsBean" class="org.fao.fenix.faostat.beans.DefaultOptionsBean">
+	<bean id="defaultOptionsBean" class="org.fao.faostat.beans.DefaultOptionsBean">
 		<constructor-arg value="${datasource}" />
 		<constructor-arg value="${lang}" />
 		<constructor-arg value="${apiKey}" />
@@ -22,20 +22,20 @@
 		<constructor-arg value="${outputType}" />
 	</bean>
 
-	<bean id="datasourcePool" class="org.fao.fenix.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
+	<bean id="datasourcePool" class="org.fao.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>
 
-	<bean id="queriesPool" class="org.fao.fenix.faostat.core.QueriesPool" lazy-init="false" init-method="init">
+	<bean id="queriesPool" class="org.fao.faostat.core.QueriesPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/queries" />
 		<constructor-arg value="${datasource}" />
 	</bean>
 
-	<bean id="jsonSchemaPool" class="org.fao.fenix.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
+	<bean id="jsonSchemaPool" class="org.fao.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>
 
-	<bean id="faostatapiCore" class="org.fao.fenix.faostat.core.FAOSTATAPICore">
+	<bean id="faostatapiCore" class="org.fao.faostat.core.FAOSTATAPICore">
 		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
 		<property name="queriesPool" ref="queriesPool"/>
 		<property name="datasourcePool" ref="datasourcePool"/>

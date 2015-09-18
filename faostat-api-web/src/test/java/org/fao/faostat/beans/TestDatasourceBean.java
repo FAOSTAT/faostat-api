@@ -1,7 +1,6 @@
-package org.fao.fenix.faostat.beans;
+package org.fao.faostat.beans;
 
 import junit.framework.TestCase;
-import org.fao.fenix.faostat.constants.DRIVER;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
