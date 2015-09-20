@@ -30,6 +30,9 @@ public class V10Groups extends V10 {
         /* Store user preferences. */
         this.storeUserOptions(datasource, lang, api_key, client_key, output_type);
 
+        /* Store procedure parameters. */
+        this.getO().addParameter("lang", this.faostatapiCore.iso2faostat(lang));
+
         /* Query the DB and return the results. */
         try {
 

@@ -1,4 +1,6 @@
 {
   "groups": "SELECT D.GroupCode, D.GroupName{{this}}, D.Ord FROM Domain D GROUP BY D.GroupCode, D.GroupName{{this}}, D.Ord ORDER BY D.Ord",
-  "groupsanddomains": "SELECT D.GroupCode, D.GroupName{{this}}, D.DomainCode, D.DomainName{{this}}, D.Ord FROM Domain D ORDER BY D.Ord"
+  "groupsanddomains": "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord",
+  "dimensions": "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'",
+  "methodologies": "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC"
 }

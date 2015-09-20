@@ -122,30 +122,88 @@
   },
   "links": [
     {
-      "href": "/schema/",
+      "href": "{lang}/methodologies/",
       "method": "GET",
-      "rel": "schema",
-      "description": "Definition of FAOSTAT domain.",
-      "title": "Domain Structure",
+      "rel": "methodologies",
+      "title": "Methodologies",
+      "description": "List of FAOSTAT methodologies.",
       "schema": {
-
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
       },
       "targetSchema": {
         "type": "object",
         "name": "Schema Output",
-        "description": "Output of 'schema' service.",
+        "description": "Output of 'methodologies' service.",
         "properties": {
           "metadata": {
             "type": "object",
             "title": "Metadata",
-            "description": "Metadata for the 'schema' service.",
+            "description": "Metadata for the 'methodologies' service.",
             "properties": {
 
             }
           },
           "data": {
             "type": "array",
-            "title": "Schema",
+            "title": "Methodologies",
+            "description": "List of FAOSTAT methodologies.",
+            "items": {
+              "type": "object",
+              "title": "Methodology",
+              "description": "FAOSTAT methodology",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/code"
+                },
+                "label": {
+                  "$ref": "#/definitions/label"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/dimensions/{domain_code}/",
+      "method": "GET",
+      "rel": "dimensions",
+      "description": "Definition of FAOSTAT domain.",
+      "title": "Domain Structure",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "title": "Domain code",
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Schema Output",
+        "description": "Output of 'dimensions' service.",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'dimensions' service.",
+            "properties": {
+
+            }
+          },
+          "data": {
+            "type": "array",
+            "title": "Dimensions",
             "description": "FAOSTAT domain structure.",
             "items": {
               "$ref": "#/definitions/dimension"
@@ -161,7 +219,9 @@
       "description": "Extract and filter FAOSTAT data.",
       "title": "Data",
       "schema": {
+        "properties": {
 
+        }
       },
       "targetSchema": {
         "type": "object",
