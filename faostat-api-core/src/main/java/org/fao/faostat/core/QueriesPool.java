@@ -43,6 +43,16 @@ public class QueriesPool {
         return this.getTemplate().apply(iso2faostat(lang));
     }
 
+    public String getQuery(String id, Map<String, String> procedureParameters) throws IOException {
+        String query = this.getQueries().get(id);
+        for (String key : procedureParameters.keySet()) {
+            String tmp = "\\{\\{" + key + "\\}\\}";
+            query = query.replaceAll(tmp, procedureParameters.get(key));
+        }
+        System.out.println(query);
+        return query;
+    }
+
     public void init() throws IOException {
         Gson g = new Gson();
         String path = this.queriesPath + File.separator + this.getDatasource() + ".json";

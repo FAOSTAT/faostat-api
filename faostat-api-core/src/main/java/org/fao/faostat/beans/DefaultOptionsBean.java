@@ -1,5 +1,8 @@
 package org.fao.faostat.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
@@ -15,12 +18,19 @@ public class DefaultOptionsBean {
 
     private String lang;
 
+    private Map<String, String> procedureParameters;
+
     public DefaultOptionsBean(String datasource, String lang, String apiKey, String clientKey, String outputType) {
         this.setLang(lang);
         this.setApiKey(apiKey);
         this.setClientKey(clientKey);
         this.setOutputType(outputType);
         this.setDatasource(datasource);
+        this.setProcedureParameters(new HashMap<String, String>());
+    }
+
+    public void addParameter(String key, String value) {
+        this.getProcedureParameters().put(key, value);
     }
 
     public String getLang() {
@@ -61,6 +71,14 @@ public class DefaultOptionsBean {
 
     public void setOutputType(String outputType) {
         this.outputType = outputType;
+    }
+
+    public Map<String, String> getProcedureParameters() {
+        return procedureParameters;
+    }
+
+    public void setProcedureParameters(Map<String, String> procedureParameters) {
+        this.procedureParameters = procedureParameters;
     }
 
     @Override

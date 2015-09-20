@@ -8,6 +8,7 @@ import org.fao.faostat.jdbc.JDBCIterable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -30,7 +31,7 @@ public class FAOSTATAPICore {
     public StreamingOutput createOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
 
         /* Query the DB. */
-        final JDBCIterable i = getJDBCIterable(queryCode, o.getDatasource(), o.getLang());
+        final JDBCIterable i = getJDBCIterable(queryCode, o);
 
         /* Initiate the output stream. */
         StreamingOutput stream = new StreamingOutput() {
@@ -88,8 +89,20 @@ public class FAOSTATAPICore {
 
     }
 
-    private JDBCIterable getJDBCIterable(String queryCode, String datasource, String lang) throws Exception {
-        String query = this.getQueriesPool().getQuery(queryCode, lang);
+    private JDBCIterable getJDBCIterable(String queryCode, DefaultOptionsBean o) throws Exception {
+        String query = this.getQueriesPool().getQuery(queryCode, o.getProcedureParameters());
+        if (query == null)
+            throw new Exception("Query \'" + queryCode + "' not found.");
+        DatasourceBean dsb = this.getDatasourcePool().getDatasource(o.getDatasource().toUpperCase());
+        if (dsb == null)
+            throw new Exception("Datasource \'" + o.getDatasource().toUpperCase() + "' not found.");
+        JDBCIterable i = new JDBCIterable();
+        i.query(dsb, query);
+        return i;
+    }
+
+    private JDBCIterable getJDBCIterable(String queryCode, String datasource, Map<String, String> procedureParameters) throws Exception {
+        String query = this.getQueriesPool().getQuery(queryCode, procedureParameters);
         if (query == null)
             throw new Exception("Query \'" + queryCode + "' not found.");
         DatasourceBean dsb = this.getDatasourcePool().getDatasource(datasource.toUpperCase());
@@ -116,7 +129,7 @@ public class FAOSTATAPICore {
         this.queriesPool = queriesPool;
     }
 
-    private String iso2faostat(String lang) {
+    public String iso2faostat(String lang) {
         switch (lang.toLowerCase()) {
             case "fr": return "F";
             case "es": return "S";
@@ -124,7 +137,7 @@ public class FAOSTATAPICore {
         }
     }
 
-    private String faostat2iso(String lang) {
+    public String faostat2iso(String lang) {
         switch (lang.toUpperCase()) {
             case "F": return "fr";
             case "S": return "es";
