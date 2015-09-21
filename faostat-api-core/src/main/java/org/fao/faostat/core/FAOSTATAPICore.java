@@ -46,7 +46,22 @@ public class FAOSTATAPICore {
                 writer.write("{");
 
                 /* Add metadata. */
-                writer.write("\"metadata\": {},");
+                writer.write("\"metadata\": {");
+                writer.write("\"datasource\": \"" + o.getDatasource() + "\",");
+                writer.write("\"output_type\": \"" + o.getOutputType() + "\",");
+                writer.write("\"api_key\": \"" + o.getApiKey() + "\",");
+                writer.write("\"client_key\": \"" + o.getClientKey() + "\",");
+                writer.write("\"parameters\": [");
+                int count = 0;
+                for (String key : o.getProcedureParameters().keySet()) {
+                    writer.write("{\"" + key + "\": \"" + o.getProcedureParameters().get(key) + "\"}");
+                    if (count < o.getProcedureParameters().keySet().size() - 1) {
+                        writer.write(",");
+                        count++;
+                    }
+                }
+                writer.write("]");
+                writer.write("},");
 
                 /* Initiate the array. */
                 writer.write("\"data\": [");
