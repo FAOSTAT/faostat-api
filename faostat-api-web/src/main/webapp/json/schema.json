@@ -122,6 +122,70 @@
   },
   "links": [
     {
+      "href": "{lang}/methodologies/{id}/",
+      "method": "GET",
+      "rel": "methodology",
+      "title": "Methodology",
+      "description": "Description of FAOSTAT methodology.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "id": {
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Schema Output",
+        "description": "Output of 'methodology' service.",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Metadata for the 'methodology' service.",
+            "properties": {
+
+            }
+          },
+          "data": {
+            "type": "object",
+            "title": "Methodology",
+            "description": "Description of FAOSTAT methodology.",
+            "properties": {
+              "note": {
+                "type": "string",
+                "title": "Note",
+                "description": "Note."
+              },
+              "coverage": {
+                "type": "string",
+                "title": "Coverage",
+                "description": "Coverage."
+              },
+              "reference": {
+                "type": "string",
+                "title": "Reference",
+                "description": "Reference."
+              },
+              "collection": {
+                "type": "string",
+                "title": "Collection",
+                "description": "Collection."
+              },
+              "estimation": {
+                "type": "string",
+                "title": "Estimation",
+                "description": "Estimation."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/methodologies/",
       "method": "GET",
       "rel": "methodologies",
