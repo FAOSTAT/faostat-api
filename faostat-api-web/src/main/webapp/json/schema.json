@@ -118,6 +118,45 @@
           }
         }
       }
+    },
+    "metadata": {
+      "type": "object",
+      "title": "Metadata",
+      "description": "Meta information about the request.",
+      "properties": {
+        "datasource": {
+          "type": "string",
+          "title": "Datasource",
+          "description": "Name of the datasource. Default: 'faostat'.",
+          "default": "faostat"
+        },
+        "output_type": {
+          "type": "string",
+          "title": "Output Type",
+          "description": "Type of the output: 'objects' or 'arrays'. Default: 'objects'.",
+          "default": "objects"
+        },
+        "api_key": {
+          "type": "string",
+          "title": "API Key",
+          "description": "Not available in Version 1.0."
+        },
+        "client_key": {
+          "type": "string",
+          "title": "Client Key",
+          "description": "Not available in Version 1.0."
+        },
+        "parameters": {
+          "type": "array",
+          "title": "Parameters",
+          "description": "Procedure parameters.",
+          "items": {
+            "type": "string",
+            "title": "Parameter",
+            "description": "Procedure parameter."
+          }
+        }
+      }
     }
   },
   "links": [
@@ -143,12 +182,7 @@
         "description": "Output of 'methodology' service.",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'methodology' service.",
-            "properties": {
-
-            }
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "object",
@@ -204,12 +238,7 @@
         "description": "Output of 'methodologies' service.",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'methodologies' service.",
-            "properties": {
-
-            }
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
@@ -258,12 +287,7 @@
         "description": "Output of 'dimensions' service.",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'dimensions' service.",
-            "properties": {
-
-            }
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
@@ -293,49 +317,7 @@
         "description": "Output of 'data' service.",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'data' service.",
-            "properties": {
-              "dsd": {
-                "type": "array",
-                "title": "DSD",
-                "description": "Data structure definition.",
-                "items": {
-                  "type": "object",
-                  "title": "Column",
-                  "description": "Definition of the column",
-                  "properties": {
-                    "ord": {
-                      "$ref": "#/definitions/ord"
-                    },
-                    "codelist": {
-                      "type": "string",
-                      "title": "Codelist",
-                      "description": "Name of the codelist linked to this column."
-                    },
-                    "label": {
-                      "$ref": "#/definitions/label"
-                    },
-                    "type": {
-                      "type": "string",
-                      "title": "Type",
-                      "description": "Type of values of this column.",
-                      "enum": [
-                        "value",
-                        "code",
-                        "date"
-                      ]
-                    },
-                    "key": {
-                      "type": "string",
-                      "title": "Key",
-                      "description": "Name of the JSON key for this column."
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
@@ -447,9 +429,7 @@
         "description": "Output of 'codes' service.",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'codes' service."
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
@@ -485,9 +465,7 @@
         "type": "object",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'groups' service."
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
@@ -523,9 +501,7 @@
         "type": "object",
         "properties": {
           "metadata": {
-            "type": "object",
-            "title": "Metadata",
-            "description": "Metadata for the 'groupsanddomains' service."
+            "$ref": "#/definitions/metadata"
           },
           "data": {
             "type": "array",
