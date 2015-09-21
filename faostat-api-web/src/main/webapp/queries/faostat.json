@@ -2,5 +2,8 @@
   "groups": "SELECT D.GroupCode, D.GroupName{{this}}, D.Ord FROM Domain D GROUP BY D.GroupCode, D.GroupName{{this}}, D.Ord ORDER BY D.Ord",
   "groupsanddomains": "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord",
   "dimensions": "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'",
-  "methodologies": "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC"
+  "methodologies": "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC",
+  "methodology": "SELECT M.MethodologyNote{{lang}} AS note, M.MethodologyCoverage{{lang}} AS coverage, M.MethodologyReferences{{lang}} AS references, M.MethodologyCollection{{lang}} AS collection, M.MethodologyEstimation{{lang}} AS estimationFROM Metadata_Methodology AS M WHERE M.MethodologyCode='{{methodology_code}}'",
+  "classifications": "SELECT M.ItemCode AS code, M.ItemName{{lang}} AS label, M.ItemDescription{{lang}} AS description FROM Metadata_Item AS M WHERE M.domaincode = '{{domain_code}}' ORDER BY M.ItemName{{lang}} ASC",
+  "units": "SELECT E.UnitAbbreviation{{lang}} AS code, E.UnitTitle{{lang}} AS label FROM Metadata_Unit AS E ORDER BY E.UnitAbbreviation{{lang}} ASC"
 }

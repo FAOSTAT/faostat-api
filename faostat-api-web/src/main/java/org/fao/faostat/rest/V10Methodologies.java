@@ -20,11 +20,11 @@ public class V10Methodologies extends V10 {
     }
 
     @GET
-    public Response getGroups(@PathParam("lang") String lang,
-                              @QueryParam("datasource") String datasource,
-                              @QueryParam("api_key") String api_key,
-                              @QueryParam("client_key") String client_key,
-                              @QueryParam("output_type") String output_type) {
+    public Response getMethodologies(@PathParam("lang") String lang,
+                                     @QueryParam("datasource") String datasource,
+                                     @QueryParam("api_key") String api_key,
+                                     @QueryParam("client_key") String client_key,
+                                     @QueryParam("output_type") String output_type) {
 
 
         /* Store user preferences. */
