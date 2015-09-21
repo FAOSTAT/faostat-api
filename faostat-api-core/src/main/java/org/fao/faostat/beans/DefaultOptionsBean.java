@@ -16,12 +16,16 @@ public class DefaultOptionsBean {
 
     private String outputType;
 
-    private String lang;
-
     private Map<String, String> procedureParameters;
 
-    public DefaultOptionsBean(String datasource, String lang, String apiKey, String clientKey, String outputType) {
-        this.setLang(lang);
+    public DefaultOptionsBean() {
+        this.setDatasource(null);
+        this.setApiKey(null);
+        this.setClientKey(null);
+        this.setOutputType(null);
+    }
+
+    public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {
         this.setApiKey(apiKey);
         this.setClientKey(clientKey);
         this.setOutputType(outputType);
@@ -31,14 +35,6 @@ public class DefaultOptionsBean {
 
     public void addParameter(String key, String value) {
         this.getProcedureParameters().put(key, value);
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public void setLang(String lang) {
-        this.lang = lang;
     }
 
     public String getDatasource() {

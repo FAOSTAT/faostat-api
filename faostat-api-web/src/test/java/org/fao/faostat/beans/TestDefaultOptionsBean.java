@@ -12,12 +12,11 @@ public class TestDefaultOptionsBean extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        b = new DefaultOptionsBean("datasource", "lang", "apiKey", "clientKey", "outputType");
+        b = new DefaultOptionsBean("datasource", "apiKey", "clientKey", "outputType");
     }
 
     public void testSetters() {
         assertEquals("datasource", b.getDatasource());
-        assertEquals("lang", b.getLang());
         assertEquals("apiKey", b.getApiKey());
         assertEquals("clientKey", b.getClientKey());
         assertEquals("outputType", b.getOutputType());

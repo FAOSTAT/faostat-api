@@ -16,7 +16,6 @@
 
 	<bean id="defaultOptionsBean" class="org.fao.faostat.beans.DefaultOptionsBean">
 		<constructor-arg value="${datasource}" />
-		<constructor-arg value="${lang}" />
 		<constructor-arg value="${apiKey}" />
 		<constructor-arg value="${clientKey}" />
 		<constructor-arg value="${outputType}" />

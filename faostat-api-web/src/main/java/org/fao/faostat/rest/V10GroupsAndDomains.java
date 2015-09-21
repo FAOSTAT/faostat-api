@@ -28,7 +28,7 @@ public class V10GroupsAndDomains extends V10 {
 
 
         /* Store user preferences. */
-        this.storeUserOptions(datasource, lang, api_key, client_key, output_type);
+        this.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
         this.getO().addParameter("lang", this.faostatapiCore.iso2faostat(lang));

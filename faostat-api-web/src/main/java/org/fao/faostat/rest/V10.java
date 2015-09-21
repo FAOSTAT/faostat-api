@@ -15,9 +15,12 @@ public class V10 {
     @InjectParam
     FAOSTATAPICore faostatapiCore;
 
-    public void storeUserOptions(String datasource, String lang, String apiKey, String clientKey, String outputType) {
+    public V10() {
+        this.setO(new DefaultOptionsBean());
+    }
+
+    public void storeUserOptions(String datasource, String apiKey, String clientKey, String outputType) {
         this.getO().setDatasource(datasource != null ? datasource : this.getO().getDatasource());
-        this.getO().setLang(lang != null ? lang : this.getO().getLang());
         this.getO().setApiKey(apiKey != null ? apiKey : this.getO().getApiKey());
         this.getO().setClientKey(clientKey != null ? clientKey : this.getO().getClientKey());
         this.getO().setOutputType(outputType != null ? outputType : this.getO().getOutputType());
