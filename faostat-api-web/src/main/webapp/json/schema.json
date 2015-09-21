@@ -161,6 +161,163 @@
   },
   "links": [
     {
+      "href": "{lang}/abbreviations/",
+      "method": "GET",
+      "rel": "abbreviations",
+      "title": "Abbreviations",
+      "description": "FAOSTAT abbreviations.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Abbreviations Output",
+        "description": "Output of 'abbreviations' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Abbreviations",
+            "description": "FAOSTAT abbreviations.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/glossary/",
+      "method": "GET",
+      "rel": "glossary",
+      "title": "Glossary",
+      "description": "FAOSTAT glossary.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Glossary Output",
+        "description": "Output of 'glossary' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Glossary",
+            "description": "FAOSTAT glossary.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              },
+              "source": {
+                "$ref": "#/definitions/description"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/units/",
+      "method": "GET",
+      "rel": "units",
+      "title": "Units",
+      "description": "FAOSTAT units.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Units Output",
+        "description": "Output of 'units' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Units",
+            "description": "List of FAOSTAT units.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/classifications/{domain_code}/",
+      "method": "GET",
+      "rel": "classifications",
+      "title": "Classifications",
+      "description": "FAOSTAT classifications.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "id": {
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Classifications Output",
+        "description": "Output of 'classifications' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Classifications",
+            "description": "List of FAOSTAT classifications.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              },
+              "description": {
+                "$ref": "#/definitions/description"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/methodologies/{id}/",
       "method": "GET",
       "rel": "methodology",
