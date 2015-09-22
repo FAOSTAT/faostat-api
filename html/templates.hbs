@@ -375,7 +375,7 @@
             </div>
         </div>
         <div class='row'>
-            <div class='col-lg-7'>
+            <div class='col-lg-12'>
                 <h4>Inputs</h4>
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
                     {{> table_headers}}
@@ -384,13 +384,48 @@
                     </tbody>
                 </table>
             </div>
-            <div class='col-lg-5'>
+            <div class='col-lg-12'>
                 <h4>Input Example</h4>
-                {{> home_groups_in}}
+                <div>
+                    <ul class='nav nav-tabs' role='tablist'>
+                        <li role='presentation' class='active'>
+                            <a href='#home_groups_in_curl' aria-controls='home_groups_in_curl' role='tab' data-toggle='tab'>
+                                cURL
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#home_groups_in_js' aria-controls='home_groups_in_js' role='tab' data-toggle='tab'>
+                                JavaScript
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#home_groups_in_api' aria-controls='home_groups_in_api' role='tab' data-toggle='tab'>
+                                FAOSTAT API Client
+                            </a>
+                        </li>
+                    </ul>
+                    <div class='tab-content'>
+                        <div role='tabpanel' class='tab-pane active' id='home_groups_in_curl'>
+                            <textarea id='home_groups_in_curl_content' style='max-height: 190px; overflow-y: auto;'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='home_groups_in_js'>
+                            <textarea id='home_groups_in_js_content' style='max-height: 190px; overflow-y: auto;'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='home_groups_in_api'>
+                            <textarea id='home_groups_in_api_content' style='max-height: 190px; overflow-y: auto;'>
+
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class='row'>
-            <div class='col-lg-7'>
+            <div class='col-lg-12'>
                 <h4>Outputs</h4>
                 <p>
                     The output is an array of objects. Please refer to the table below for the structure
@@ -417,12 +452,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class='col-lg-5'>
+            <div class='col-lg-12'>
                 <h4>Output Example</h4>
-                {{> home_groups_out}}
             </div>
         </div>
     </div>
+    <hr>
 </script>
 
 <!-- Home > DB Updates. -->
@@ -459,7 +494,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -492,7 +526,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -532,7 +565,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -565,7 +597,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -605,7 +636,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -638,7 +668,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -690,7 +719,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -713,7 +741,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -758,7 +785,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -781,7 +807,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -826,7 +851,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -849,7 +873,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -896,7 +919,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -919,7 +941,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -974,7 +995,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -997,7 +1017,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1037,7 +1056,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1060,7 +1078,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1111,7 +1128,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1134,7 +1150,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1174,7 +1189,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1197,7 +1211,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1237,7 +1250,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1260,7 +1272,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1300,7 +1311,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1323,7 +1333,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1363,7 +1372,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1386,7 +1394,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>
@@ -1426,7 +1433,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Input Example</h4>
-                <!--{{> home_groups_in}}-->
             </div>
         </div>
         <div class='row'>
@@ -1449,7 +1455,6 @@
             </div>
             <div class='col-lg-6'>
                 <h4>Output Example</h4>
-                <!--{{> home_groups_out}}-->
             </div>
         </div>
     </div>

@@ -1,3 +1,4 @@
+/*global define,document*/
 define(['jquery',
         'handlebars',
         'text!templates/index.hbs',
@@ -17,6 +18,9 @@ define(['jquery',
     }
 
     API.prototype.init = function (config) {
+
+        /* Variables. */
+        var editor, source, template, dynamic_data, html, buffer = [];
 
         /* Extend default configuration. */
         this.CONFIG = $.extend(true, {}, this.CONFIG, config);
@@ -55,22 +59,32 @@ define(['jquery',
         Handlebars.registerPartial('browse', $(templates).filter('#browse').html());
 
         /* Snippets. */
-        Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
-        Handlebars.registerPartial('home_groups_out', $(snippets).filter('#home_groups_out').html());
+        //Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
+        //Handlebars.registerPartial('home_groups_out', $(snippets).filter('#home_groups_out').html());
 
         /* Load template. */
-        var source = $(index).filter('#structure').html();
-        var template = Handlebars.compile(source);
-        var dynamic_data = {};
-        var html = template(dynamic_data);
+        source = $(index).filter('#structure').html();
+        template = Handlebars.compile(source);
+        dynamic_data = {};
+        html = template(dynamic_data);
         $('#' + this.CONFIG.placeholder_id).html(html);
 
-        /* Make source code looks pretty. */
-        //var opts = {
-        //    lineNumbers: true,
-        //    mode: 'javascript'
-        //};
-        //CodeMirror.fromTextArea(document.getElementById('home_groups_in_snippet'), opts);
+        /* Load the cURL snippet and store it into the buffer. */
+        editor = CodeMirror.fromTextArea(document.getElementById('home_groups_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#home_groups_in_curl').html().trim());
+        buffer.push('home_groups_in_curl');
+
+        /* Load other snippets on tab change to avoid Bootstrap's tab rendering problems. */
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr('href'), local_editor;
+            target = target.substring(1);
+            if ($.inArray(target, buffer) < 0) {
+                buffer.push(target);
+                local_editor = CodeMirror.fromTextArea(document.getElementById(target + '_content'), {lineNumbers: true});
+                local_editor.setValue($(snippets).filter('#' + target).html().trim());
+            }
+        });
+
 
     };
 

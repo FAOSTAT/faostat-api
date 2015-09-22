@@ -1,23 +1,29 @@
 <!-- Home > Groups > IN. -->
-<script type='text/x-handlebars-template' id='home_groups_in'>
-    $.ajax({
-        type: "GET",
-        url: "http://faostat3.fao.org/api/groups/",
-        data: {
-            datasource: "faostat",
-            lang: "E"
-        },
-        success: function() {}
-    });
+<script type='text/x-handlebars-template' id='home_groups_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/groups/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='home_groups_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/groups/
+</script>
+
+<script type='text/x-handlebars-template' id='home_groups_in_api'>
+pippo
 </script>
 
 <!-- Home > Groups > OUT. -->
 <script type='text/x-handlebars-template' id='home_groups_out'>
-    [
-        {
-            "code": "Q",
-            "label": "Production",
-           "order": 110
-        }
-    ]
+[
+    {
+        "code": "Q",
+        "label": "Production",
+       "order": 110
+    }
+]
 </script>

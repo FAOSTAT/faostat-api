@@ -64,3 +64,23 @@ body {
 .affix-bottom#api_header {
   position: static;
 }
+
+.CodeMirror.cm-s-default {
+  max-height: 175px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  font-size: 0.9em;
+}
+
+.CodeMirror-scroll {
+  background-color: #337ab7;
+  color: #fff;
+}
+
+.CodeMirror-gutters {
+  background-color: #174c74;
+}
+
+.CodeMirror-gutter.CodeMirror-linenumbers {
+  color: #fff;
+}

@@ -1,6 +1,6 @@
 require.config({
 
-    baseUrl: 'src/js/libs',
+    baseUrl: './src/js/libs',
 
     paths: {
         templates: '../../../html'
