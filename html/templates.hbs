@@ -148,7 +148,7 @@
 </script>
 
 <!-- Navigation menu. -->
-<script type='text/x-handlebars-template' id='base_url'>http://faostat3.fao.org/api/v1.0/{datasource}/{lang}/</script>
+<script type='text/x-handlebars-template' id='base_url'>http://faostat3.fao.org/api/v1.0/{lang}/</script>
 
 <!-- Table headers. -->
 <script type='text/x-handlebars-template' id='table_headers'>
@@ -406,17 +406,17 @@
                     </ul>
                     <div class='tab-content'>
                         <div role='tabpanel' class='tab-pane active' id='home_groups_in_curl'>
-                            <textarea id='home_groups_in_curl_content' style='max-height: 190px; overflow-y: auto;'>
+                            <textarea id='home_groups_in_curl_content' class='sourcecode'>
 
                             </textarea>
                         </div>
                         <div role='tabpanel' class='tab-pane' id='home_groups_in_js'>
-                            <textarea id='home_groups_in_js_content' style='max-height: 190px; overflow-y: auto;'>
+                            <textarea id='home_groups_in_js_content' class='sourcecode'>
 
                             </textarea>
                         </div>
                         <div role='tabpanel' class='tab-pane' id='home_groups_in_api'>
-                            <textarea id='home_groups_in_api_content' style='max-height: 190px; overflow-y: auto;'>
+                            <textarea id='home_groups_in_api_content' class='sourcecode'>
 
                             </textarea>
                         </div>
@@ -454,6 +454,9 @@
             </div>
             <div class='col-lg-12'>
                 <h4>Output Example</h4>
+                <textarea id='home_groups_out_content' class='sourcecode'>
+
+                </textarea>
             </div>
         </div>
     </div>

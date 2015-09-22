@@ -84,3 +84,8 @@ body {
 .CodeMirror-gutter.CodeMirror-linenumbers {
   color: #fff;
 }
+
+.sourcecode {
+  max-height: 190px;
+  overflow-y: auto;
+}

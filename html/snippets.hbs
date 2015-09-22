@@ -14,16 +14,38 @@ curl http://fenixapps2.fao.org/api/v1.0/en/groups/
 </script>
 
 <script type='text/x-handlebars-template' id='home_groups_in_api'>
-pippo
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT groups and domains. */
+api.groups({}).then(function (response) {
+    /* Do something with the result. */
+});
 </script>
 
 <!-- Home > Groups > OUT. -->
 <script type='text/x-handlebars-template' id='home_groups_out'>
-[
-    {
-        "code": "Q",
-        "label": "Production",
-       "order": 110
-    }
-]
+{
+    "metadata":{
+        "datasource":"faostat",
+        "output_type":"objects",
+        "api_key":"YOUR_API_KEY",
+        "client_key":"YOUR_CLIENT_KEY",
+        "parameters":[
+            {
+                "lang":"E"
+            }
+        ]
+    },
+    "data":[
+        {
+            "code":"D",
+            "label":"Food Security",
+            "DomainCode":"HS",
+            "DomainNameE":"Indicators from Household Surveys (gender, area, socioeconomics)",
+            "ord":0
+        }
+        ...
+    ]
+}
 </script>

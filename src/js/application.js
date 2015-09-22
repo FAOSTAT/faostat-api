@@ -58,10 +58,6 @@ define(['jquery',
         Handlebars.registerPartial('analysis', $(templates).filter('#analysis').html());
         Handlebars.registerPartial('browse', $(templates).filter('#browse').html());
 
-        /* Snippets. */
-        //Handlebars.registerPartial('home_groups_in', $(snippets).filter('#home_groups_in').html());
-        //Handlebars.registerPartial('home_groups_out', $(snippets).filter('#home_groups_out').html());
-
         /* Load template. */
         source = $(index).filter('#structure').html();
         template = Handlebars.compile(source);
@@ -73,6 +69,10 @@ define(['jquery',
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_in_curl_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_in_curl').html().trim());
         buffer.push('home_groups_in_curl');
+
+        /* Output snippet. */
+        editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#home_groups_out').html().trim());
 
         /* Load other snippets on tab change to avoid Bootstrap's tab rendering problems. */
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
