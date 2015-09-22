@@ -31,6 +31,8 @@ define(['jquery',
         Handlebars.registerPartial('introduction', $(templates).filter('#introduction').html());
         Handlebars.registerPartial('introduction_datasources', $(templates).filter('#introduction_datasources').html());
         Handlebars.registerPartial('introduction_languages', $(templates).filter('#introduction_languages').html());
+        Handlebars.registerPartial('introduction_output_structure', $(templates).filter('#introduction_output_structure').html());
+        Handlebars.registerPartial('introduction_data', $(templates).filter('#introduction_data').html());
         Handlebars.registerPartial('introduction_http_codes', $(templates).filter('#introduction_http_codes').html());
         Handlebars.registerPartial('table_headers', $(templates).filter('#table_headers').html());
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
