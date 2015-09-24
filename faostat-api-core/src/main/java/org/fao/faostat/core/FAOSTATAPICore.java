@@ -92,35 +92,45 @@ public class FAOSTATAPICore {
 
     }
 
-    public StreamingOutput createDimensionOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+    private List<List<Map<String, String>>> getDomainDimensions(String queryCode, DefaultOptionsBean o) throws Exception {
 
         /* Query the DB. */
         JDBCIterable i = getJDBCIterable(queryCode, o);
 
         /* Store the original result. */
-        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> l = new ArrayList<>();
         while (i.hasNext()) {
             l.add(i.nextMap());
         }
 
         /* Initiate variables. */
-        final List<List<Map<String, String>>> dimensions = new ArrayList<List<Map<String, String>>>();
-        final List<String> groupJSONs = new ArrayList<String>();
+        List<List<Map<String, String>>> dimensions = new ArrayList<>();
 
         /* Create groups. */
-        List<Map<String, String>> groups = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> groups = new ArrayList<>();
         String current = "1";
-        for (int idx = 0; idx < l.size(); idx++) {
-            if (l.get(idx).get("ListBoxNo").equalsIgnoreCase(current)) {
-                groups.add(l.get(idx));
+        for (Map<String, String> m : l) {
+            if (m.get("ListBoxNo").equalsIgnoreCase(current)) {
+                groups.add(m);
             } else {
                 dimensions.add(groups);
-                current = l.get(idx).get("ListBoxNo");
-                groups = new ArrayList<Map<String, String>>();
-                groups.add(l.get(idx));
+                current = m.get("ListBoxNo");
+                groups = new ArrayList<>();
+                groups.add(m);
             }
         }
         dimensions.add(groups);
+
+        /* Return output. */
+        return dimensions;
+
+    }
+
+    public StreamingOutput createDimensionOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+
+        /* Initiate variables. */
+        final List<List<Map<String, String>>> dimensions = getDomainDimensions("dimensions", o);
+        final List<String> groupJSONs = new ArrayList<String>();
 
         /* Iterate over the stored dimensions. */
         for (int z = 0; z < dimensions.size(); z += 1) {
@@ -186,6 +196,67 @@ public class FAOSTATAPICore {
                             if (i < groupJSONs.size() - 1)
                                 writer.write(",");
                         }
+                        break;
+
+                }
+
+                /* Close the array. */
+                writer.write("]");
+
+                /* Close the object. */
+                writer.write("}");
+
+                /* Flush the writer. */
+                writer.flush();
+
+            }
+
+        };
+
+        /* Return stream. */
+        return stream;
+
+    }
+
+    public StreamingOutput createCodesOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        JDBCIterable i = getJDBCIterable(queryCode, o);
+
+        /* Initiate the output stream. */
+        StreamingOutput stream = new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Initiate the output. */
+                writer.write("{");
+
+                /* Add metadata. */
+                writer.write(createMetadata(o));
+
+                /* Initiate the array. */
+                writer.write("\"data\": [");
+
+                /* Generate an array of objects of arrays. */
+                switch (o.getOutputType()) {
+
+                    case "arrays":
+//                        while (i.hasNext()) {
+//                            writer.write(i.nextArray());
+//                            if (i.hasNext())
+//                                writer.write(",");
+//                        }
+//                        break;
+                    default:
+//                        while (i.hasNext()) {
+//                            writer.write(i.nextJSON());
+//                            if (i.hasNext())
+//                                writer.write(",");
+//                        }
                         break;
 
                 }

@@ -51,7 +51,7 @@ public class V10Codes extends V10 {
         try {
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = this.getFaostatapiCore().createDimensionOutputStream("dimensions", this.getO());
+            StreamingOutput stream = this.getFaostatapiCore().createCodesOutputStream("dimensions", this.getO());
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
