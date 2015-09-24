@@ -19,10 +19,10 @@ public class DefaultOptionsBean {
     private Map<String, String> procedureParameters;
 
     public DefaultOptionsBean() {
-        this.setDatasource(null);
+        this.setDatasource("faostat");
         this.setApiKey(null);
         this.setClientKey(null);
-        this.setOutputType(null);
+        this.setOutputType("objects");
     }
 
     public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {

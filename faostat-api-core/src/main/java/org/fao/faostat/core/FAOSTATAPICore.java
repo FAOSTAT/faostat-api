@@ -49,22 +49,7 @@ public class FAOSTATAPICore {
                 writer.write("{");
 
                 /* Add metadata. */
-                writer.write("\"metadata\": {");
-                writer.write("\"datasource\": \"" + o.getDatasource() + "\",");
-                writer.write("\"output_type\": \"" + o.getOutputType() + "\",");
-                writer.write("\"api_key\": \"" + o.getApiKey() + "\",");
-                writer.write("\"client_key\": \"" + o.getClientKey() + "\",");
-                writer.write("\"parameters\": [");
-                int count = 0;
-                for (String key : o.getProcedureParameters().keySet()) {
-                    writer.write("{\"" + key + "\": \"" + o.getProcedureParameters().get(key) + "\"}");
-                    if (count < o.getProcedureParameters().keySet().size() - 1) {
-                        writer.write(",");
-                        count++;
-                    }
-                }
-                writer.write("]");
-                writer.write("},");
+                writer.write(createMetadata(o));
 
                 /* Initiate the array. */
                 writer.write("\"data\": [");
@@ -184,22 +169,7 @@ public class FAOSTATAPICore {
                 writer.write("{");
 
                 /* Add metadata. */
-                writer.write("\"metadata\": {");
-                writer.write("\"datasource\": \"" + o.getDatasource() + "\",");
-                writer.write("\"output_type\": \"" + o.getOutputType() + "\",");
-                writer.write("\"api_key\": \"" + o.getApiKey() + "\",");
-                writer.write("\"client_key\": \"" + o.getClientKey() + "\",");
-                writer.write("\"parameters\": [");
-                int count = 0;
-                for (String key : o.getProcedureParameters().keySet()) {
-                    writer.write("{\"" + key + "\": \"" + o.getProcedureParameters().get(key) + "\"}");
-                    if (count < o.getProcedureParameters().keySet().size() - 1) {
-                        writer.write(",");
-                        count++;
-                    }
-                }
-                writer.write("]");
-                writer.write("},");
+                writer.write(createMetadata(o));
 
                 /* Initiate the array. */
                 writer.write("\"data\": [");
@@ -236,6 +206,27 @@ public class FAOSTATAPICore {
         /* Return stream. */
         return stream;
 
+    }
+
+    private String createMetadata(DefaultOptionsBean o) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"metadata\": {");
+        sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
+        sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
+        sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
+        sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
+        sb.append("\"parameters\": [");
+        int count = 0;
+        for (String key : o.getProcedureParameters().keySet()) {
+            sb.append("{\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"}");
+            if (count < o.getProcedureParameters().keySet().size() - 1) {
+                sb.append(",");
+                count++;
+            }
+        }
+        sb.append("]");
+        sb.append("},");
+        return sb.toString();
     }
 
     private JDBCIterable getJDBCIterable(String queryCode, DefaultOptionsBean o) throws Exception {
