@@ -233,12 +233,22 @@ public class FAOSTATAPICore {
                     row.put("parent", tmp.get("Parent"));
                     row.put("description", "TODO");
                     row.put("aggregate_type", tmp.get("AggregateType"));
-                    row.put("children", new ArrayList<Map<String, String>>());
+                    row.put("children", new ArrayList<Map<String, Object>>());
                     codes.add(row);
                 }
             }
 
             /* Add children. */
+            for (Map<String, Object> c1 : codes) {
+                if (c1.get("parent") != null) {
+                    log.append("code ").append(c1.get("code")).append(" has parent ").append(c1.get("parent")).append("\n");
+                    for (Map<String, Object> c2 : codes) {
+                        if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
+                            ((ArrayList<Map<String, Object>>)c2.get("children")).add(c1);
+                        }
+                    }
+                }
+            }
 
             /* Query the DB. */
             JDBCIterable i = getJDBCIterable(queryCode, o);
@@ -256,8 +266,10 @@ public class FAOSTATAPICore {
                     writer.write("{");
 
                     /* Add metadata. */
-                    o.addParameter("id", o.getProcedureParameters().get("dimension_code"));
                     writer.write(createMetadata(o));
+
+                    /* TODO Remove this log. */
+//                    writer.write("\"log\": \"" + log.toString() + "\",");
 
                     /* Initiate the array. */
                     writer.write("\"data\": [");
