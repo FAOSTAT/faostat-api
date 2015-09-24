@@ -23,6 +23,7 @@ public class DefaultOptionsBean {
         this.setApiKey(null);
         this.setClientKey(null);
         this.setOutputType("objects");
+        this.setProcedureParameters(new HashMap<String, String>());
     }
 
     public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {
@@ -79,11 +80,12 @@ public class DefaultOptionsBean {
 
     @Override
     public String toString() {
-        return "ConfigBean{" +
+        return "DefaultOptionsBean{" +
                 "datasource='" + datasource + '\'' +
                 ", apiKey='" + apiKey + '\'' +
                 ", clientKey='" + clientKey + '\'' +
                 ", outputType='" + outputType + '\'' +
+                ", procedureParameters=" + procedureParameters +
                 '}';
     }
 

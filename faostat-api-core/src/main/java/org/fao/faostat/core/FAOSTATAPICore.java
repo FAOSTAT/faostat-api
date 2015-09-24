@@ -1,5 +1,6 @@
 package org.fao.faostat.core;
 
+import com.google.gson.Gson;
 import com.sun.jersey.api.core.InjectParam;
 import org.fao.faostat.beans.DatasourceBean;
 import org.fao.faostat.beans.DefaultOptionsBean;
@@ -89,40 +90,6 @@ public class FAOSTATAPICore {
 
         /* Return stream. */
         return stream;
-
-    }
-
-    private List<List<Map<String, String>>> getDomainDimensions(String queryCode, DefaultOptionsBean o) throws Exception {
-
-        /* Query the DB. */
-        JDBCIterable i = getJDBCIterable(queryCode, o);
-
-        /* Store the original result. */
-        List<Map<String, String>> l = new ArrayList<>();
-        while (i.hasNext()) {
-            l.add(i.nextMap());
-        }
-
-        /* Initiate variables. */
-        List<List<Map<String, String>>> dimensions = new ArrayList<>();
-
-        /* Create groups. */
-        List<Map<String, String>> groups = new ArrayList<>();
-        String current = "1";
-        for (Map<String, String> m : l) {
-            if (m.get("ListBoxNo").equalsIgnoreCase(current)) {
-                groups.add(m);
-            } else {
-                dimensions.add(groups);
-                current = m.get("ListBoxNo");
-                groups = new ArrayList<>();
-                groups.add(m);
-            }
-        }
-        dimensions.add(groups);
-
-        /* Return output. */
-        return dimensions;
 
     }
 
@@ -220,63 +187,182 @@ public class FAOSTATAPICore {
 
     public StreamingOutput createCodesOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
 
-        /* Query the DB. */
-        JDBCIterable i = getJDBCIterable(queryCode, o);
+        /* Logger. */
+        final StringBuilder log = new StringBuilder();
 
-        /* Initiate the output stream. */
-        StreamingOutput stream = new StreamingOutput() {
+        try {
 
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
+            /* Get domain's dimensions. */
+            List<List<Map<String, String>>> dimensions = getDomainDimensions("dimensions", o);
 
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            /* Organize data in an object. */
+            List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
 
-                /* Initiate the output. */
-                writer.write("{");
+            /* Get the dimension of interest. */
+            Map<String, Object> dimension = null;
+            String dimensionCode = o.getProcedureParameters().get("dimension_code");
+            for (Map<String, Object> m : structuredDimensions) {
+                if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+                    dimension = m;
+                    break;
+                }
+            }
 
-                /* Add metadata. */
-                writer.write(createMetadata(o));
+            /* Get subdimensions. */
+            ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
 
-                /* Initiate the array. */
-                writer.write("\"data\": [");
+            /* Prepare output. */
+            final List<Map<String, Object>> codes = new ArrayList<>();
+            Map<String, Object> row;
+            Map<String, String> tmp;
 
-                /* Generate an array of objects of arrays. */
-                switch (o.getOutputType()) {
+            /* Fetch codes for each subdimnesion. */
+            for (Map<String, Object> m : subdimensions) {
+                DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
+                subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
+                subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
+                subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
+                subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
+                JDBCIterable subDimensionIterable = getJDBCIterable("codes", subDimensionOptions);
+                while (subDimensionIterable.hasNext()) {
+                    tmp = subDimensionIterable.nextMap();
+                    row = new HashMap<>();
+                    row.put("code", tmp.get("Code"));
+                    row.put("label", tmp.get("Label"));
+                    row.put("ord", tmp.get("Order"));
+                    row.put("parent", tmp.get("Parent"));
+                    row.put("description", "TODO");
+                    row.put("aggregate_type", tmp.get("AggregateType"));
+                    row.put("children", new ArrayList<Map<String, String>>());
+                    codes.add(row);
+                }
+            }
 
-                    case "arrays":
-//                        while (i.hasNext()) {
-//                            writer.write(i.nextArray());
-//                            if (i.hasNext())
-//                                writer.write(",");
-//                        }
-//                        break;
-                    default:
-//                        while (i.hasNext()) {
-//                            writer.write(i.nextJSON());
-//                            if (i.hasNext())
-//                                writer.write(",");
-//                        }
-                        break;
+            /* Add children. */
+
+            /* Query the DB. */
+            JDBCIterable i = getJDBCIterable(queryCode, o);
+
+            /* Initiate the output stream. */
+            StreamingOutput stream = new StreamingOutput() {
+
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Initiate the output. */
+                    writer.write("{");
+
+                    /* Add metadata. */
+                    o.addParameter("id", o.getProcedureParameters().get("dimension_code"));
+                    writer.write(createMetadata(o));
+
+                    /* Initiate the array. */
+                    writer.write("\"data\": [");
+
+                    /* Generate an array of objects of arrays. */
+                    switch (o.getOutputType()) {
+
+                        case "arrays":
+                            writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
+                            break;
+                        default:
+                            Gson g = new Gson();
+                            writer.write(g.toJson(codes));
+                            break;
+
+                    }
+
+                    /* Close the array. */
+                    writer.write("]");
+
+                    /* Close the object. */
+                    writer.write("}");
+
+                    /* Flush the writer. */
+                    writer.flush();
 
                 }
 
-                /* Close the array. */
-                writer.write("]");
-
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-            }
-
-        };
+            };
 
         /* Return stream. */
-        return stream;
+            return stream;
 
+        } catch (Exception e) {
+            StreamingOutput stream = new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    log.append("\n\n\nEXCEPTION!");
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write(log.toString());
+                    writer.flush();
+                }
+            };
+            return stream;
+        }
+
+    }
+
+    private List<List<Map<String, String>>> getDomainDimensions(String queryCode, DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        JDBCIterable i = getJDBCIterable(queryCode, o);
+
+        /* Store the original result. */
+        List<Map<String, String>> l = new ArrayList<>();
+        while (i.hasNext()) {
+            l.add(i.nextMap());
+        }
+
+        /* Initiate variables. */
+        List<List<Map<String, String>>> dimensions = new ArrayList<>();
+
+        /* Create groups. */
+        List<Map<String, String>> groups = new ArrayList<>();
+        String current = "1";
+        for (Map<String, String> m : l) {
+            if (m.get("ListBoxNo").equalsIgnoreCase(current)) {
+                groups.add(m);
+            } else {
+                dimensions.add(groups);
+                current = m.get("ListBoxNo");
+                groups = new ArrayList<>();
+                groups.add(m);
+            }
+        }
+        dimensions.add(groups);
+
+        /* Return output. */
+        return dimensions;
+
+    }
+
+    private List<Map<String, Object>> organizeDomainDimensions(List<List<Map<String, String>>> dimensions) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        List<String> idsBuffer = new ArrayList<>();
+        for (List<Map<String, String>> dimension : dimensions) {
+            Map<String, Object> tmp = new HashMap<>();
+            if (!idsBuffer.contains(dimension.get(0).get("VarTypeGroup") + "group")) {
+                idsBuffer.add(dimension.get(0).get("VarTypeGroup") + "group");
+                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group");
+            } else {
+                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group2");
+            }
+            tmp.put("ord", dimension.get(0).get("ListBoxNo"));
+            tmp.put("label", "TODO");
+            tmp.put("description", "TODO");
+            tmp.put("parameter", "@List" + dimension.get(0).get("ListBoxNo") + "Codes");
+            tmp.put("href", "/codes/" + dimension.get(0).get("VarTypeGroup") + "group/");
+            tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
+            for (Map<String, String> subdimension : dimension) {
+                ((ArrayList)tmp.get("subdimensions")).add(subdimension);
+            }
+            out.add(tmp);
+        }
+        return out;
     }
 
     private String createMetadata(DefaultOptionsBean o) {
@@ -301,7 +387,7 @@ public class FAOSTATAPICore {
     }
 
     private JDBCIterable getJDBCIterable(String queryCode, DefaultOptionsBean o) throws Exception {
-        String query = this.getQueriesPool().getQuery(queryCode, o.getProcedureParameters());
+        String query = getQuery(queryCode, o);
         if (query == null)
             throw new Exception("Query \'" + queryCode + "' not found.");
         DatasourceBean dsb = this.getDatasourcePool().getDatasource(o.getDatasource().toUpperCase());
@@ -310,6 +396,10 @@ public class FAOSTATAPICore {
         JDBCIterable i = new JDBCIterable();
         i.query(dsb, query);
         return i;
+    }
+
+    private String getQuery(String queryCode, DefaultOptionsBean o) throws Exception {
+        return this.getQueriesPool().getQuery(queryCode, o.getProcedureParameters());
     }
 
     private JDBCIterable getJDBCIterable(String queryCode, String datasource, Map<String, String> procedureParameters) throws Exception {

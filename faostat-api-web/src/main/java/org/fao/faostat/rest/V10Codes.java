@@ -11,7 +11,7 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/codes/{dimension_code}/{domain_codes}")
+@Path("/v1.0/{lang}/codes/{dimension_code}/{domain_code}")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Codes extends V10 {
 
@@ -22,7 +22,7 @@ public class V10Codes extends V10 {
     @GET
     public Response getDimensions(@PathParam("lang") String lang,
                                   @PathParam("dimension_code") String dimension_code,
-                                  @PathParam("domain_codes") String domain_codes,
+                                  @PathParam("domain_code") String domain_code,
                                   @QueryParam("datasource") String datasource,
                                   @QueryParam("api_key") String api_key,
                                   @QueryParam("client_key") String client_key,
@@ -39,8 +39,8 @@ public class V10Codes extends V10 {
 
         /* Store procedure parameters. */
         this.getO().addParameter("lang", this.faostatapiCore.iso2faostat(lang));
+        this.getO().addParameter("domain_code", domain_code);
         this.getO().addParameter("dimension_code", dimension_code);
-        this.getO().addParameter("domain_codes", domain_codes);
         this.getO().addParameter("show_lists", String.valueOf(show_lists));
         this.getO().addParameter("show_full_metadata", String.valueOf(show_full_metadata));
         this.getO().addParameter("subdimensions", subdimensions);
