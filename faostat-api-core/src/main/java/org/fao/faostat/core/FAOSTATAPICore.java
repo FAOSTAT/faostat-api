@@ -8,6 +8,9 @@ import org.fao.faostat.jdbc.JDBCIterable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,6 +83,137 @@ public class FAOSTATAPICore {
                         while (i.hasNext()) {
                             writer.write(i.nextJSON());
                             if (i.hasNext())
+                                writer.write(",");
+                        }
+                        break;
+
+                }
+
+                /* Close the array. */
+                writer.write("]");
+
+                /* Close the object. */
+                writer.write("}");
+
+                /* Flush the writer. */
+                writer.flush();
+
+            }
+
+        };
+
+        /* Return stream. */
+        return stream;
+
+    }
+
+    public StreamingOutput createDimensionOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        JDBCIterable i = getJDBCIterable(queryCode, o);
+
+        /* Store the original result. */
+        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
+        while (i.hasNext()) {
+            l.add(i.nextMap());
+        }
+
+        /* Initiate variables. */
+        final List<List<Map<String, String>>> dimensions = new ArrayList<List<Map<String, String>>>();
+        final List<String> groupJSONs = new ArrayList<String>();
+
+        /* Create groups. */
+        List<Map<String, String>> groups = new ArrayList<Map<String, String>>();
+        String current = "1";
+        for (int idx = 0; idx < l.size(); idx++) {
+            if (l.get(idx).get("ListBoxNo").equalsIgnoreCase(current)) {
+                groups.add(l.get(idx));
+            } else {
+                dimensions.add(groups);
+                current = l.get(idx).get("ListBoxNo");
+                groups = new ArrayList<Map<String, String>>();
+                groups.add(l.get(idx));
+            }
+        }
+        dimensions.add(groups);
+
+        /* Iterate over the stored dimensions. */
+        for (int z = 0; z < dimensions.size(); z += 1) {
+
+            /* Encode group. */
+            String s = "";
+            s += "{";
+            s += "\"ord\": " + dimensions.get(z).get(0).get("ListBoxNo") + ",";
+            s += "\"id\": \"" + dimensions.get(z).get(0).get("VarTypeGroup") + "group\",";
+            s += "\"label\": \"TODO\",";
+            s += "\"parameter\": \"@List" + dimensions.get(z).get(0).get("ListBoxNo") + "Codes\",";
+            s += "\"description\": \"TODO\",";
+            s += "\"href\": \"/codes/" + dimensions.get(z).get(0).get("VarTypeGroup") + "group/\",";
+
+            /* Encode subdimensions. */
+            s += "\"subdimensions\": [";
+            for (int idx = 0; idx < dimensions.get(z).size(); idx += 1) {
+                s += "{";
+                s += "\"id\": \"" + dimensions.get(z).get(idx).get("TabName").replace(" ", "").toLowerCase() + "\",";
+                s += "\"ord\": " + dimensions.get(z).get(idx).get("TabOrder") + ",";
+                s += "\"label\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
+                s += "\"description\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
+                s += "\"href\": \"/codes/" + dimensions.get(z).get(idx).get("TabName").replace(" ", "").toLowerCase() + "/\"";
+                s += "}";
+                if (idx < dimensions.get(z).size() - 1)
+                    s += ",";
+            }
+            s += "]";
+            s += "}";
+
+            /* Add to the final output. */
+            groupJSONs.add(s);
+
+        }
+
+        /* Initiate the output stream. */
+        StreamingOutput stream = new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Initiate the output. */
+                writer.write("{");
+
+                /* Add metadata. */
+                writer.write("\"metadata\": {");
+                writer.write("\"datasource\": \"" + o.getDatasource() + "\",");
+                writer.write("\"output_type\": \"" + o.getOutputType() + "\",");
+                writer.write("\"api_key\": \"" + o.getApiKey() + "\",");
+                writer.write("\"client_key\": \"" + o.getClientKey() + "\",");
+                writer.write("\"parameters\": [");
+                int count = 0;
+                for (String key : o.getProcedureParameters().keySet()) {
+                    writer.write("{\"" + key + "\": \"" + o.getProcedureParameters().get(key) + "\"}");
+                    if (count < o.getProcedureParameters().keySet().size() - 1) {
+                        writer.write(",");
+                        count++;
+                    }
+                }
+                writer.write("]");
+                writer.write("},");
+
+                /* Initiate the array. */
+                writer.write("\"data\": [");
+
+                /* Generate an array of objects of arrays. */
+                switch (o.getOutputType()) {
+
+                    case "arrays":
+                        writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
+                        break;
+                    default:
+                        for (int i = 0; i < groupJSONs.size(); i++) {
+                            writer.write(groupJSONs.get(i).toString());
+                            if (i < groupJSONs.size() - 1)
                                 writer.write(",");
                         }
                         break;

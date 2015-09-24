@@ -6,10 +6,8 @@ import org.fao.faostat.constants.DRIVER;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -182,6 +180,43 @@ public class JDBCIterable implements Iterator<List<String>> {
         }
 
         return s;
+
+    }
+
+    public Map<String, String> nextMap() {
+
+        Map<String, String> out = new HashMap<String, String>();
+        String value;
+
+        if (this.isHasNext()) {
+            try {
+                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
+                    try {
+                        value = this.getResultSet().getString(i).trim();
+                        out.put(this.getResultSet().getMetaData().getColumnLabel(i), value);
+                    } catch (NullPointerException ignored) {
+                        if (i > 0) {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), null);
+                        }
+                    }
+                }
+                this.setHasNext(this.getResultSet().next());
+            } catch(SQLException ignored) {
+
+            }
+        }
+
+        if (!this.isHasNext()) {
+            try {
+                this.getResultSet().close();
+                this.getStatement().close();
+                this.getConnection().close();
+            } catch (SQLException ignored) {
+
+            }
+        }
+
+        return out;
 
     }
 

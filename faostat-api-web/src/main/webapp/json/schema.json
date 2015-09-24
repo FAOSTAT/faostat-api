@@ -285,7 +285,7 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "id": {
+          "domain_code": {
             "$ref": "#/definitions/code"
           }
         }
@@ -458,14 +458,16 @@
       }
     },
     {
-      "href": "/data/",
+      "href": "{lang}/data/",
       "method": "GET",
       "rel": "data",
       "description": "Extract and filter FAOSTAT data.",
       "title": "Data",
       "schema": {
         "properties": {
-
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
         }
       },
       "targetSchema": {
