@@ -9,10 +9,7 @@ import org.fao.faostat.jdbc.JDBCIterable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -191,6 +188,10 @@ public class FAOSTATAPICore {
         final StringBuilder log = new StringBuilder();
         final Gson g = new Gson();
 
+        /* Blacklist. */
+        final String[] blacklist = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
+        log.append(blacklist).append("\n");
+
         try {
 
             /* Get domain's dimensions. */
@@ -248,7 +249,11 @@ public class FAOSTATAPICore {
                             if (Boolean.parseBoolean(o.getProcedureParameters().get("show_lists")))
                                 codes.add(row);
                         } else {
-                            codes.add(row);
+                            if (blacklist != null && blacklist.length > 0) {
+                                if (!Arrays.asList(blacklist).contains(row.get("code").toString())) {
+                                    codes.add(row);
+                                }
+                            }
                         }
                     }
                 }
@@ -272,7 +277,17 @@ public class FAOSTATAPICore {
                     row.put("description", "TODO");
                     row.put("aggregate_type", tmp.get("AggregateType"));
                     row.put("children", new ArrayList<Map<String, Object>>());
-                    codes.add(row);
+                    if (tmp.get("AggregateType").equalsIgnoreCase(">")) {
+                        if (Boolean.parseBoolean(o.getProcedureParameters().get("show_lists")))
+                            codes.add(row);
+                    } else {
+                        if (blacklist != null && blacklist.length > 0) {
+                            if (!Arrays.asList(blacklist).contains(row.get("code").toString())) {
+                                codes.add(row);
+                            }
+                        }
+                    }
+
                 }
 
             }
@@ -306,7 +321,8 @@ public class FAOSTATAPICore {
                     /* Add metadata. */
                     writer.write(createMetadata(o));
 
-//                    writer.write("\"log\": \"" + log.toString() + "\",");
+//                    writer.write("\"log\": " + g.toJson(blacklist) + ",");
+//                    writer.write("\"log2\": " + log + ",");
 
                     /* Initiate the array. */
                     writer.write("\"data\": [");
