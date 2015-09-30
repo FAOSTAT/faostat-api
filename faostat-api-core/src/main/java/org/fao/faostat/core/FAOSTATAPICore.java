@@ -196,12 +196,13 @@ public class FAOSTATAPICore {
             List<List<Map<String, String>>> dimensions = getDomainDimensions("dimensions", o);
 
             /* Organize data in an object. */
-            List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
+            final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
 
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
-            String dimensionCode = o.getProcedureParameters().get("dimension_code");
+            String dimensionCode = o.getProcedureParameters().get("id");
             for (Map<String, Object> m : structuredDimensions) {
+                log.append(m).append("\n");
                 if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
                     dimension = m;
                     break;
@@ -216,7 +217,7 @@ public class FAOSTATAPICore {
             Map<String, Object> row;
             Map<String, String> tmp;
 
-            /* Fetch codes for each subdimnesion. */
+            /* Fetch codes for each sub-dimension. */
             for (Map<String, Object> m : subdimensions) {
                 DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
                 subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
@@ -250,9 +251,6 @@ public class FAOSTATAPICore {
                 }
             }
 
-            /* Query the DB. */
-            JDBCIterable i = getJDBCIterable(queryCode, o);
-
             /* Initiate the output stream. */
             StreamingOutput stream = new StreamingOutput() {
 
@@ -265,11 +263,11 @@ public class FAOSTATAPICore {
                     /* Initiate the output. */
                     writer.write("{");
 
+                    /* Add procedure parameter to the metadata. */
+                    o.addParameter("parameter", structuredDimensions.get(0).get("parameter").toString());
+
                     /* Add metadata. */
                     writer.write(createMetadata(o));
-
-                    /* TODO Remove this log. */
-//                    writer.write("\"log\": \"" + log.toString() + "\",");
 
                     /* Initiate the array. */
                     writer.write("\"data\": [");
