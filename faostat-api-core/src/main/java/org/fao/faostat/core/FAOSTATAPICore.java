@@ -189,6 +189,7 @@ public class FAOSTATAPICore {
 
         /* Logger. */
         final StringBuilder log = new StringBuilder();
+        final Gson g = new Gson();
 
         try {
 
@@ -201,29 +202,67 @@ public class FAOSTATAPICore {
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
             String dimensionCode = o.getProcedureParameters().get("id");
+            log.append("look for ").append(dimensionCode).append("\n");
             for (Map<String, Object> m : structuredDimensions) {
-                log.append(m).append("\n");
                 if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
                     dimension = m;
                     break;
                 }
+                ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) m.get("subdimensions");
+                log.append("subdimensions").append("\n");
+                log.append(subdimensions).append("\n\n\n");
+                for (Map<String, Object> subm : subdimensions) {
+                    log.append("\tsubdimension").append(subm).append("\n");
+                    log.append("\tdimensionCode").append(dimensionCode).append("\n");
+                    if (subm.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+                        dimension = subm;
+                        break;
+                    }
+                }
             }
-
-            /* Get subdimensions. */
-            ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
+            log.append("I found\n");
+            log.append(g.toJson(dimension));
 
             /* Prepare output. */
             final List<Map<String, Object>> codes = new ArrayList<>();
             Map<String, Object> row;
             Map<String, String> tmp;
 
-            /* Fetch codes for each sub-dimension. */
-            for (Map<String, Object> m : subdimensions) {
+            /* Get subdimensions. */
+            ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
+
+            if (subdimensions != null) {
+
+                /* Fetch codes for each sub-dimension. */
+                for (Map<String, Object> m : subdimensions) {
+                    DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
+                    subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
+                    subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
+                    subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
+                    subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
+                    JDBCIterable subDimensionIterable = getJDBCIterable("codes", subDimensionOptions);
+                    while (subDimensionIterable.hasNext()) {
+                        tmp = subDimensionIterable.nextMap();
+                        row = new HashMap<>();
+                        row.put("code", tmp.get("Code"));
+                        row.put("label", tmp.get("Label"));
+                        row.put("ord", tmp.get("Order"));
+                        row.put("parent", tmp.get("Parent"));
+                        row.put("description", "TODO");
+                        row.put("aggregate_type", tmp.get("AggregateType"));
+                        row.put("children", new ArrayList<Map<String, Object>>());
+                        codes.add(row);
+                    }
+                }
+
+            } else {
+
+                /* Fetch codes. */
                 DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
                 subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
                 subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
-                subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
-                subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
+                subDimensionOptions.addParameter("dimension", dimension.get("ListBoxNo").toString());
+                subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
                 JDBCIterable subDimensionIterable = getJDBCIterable("codes", subDimensionOptions);
                 while (subDimensionIterable.hasNext()) {
                     tmp = subDimensionIterable.nextMap();
@@ -237,6 +276,7 @@ public class FAOSTATAPICore {
                     row.put("children", new ArrayList<Map<String, Object>>());
                     codes.add(row);
                 }
+
             }
 
             /* Add children. */
@@ -269,6 +309,8 @@ public class FAOSTATAPICore {
                     /* Add metadata. */
                     writer.write(createMetadata(o));
 
+//                    writer.write("\"log\": \"" + log.toString() + "\",");
+
                     /* Initiate the array. */
                     writer.write("\"data\": [");
 
@@ -298,7 +340,7 @@ public class FAOSTATAPICore {
 
             };
 
-        /* Return stream. */
+            /* Return stream. */
             return stream;
 
         } catch (Exception e) {
@@ -334,6 +376,7 @@ public class FAOSTATAPICore {
         List<Map<String, String>> groups = new ArrayList<>();
         String current = "1";
         for (Map<String, String> m : l) {
+            m.put("id", m.get("TabName").replaceAll(" ", "").toLowerCase());
             if (m.get("ListBoxNo").equalsIgnoreCase(current)) {
                 groups.add(m);
             } else {
