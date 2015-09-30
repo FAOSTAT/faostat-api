@@ -492,7 +492,7 @@
       }
     },
     {
-      "href": "{lang}/codes/{codelist}/",
+      "href": "{lang}/codes/{id}/",
       "method": "GET",
       "rel": "codes",
       "description": "List of codes for the given codelist.",
@@ -508,10 +508,10 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "codelist": {
+          "id": {
             "type": "string",
-            "title": "Codelist",
-            "description": "Name of the FAOSTAT codelist to be retrieved.",
+            "title": "Codelist ID",
+            "description": "ID of the FAOSTAT codelist to be retrieved.",
             "enum": [
               "areas",
               "countries",
