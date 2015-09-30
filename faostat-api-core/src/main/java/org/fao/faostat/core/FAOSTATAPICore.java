@@ -202,26 +202,19 @@ public class FAOSTATAPICore {
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
             String dimensionCode = o.getProcedureParameters().get("id");
-            log.append("look for ").append(dimensionCode).append("\n");
             for (Map<String, Object> m : structuredDimensions) {
                 if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
                     dimension = m;
                     break;
                 }
                 ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) m.get("subdimensions");
-                log.append("subdimensions").append("\n");
-                log.append(subdimensions).append("\n\n\n");
                 for (Map<String, Object> subm : subdimensions) {
-                    log.append("\tsubdimension").append(subm).append("\n");
-                    log.append("\tdimensionCode").append(dimensionCode).append("\n");
                     if (subm.get("id").toString().equalsIgnoreCase(dimensionCode)) {
                         dimension = subm;
                         break;
                     }
                 }
             }
-            log.append("I found\n");
-            log.append(g.toJson(dimension));
 
             /* Prepare output. */
             final List<Map<String, Object>> codes = new ArrayList<>();
@@ -251,7 +244,12 @@ public class FAOSTATAPICore {
                         row.put("description", "TODO");
                         row.put("aggregate_type", tmp.get("AggregateType"));
                         row.put("children", new ArrayList<Map<String, Object>>());
-                        codes.add(row);
+                        if (tmp.get("AggregateType").equalsIgnoreCase(">")) {
+                            if (Boolean.parseBoolean(o.getProcedureParameters().get("show_lists")))
+                                codes.add(row);
+                        } else {
+                            codes.add(row);
+                        }
                     }
                 }
 
@@ -282,7 +280,6 @@ public class FAOSTATAPICore {
             /* Add children. */
             for (Map<String, Object> c1 : codes) {
                 if (c1.get("parent") != null) {
-                    log.append("code ").append(c1.get("code")).append(" has parent ").append(c1.get("parent")).append("\n");
                     for (Map<String, Object> c2 : codes) {
                         if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
                             ((ArrayList<Map<String, Object>>)c2.get("children")).add(c1);
