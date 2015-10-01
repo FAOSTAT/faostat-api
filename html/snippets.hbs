@@ -134,3 +134,63 @@ api.groupsanddomains({}).then(function (response) {
     ]
 }
 </script>
+
+<!-- Download > Bulk Downloads > IN. -->
+<script type='text/x-handlebars-template' id='download_bulkdownloads_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/bulkdownloads/qc/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='download_bulkdownloads_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/bulkdownloads/qc/
+</script>
+
+<script type='text/x-handlebars-template' id='download_bulkdownloads_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Configure the request. */
+var config = {
+    domain_code: 'qc'
+}
+
+/* Fetch FAOSTAT groups and domains. */
+api.bulkdownloads(config).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Download > Bulk Downloads > OUT. -->
+<script type='text/x-handlebars-template' id='download_bulkdownloads_out'>
+{
+    "metadata": {
+        "datasource": "faostat",
+        "output_type": "objects",
+        "api_key": "YOUR_API_KEY",
+        "client_key": "YOUR_CLIENT_KEY",
+        "parameters": [
+            {
+                "domain_code": "GE"
+            },
+            {
+                "lang": "E"
+            }
+        ]
+    },
+    "data": [
+        {
+            "code": "GE",
+            "label": "Emissions - Agriculture\/Enteric Fermentation",
+            "filename": "Emissions_Agriculture_Enteric_Fermentation_E_Africa_1.zip",
+            "content": "Africa (423 KB)",
+            "date": "2014-12-04 16:51:14.283"
+        },
+        ...
+    ]
+}
+</script>

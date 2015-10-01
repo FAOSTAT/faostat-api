@@ -887,68 +887,68 @@
 
 <!-- Download > Metadata. -->
 <script type='text/x-handlebars-template' id='download_metadata'>
-    <div class='bs-docs-section'>
-        <h2 id='download-metadata'>
-            <a href='#download-metadata'>
-                Metadata
-            </a>
-        </h2>
-        <p>
-            Provides the metadata for the given group or domain.
-        </p>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Endpoint</h4>
-                <code>
-                    {{>base_url}}metadata/{faostat_code}/
-                </code>
-            </div>
-            <div class='col-lg-6'>
-                &nbsp;
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Inputs</h4>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    {{> table_commons}}
-                        <tr>
-                            <td><kbd>faostat_code</kbd></td>
-                            <td>Domain or group code.</td>
-                            <td><var>Q</var></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Input Example</h4>
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Outputs</h4>
-                <p>
-                    The output is an array of objects. Please refer to the table below for the structure
-                    of the single object.
-                </p>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    <!--<tr>-->
-                    <!--<td><kbd>code</kbd></td>-->
-                    <!--<td>Group code.</td>-->
-                    <!--<td><var>Q</var></td>-->
-                    <!--</tr>-->
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Output Example</h4>
-            </div>
-        </div>
-    </div>
+    <!--<div class='bs-docs-section'>-->
+        <!--<h2 id='download-metadata'>-->
+            <!--<a href='#download-metadata'>-->
+                <!--Metadata-->
+            <!--</a>-->
+        <!--</h2>-->
+        <!--<p>-->
+            <!--Provides the metadata for the given group or domain.-->
+        <!--</p>-->
+        <!--<div class='row'>-->
+            <!--<div class='col-lg-6'>-->
+                <!--<h4>Endpoint</h4>-->
+                <!--<code>-->
+                    <!--{{>base_url}}metadata/{faostat_code}/-->
+                <!--</code>-->
+            <!--</div>-->
+            <!--<div class='col-lg-6'>-->
+                <!--&nbsp;-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class='row'>-->
+            <!--<div class='col-lg-6'>-->
+                <!--<h4>Inputs</h4>-->
+                <!--<table class='table table-bordered table-responsive table-striped table-hover table-condensed'>-->
+                    <!--{{> table_headers}}-->
+                    <!--<tbody>-->
+                    <!--{{> table_commons}}-->
+                        <!--<tr>-->
+                            <!--<td><kbd>faostat_code</kbd></td>-->
+                            <!--<td>Domain or group code.</td>-->
+                            <!--<td><var>Q</var></td>-->
+                        <!--</tr>-->
+                    <!--</tbody>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class='col-lg-6'>-->
+                <!--<h4>Input Example</h4>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class='row'>-->
+            <!--<div class='col-lg-6'>-->
+                <!--<h4>Outputs</h4>-->
+                <!--<p>-->
+                    <!--The output is an array of objects. Please refer to the table below for the structure-->
+                    <!--of the single object.-->
+                <!--</p>-->
+                <!--<table class='table table-bordered table-responsive table-striped table-hover table-condensed'>-->
+                    <!--{{> table_headers}}-->
+                    <!--<tbody>-->
+                    <!--&lt;!&ndash;<tr>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<td><kbd>code</kbd></td>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<td>Group code.</td>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<td><var>Q</var></td>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+                    <!--</tbody>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div class='col-lg-6'>-->
+                <!--<h4>Output Example</h4>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 </script>
 
 <!-- Download > Bulk. -->
@@ -966,7 +966,7 @@
             <div class='col-lg-6'>
                 <h4>Endpoint</h4>
                 <code>
-                    {{>base_url}}bulkdownloads/{faostat_code}/
+                    {{>base_url}}bulkdownloads/{domain_code}/
                 </code>
             </div>
             <div class='col-lg-6'>
@@ -974,26 +974,62 @@
             </div>
         </div>
         <div class='row'>
-            <div class='col-lg-6'>
+            <div class='col-lg-12'>
                 <h4>Inputs</h4>
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
                     {{> table_headers}}
                     <tbody>
                     {{> table_commons}}
                     <tr>
-                        <td><kbd>faostat_code</kbd></td>
-                        <td>Domain or group code.</td>
-                        <td><var>Q</var></td>
+                        <td><kbd>domain_code</kbd></td>
+                        <td>Domain code.</td>
+                        <td><var>QC</var></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div class='col-lg-6'>
+            <div class='col-lg-12'>
                 <h4>Input Example</h4>
+                <div>
+                    <ul class='nav nav-tabs' role='tablist'>
+                        <li role='presentation' class='active'>
+                            <a href='#download_bulkdownloads_in_curl' aria-controls='download_bulkdownloads_in_curl' role='tab' data-toggle='tab'>
+                                cURL
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#download_bulkdownloads_in_js' aria-controls='download_bulkdownloads_in_js' role='tab' data-toggle='tab'>
+                                JavaScript
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#download_bulkdownloads_in_api' aria-controls='download_bulkdownloads_in_api' role='tab' data-toggle='tab'>
+                                FAOSTAT API Client
+                            </a>
+                        </li>
+                    </ul>
+                    <div class='tab-content'>
+                        <div role='tabpanel' class='tab-pane active' id='download_bulkdownloads_in_curl'>
+                            <textarea id='download_bulkdownloads_in_curl_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='download_bulkdownloads_in_js'>
+                            <textarea id='download_bulkdownloads_in_js_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='download_bulkdownloads_in_api'>
+                            <textarea id='download_bulkdownloads_in_api_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class='row'>
-            <div class='col-lg-6'>
+            <div class='col-lg-12'>
                 <h4>Outputs</h4>
                 <p>
                     The output is an array of objects. Please refer to the table below for the structure
@@ -1002,16 +1038,39 @@
                 <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
                     {{> table_headers}}
                     <tbody>
-                    <!--<tr>-->
-                    <!--<td><kbd>code</kbd></td>-->
-                    <!--<td>Group code.</td>-->
-                    <!--<td><var>Q</var></td>-->
-                    <!--</tr>-->
+                        <tr>
+                            <td><kbd>code</kbd></td>
+                            <td>Domain code.</td>
+                            <td><var>GE</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>label</kbd></td>
+                            <td>Domain label.</td>
+                            <td><var>Emissions - Agriculture/Enteric Fermentation</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>filename</kbd></td>
+                            <td>Name of the archive.</td>
+                            <td><var>Emissions_Agriculture_Enteric_Fermentation_E_Africa_1.zip</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>content</kbd></td>
+                            <td>Description of the archive's content.</td>
+                            <td><var>Africa (423 KB)</var></td>
+                        </tr>
+                        <tr>
+                            <td><kbd>date</kbd></td>
+                            <td>Last update.</td>
+                            <td><var>2014-12-04 16:51:14.283</var></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div class='col-lg-6'>
+            <div class='col-lg-12'>
                 <h4>Output Example</h4>
+                <textarea id='download_bulkdownloads_out_content' class='sourcecode'>
+
+                </textarea>
             </div>
         </div>
     </div>

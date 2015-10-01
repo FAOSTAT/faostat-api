@@ -75,12 +75,19 @@ define(['jquery',
         editor.setValue($(snippets).filter('#download_groupsanddomains_in_curl').html().trim());
         buffer.push('download_groupsanddomains_in_curl');
 
+        editor = CodeMirror.fromTextArea(document.getElementById('download_bulkdownloads_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#download_bulkdownloads_in_curl').html().trim());
+        buffer.push('download_bulkdownloads_in_curl');
+
         /* Output snippet. */
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_out').html().trim());
 
         editor = CodeMirror.fromTextArea(document.getElementById('download_groupsanddomains_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#download_groupsanddomains_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('download_bulkdownloads_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#download_bulkdownloads_out').html().trim());
 
         /* Introduction > Output structure example. */
         editor = CodeMirror.fromTextArea(document.getElementById('introduction_output_structure_out_content'), {lineNumbers: true});
