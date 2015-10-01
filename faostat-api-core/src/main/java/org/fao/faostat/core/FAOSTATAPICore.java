@@ -90,6 +90,73 @@ public class FAOSTATAPICore {
 
     }
 
+    public StreamingOutput createDomainsOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        final JDBCIterable i = getJDBCIterable(queryCode, o);
+        final Gson g = new Gson();
+
+        /* Add blacklist and whitelist to the options. */
+        final String[] blackList = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
+        final String[] whiteList = g.fromJson(o.getProcedureParameters().get("whitelist"), String[].class);
+        o.setBlackList(blackList);
+        o.setWhiteList(whiteList);
+
+        /* Initiate the output stream. */
+        StreamingOutput stream = new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                final List<Map<String, String>> codes = new ArrayList<>();
+                while (i.hasNext()) {
+                    Map<String, String> dbRow = i.nextMap();
+                    if (isAdmissibleDBRow(dbRow, o))
+                        codes.add(dbRow);
+                }
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Initiate the output. */
+                writer.write("{");
+
+                /* Add metadata. */
+                writer.write(createMetadata(o));
+
+                /* Initiate the array. */
+                writer.write("\"data\": [");
+
+                /* Generate an array of objects of arrays. */
+                switch (o.getOutputType()) {
+
+                    case "arrays":
+                        writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
+                        break;
+                    default:
+                        writer.write(g.toJson(codes));
+                        break;
+
+                }
+
+                /* Close the array. */
+                writer.write("]");
+
+                /* Close the object. */
+                writer.write("}");
+
+                /* Flush the writer. */
+                writer.flush();
+
+            }
+
+        };
+
+        /* Return stream. */
+        return stream;
+
+    }
+
     public StreamingOutput createDimensionOutputStream(String queryCode, final DefaultOptionsBean o) throws Exception {
 
         /* Initiate variables. */
@@ -372,6 +439,27 @@ public class FAOSTATAPICore {
                 }
             }
 
+        }
+
+        /* Return. */
+        return true;
+
+    }
+
+    private boolean isAdmissibleDBRow(Map<String, String> row, DefaultOptionsBean o) {
+
+        /* Check the blacklist. */
+        if (o.getBlackList() != null && o.getBlackList().length > 0) {
+            if (Arrays.asList(o.getBlackList()).contains(row.get("code").toUpperCase())) {
+                return false;
+            }
+        }
+
+        /* Check the whitelist. */
+        if (o.getWhiteList() != null && o.getWhiteList().length > 0) {
+            if (!Arrays.asList(o.getWhiteList()).contains(row.get("code").toUpperCase())) {
+                return false;
+            }
         }
 
         /* Return. */
