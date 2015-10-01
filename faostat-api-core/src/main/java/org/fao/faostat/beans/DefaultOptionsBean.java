@@ -16,6 +16,10 @@ public class DefaultOptionsBean {
 
     private String outputType;
 
+    private String[] blackList;
+
+    private String[] whiteList;
+
     private Map<String, String> procedureParameters;
 
     public DefaultOptionsBean() {
@@ -32,6 +36,22 @@ public class DefaultOptionsBean {
         this.setOutputType(outputType);
         this.setDatasource(datasource);
         this.setProcedureParameters(new HashMap<String, String>());
+    }
+
+    public String[] getBlackList() {
+        return blackList;
+    }
+
+    public void setBlackList(String[] blackList) {
+        this.blackList = blackList;
+    }
+
+    public String[] getWhiteList() {
+        return whiteList;
+    }
+
+    public void setWhiteList(String[] whiteList) {
+        this.whiteList = whiteList;
     }
 
     public void addParameter(String key, String value) {

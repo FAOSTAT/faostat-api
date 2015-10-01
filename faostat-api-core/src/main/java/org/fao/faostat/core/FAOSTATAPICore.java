@@ -188,9 +188,11 @@ public class FAOSTATAPICore {
         final StringBuilder log = new StringBuilder();
         final Gson g = new Gson();
 
-        /* Blacklist. */
-        final String[] blacklist = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
-        log.append(blacklist).append("\n");
+        /* Add blacklist and whitelist to the options. */
+        final String[] blackList = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
+        final String[] whiteList = g.fromJson(o.getProcedureParameters().get("whitelist"), String[].class);
+        o.setBlackList(blackList);
+        o.setWhiteList(whiteList);
 
         try {
 
@@ -220,15 +222,14 @@ public class FAOSTATAPICore {
             /* Prepare output. */
             final List<Map<String, Object>> codes = new ArrayList<>();
             Map<String, Object> row;
-            Map<String, String> tmp;
 
             /* Get subdimensions. */
-            ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
+            ArrayList<Map<String, Object>> subDimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
 
-            if (subdimensions != null) {
+            if (subDimensions != null) {
 
                 /* Fetch codes for each sub-dimension. */
-                for (Map<String, Object> m : subdimensions) {
+                for (Map<String, Object> m : subDimensions) {
                     DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
                     subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
                     subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
@@ -236,25 +237,9 @@ public class FAOSTATAPICore {
                     subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
                     JDBCIterable subDimensionIterable = getJDBCIterable("codes", subDimensionOptions);
                     while (subDimensionIterable.hasNext()) {
-                        tmp = subDimensionIterable.nextMap();
-                        row = new HashMap<>();
-                        row.put("code", tmp.get("Code"));
-                        row.put("label", tmp.get("Label"));
-                        row.put("ord", tmp.get("Order"));
-                        row.put("parent", tmp.get("Parent"));
-                        row.put("description", "TODO");
-                        row.put("aggregate_type", tmp.get("AggregateType"));
-                        row.put("children", new ArrayList<Map<String, Object>>());
-                        if (tmp.get("AggregateType").equalsIgnoreCase(">")) {
-                            if (Boolean.parseBoolean(o.getProcedureParameters().get("show_lists")))
-                                codes.add(row);
-                        } else {
-                            if (blacklist != null && blacklist.length > 0) {
-                                if (!Arrays.asList(blacklist).contains(row.get("code").toString())) {
-                                    codes.add(row);
-                                }
-                            }
-                        }
+                        row = createCode(subDimensionIterable.nextMap());
+                        if (isAdmissibleCode(row, o))
+                            codes.add(row);
                     }
                 }
 
@@ -268,26 +253,9 @@ public class FAOSTATAPICore {
                 subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
                 JDBCIterable subDimensionIterable = getJDBCIterable("codes", subDimensionOptions);
                 while (subDimensionIterable.hasNext()) {
-                    tmp = subDimensionIterable.nextMap();
-                    row = new HashMap<>();
-                    row.put("code", tmp.get("Code"));
-                    row.put("label", tmp.get("Label"));
-                    row.put("ord", tmp.get("Order"));
-                    row.put("parent", tmp.get("Parent"));
-                    row.put("description", "TODO");
-                    row.put("aggregate_type", tmp.get("AggregateType"));
-                    row.put("children", new ArrayList<Map<String, Object>>());
-                    if (tmp.get("AggregateType").equalsIgnoreCase(">")) {
-                        if (Boolean.parseBoolean(o.getProcedureParameters().get("show_lists")))
-                            codes.add(row);
-                    } else {
-                        if (blacklist != null && blacklist.length > 0) {
-                            if (!Arrays.asList(blacklist).contains(row.get("code").toString())) {
-                                codes.add(row);
-                            }
-                        }
-                    }
-
+                    row = createCode(subDimensionIterable.nextMap());
+                    if (isAdmissibleCode(row, o))
+                        codes.add(row);
                 }
 
             }
@@ -368,6 +336,46 @@ public class FAOSTATAPICore {
             };
             return stream;
         }
+
+    }
+
+    private Map<String, Object> createCode(Map<String, String> dbRow) {
+        Map<String, Object> code = new HashMap<>();
+        code.put("code", dbRow.get("Code"));
+        code.put("label", dbRow.get("Label"));
+        code.put("ord", dbRow.get("Order"));
+        code.put("parent", dbRow.get("Parent"));
+        code.put("description", "TODO");
+        code.put("aggregate_type", dbRow.get("AggregateType"));
+        code.put("children", new ArrayList<Map<String, Object>>());
+        return code;
+    }
+
+    private boolean isAdmissibleCode(Map<String, Object> row, DefaultOptionsBean o) {
+
+        /* Check wheter the code is a list. */
+        if (row.get("aggregate_type").equals(">")) {
+            return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists"));
+        } else {
+
+            /* Check the blacklist. */
+            if (o.getBlackList() != null && o.getBlackList().length > 0) {
+                if (Arrays.asList(o.getBlackList()).contains(row.get("code").toString())) {
+                    return false;
+                }
+            }
+
+            /* Check the whitelist. */
+            if (o.getWhiteList() != null && o.getWhiteList().length > 0) {
+                if (!Arrays.asList(o.getWhiteList()).contains(row.get("code").toString())) {
+                    return false;
+                }
+            }
+
+        }
+
+        /* Return. */
+        return true;
 
     }
 
