@@ -605,7 +605,7 @@
       "href": "{lang}/groups/",
       "method": "GET",
       "rel": "groups",
-      "description": "List of available FAOSTAT domains.",
+      "description": "List of available FAOSTAT groups.",
       "title": "Groups",
       "schema": {
         "type": "object",
@@ -630,6 +630,58 @@
             "type": "array",
             "title": "Groups",
             "description": "List of available groups.",
+            "items": {
+              "$ref": "#/definitions/faostat_code"
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/domains/{group_code}/",
+      "method": "GET",
+      "rel": "domains",
+      "description": "List of available FAOSTAT domains.",
+      "title": "Domains",
+      "schema": {
+        "type": "object",
+        "name": "Domains Input",
+        "description": "Input of 'domains' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "whitelist": {
+            "type": "array",
+            "title": "Whitelist",
+            "description": "List of codes allowed in the output.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "blacklist": {
+            "type": "array",
+            "title": "Blacklist",
+            "description": "List of codes not allowed in the output.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Domains",
+            "description": "List of available domains.",
             "items": {
               "$ref": "#/definitions/faostat_code"
             }
