@@ -10,13 +10,12 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.fao.fenix.faostat.rest.*" />
+    <context:component-scan base-package="org.fao.faostat.*" />
 
 	<context:property-placeholder location="classpath:faostat-api.config"/>
 
 	<bean id="defaultOptionsBean" class="org.fao.faostat.beans.DefaultOptionsBean">
 		<constructor-arg value="${datasource}" />
-		<constructor-arg value="${lang}" />
 		<constructor-arg value="${apiKey}" />
 		<constructor-arg value="${clientKey}" />
 		<constructor-arg value="${outputType}" />
