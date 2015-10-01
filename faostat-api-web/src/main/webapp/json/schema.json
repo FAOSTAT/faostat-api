@@ -654,6 +654,10 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
+          "group_code": {
+            "title": "Domain code",
+            "$ref": "#/definitions/code"
+          },
           "whitelist": {
             "type": "array",
             "title": "Whitelist",
@@ -683,7 +687,82 @@
             "title": "Domains",
             "description": "List of available domains.",
             "items": {
-              "$ref": "#/definitions/faostat_code"
+              "type": "object",
+              "title": "Domain",
+              "description": "FAOSTAT domain",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/code"
+                },
+                "label": {
+                  "$ref": "#/definitions/label"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/bulkdownloads/{domain_code}/",
+      "method": "GET",
+      "rel": "bulkdownloads",
+      "description": "List of available bulk downloads.",
+      "title": "Bulk Downloads",
+      "schema": {
+        "type": "object",
+        "name": "Bulk Downloads Input",
+        "description": "Input of 'bulkdownloads' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "title": "Domain code",
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Bulk Downloads",
+            "description": "List of available bulk downloads.",
+            "items": {
+              "type": "object",
+              "title": "Bulk Downloads",
+              "description": "FAOSTAT bulk download file",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/code"
+                },
+                "label": {
+                  "$ref": "#/definitions/label"
+                },
+                "filename": {
+                  "type": "string",
+                  "title": "Filename",
+                  "description": "Name of the archive."
+                },
+                "content": {
+                  "type": "string",
+                  "title": "Content",
+                  "description": "Description of the archive's content."
+                },
+                "date": {
+                  "type": "string",
+                  "title": "Date",
+                  "description": "Last update."
+                }
+              }
             }
           }
         }

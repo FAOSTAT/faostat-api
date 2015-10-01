@@ -9,5 +9,6 @@
   "units": "SELECT E.UnitAbbreviation{{lang}} AS code, E.UnitTitle{{lang}} AS label FROM Metadata_Unit AS E ORDER BY E.UnitAbbreviation{{lang}} ASC",
   "glossary": "SELECT M.GlossaryName{{lang}} AS code, M.GlossaryDefinition{{lang}} AS label, M.GlossarySource{{lang}} AS source FROM Metadata_Glossary AS M ORDER BY M.GlossaryName{{lang}} ASC",
   "abbreviations": "SELECT M.AbbreviationTitle{{lang}} AS code, AbbreviationDefinition{{lang}} AS label FROM Metadata_Abbreviation AS M ORDER BY AbbreviationTitle{{lang}} ASC",
-  "codes": "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}"
+  "codes": "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}",
+  "bulkdownloads": "SELECT B.Domain AS code, B.Source AS label, B.Filename AS filename, B.FileContent AS content, B.CreatedDate AS date FROM BulkDownloads B WHERE B.LanguageID = '{{lang}}' AND B.Domain = '{{domain_code}}'"
 }
