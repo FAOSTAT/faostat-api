@@ -1,3 +1,36 @@
+<!-- Introduction > Output Structure > OUT. -->
+<script type='text/x-handlebars-template' id='introduction_output_structure_out_content'>
+{
+    "metadata":{
+        "datasource":"faostat",
+        "output_type":"objects",
+        "api_key":"YOUR_API_KEY",
+        "client_key":"YOUR_CLIENT_KEY",
+        "parameters":[
+            {
+                "group_code":"q"
+            },
+            {
+                "blacklist":"null"
+            },
+            {
+                "lang":"E"
+            },
+            {
+                "whitelist":"null"
+            }
+        ]
+    },
+    "data":[
+        {
+            "code":"AS",
+            "label":"ASTI R&D Indicators"
+        },
+        ...
+    ]
+}
+</script>
+
 <!-- Home > Groups > IN. -->
 <script type='text/x-handlebars-template' id='home_groups_in_js'>
 $.ajax({
@@ -45,6 +78,58 @@ api.groups({}).then(function (response) {
             "DomainNameE":"Indicators from Household Surveys (gender, area, socioeconomics)",
             "ord":0
         }
+        ...
+    ]
+}
+</script>
+
+<!-- Download > Groups and Domains > IN. -->
+<script type='text/x-handlebars-template' id='download_groupsanddomains_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/groupsanddomains/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='download_groupsanddomains_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/groupsanddomains/
+</script>
+
+<script type='text/x-handlebars-template' id='download_groupsanddomains_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT groups and domains. */
+api.groupsanddomains({}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Download > Groups and Domains > OUT. -->
+<script type='text/x-handlebars-template' id='download_groupsanddomains_out'>
+{
+    "metadata":{
+        "datasource":"faostat",
+        "output_type":"objects",
+        "api_key":"YOUR_API_KEY",
+        "client_key":"YOUR_CLIENT_KEY",
+        "parameters":[
+            {
+                "lang":"E"
+            }
+        ]
+    },
+    "data":[
+        {
+            "code":"Q",
+            "label":"Production",
+            "DomainCode":"QC",
+            "DomainNameE":"Crops",
+            "ord":110
+        },
         ...
     ]
 }

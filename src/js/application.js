@@ -32,8 +32,6 @@ define(['jquery',
         Handlebars.registerPartial('introduction_datasources', $(templates).filter('#introduction_datasources').html());
         Handlebars.registerPartial('introduction_languages', $(templates).filter('#introduction_languages').html());
         Handlebars.registerPartial('introduction_output_structure', $(templates).filter('#introduction_output_structure').html());
-        Handlebars.registerPartial('introduction_data', $(templates).filter('#introduction_data').html());
-        Handlebars.registerPartial('introduction_metadata', $(templates).filter('#introduction_metadata').html());
         Handlebars.registerPartial('introduction_http_codes', $(templates).filter('#introduction_http_codes').html());
         Handlebars.registerPartial('table_headers', $(templates).filter('#table_headers').html());
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
@@ -73,9 +71,20 @@ define(['jquery',
         editor.setValue($(snippets).filter('#home_groups_in_curl').html().trim());
         buffer.push('home_groups_in_curl');
 
+        editor = CodeMirror.fromTextArea(document.getElementById('download_groupsanddomains_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#download_groupsanddomains_in_curl').html().trim());
+        buffer.push('download_groupsanddomains_in_curl');
+
         /* Output snippet. */
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('download_groupsanddomains_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#download_groupsanddomains_out').html().trim());
+
+        /* Introduction > Output structure example. */
+        editor = CodeMirror.fromTextArea(document.getElementById('introduction_output_structure_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#introduction_output_structure_out_content').html().trim());
 
         /* Load other snippets on tab change to avoid Bootstrap's tab rendering problems. */
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
