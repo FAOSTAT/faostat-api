@@ -125,7 +125,8 @@ public class FAOSTATAPICore {
                 writer.write(createMetadata(o));
 
                 /* Initiate the array. */
-                writer.write("\"data\": [");
+//                writer.write("\"data\": [");
+                writer.write("\"data\": ");
 
                 /* Generate an array of objects of arrays. */
                 switch (o.getOutputType()) {
@@ -140,7 +141,7 @@ public class FAOSTATAPICore {
                 }
 
                 /* Close the array. */
-                writer.write("]");
+//                writer.write("]");
 
                 /* Close the object. */
                 writer.write("}");
@@ -360,7 +361,8 @@ public class FAOSTATAPICore {
 //                    writer.write("\"log2\": " + log + ",");
 
                     /* Initiate the array. */
-                    writer.write("\"data\": [");
+//                    writer.write("\"data\": [");
+                    writer.write("\"data\": ");
 
                     /* Generate an array of objects of arrays. */
                     switch (o.getOutputType()) {
@@ -376,7 +378,7 @@ public class FAOSTATAPICore {
                     }
 
                     /* Close the array. */
-                    writer.write("]");
+//                    writer.write("]");
 
                     /* Close the object. */
                     writer.write("}");
