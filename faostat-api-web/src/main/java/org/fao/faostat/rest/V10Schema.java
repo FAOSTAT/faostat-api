@@ -1,5 +1,7 @@
 package org.fao.faostat.rest;
 
+import com.sun.jersey.api.core.InjectParam;
+import org.fao.faostat.core.FAOSTATAPICore;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
@@ -14,11 +16,10 @@ import javax.ws.rs.core.Response;
 @Component
 @Path("/v1.0")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Schema extends V10 {
+public class V10Schema {
 
-    public V10Schema() {
-        super();
-    }
+    @InjectParam
+    FAOSTATAPICore faostatapiCore;
 
     @GET
     public Response getSchema() {

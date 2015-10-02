@@ -31,10 +31,14 @@ public class DefaultOptionsBean {
     }
 
     public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {
-        this.setApiKey(apiKey);
-        this.setClientKey(clientKey);
-        this.setOutputType(outputType);
-        this.setDatasource(datasource);
+        this.storeUserOptions(datasource, apiKey, clientKey, outputType);
+    }
+
+    public void storeUserOptions(String datasource, String apiKey, String clientKey, String outputType) {
+        this.setDatasource(datasource != null ? datasource : this.getDatasource());
+        this.setApiKey(apiKey != null ? apiKey : this.getApiKey());
+        this.setClientKey(clientKey != null ? clientKey : this.getClientKey());
+        this.setOutputType(outputType != null ? outputType : this.getOutputType());
         this.setProcedureParameters(new HashMap<String, String>());
     }
 

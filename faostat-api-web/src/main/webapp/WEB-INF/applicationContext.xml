@@ -36,7 +36,6 @@
 
 	<bean id="faostatapiCore" class="org.fao.faostat.core.FAOSTATAPICore">
 		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
-		<property name="queriesPool" ref="queriesPool"/>
 		<property name="datasourcePool" ref="datasourcePool"/>
 	</bean>
 

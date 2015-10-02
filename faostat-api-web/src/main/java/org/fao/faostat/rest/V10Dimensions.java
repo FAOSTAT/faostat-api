@@ -1,5 +1,10 @@
 package org.fao.faostat.rest;
 
+import com.sun.jersey.api.core.InjectParam;
+import org.fao.faostat.beans.DatasourceBean;
+import org.fao.faostat.beans.DefaultOptionsBean;
+import org.fao.faostat.core.FAOSTATAPICore;
+import org.fao.faostat.core.StreamBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -16,10 +21,15 @@ import java.util.Map;
 @Component
 @Path("/v1.0/{lang}/dimensions/{domain_code}")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Dimensions extends V10 {
+public class V10Dimensions {
+
+    @InjectParam
+    FAOSTATAPICore faostatapiCore;
+
+    private DefaultOptionsBean o;
 
     public V10Dimensions() {
-        super();
+        this.setO(new DefaultOptionsBean());
     }
 
     @GET
@@ -32,7 +42,7 @@ public class V10Dimensions extends V10 {
 
 
         /* Store user preferences. */
-        this.storeUserOptions(datasource, api_key, client_key, output_type);
+        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
         this.getO().addParameter("lang", this.faostatapiCore.iso2faostat(lang));
@@ -41,8 +51,14 @@ public class V10Dimensions extends V10 {
         /* Query the DB and return the results. */
         try {
 
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Datasource bean. */
+            DatasourceBean datasourceBean = this.faostatapiCore.getDatasourcePool().getDatasource(this.getO().getDatasource().toUpperCase());
+
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = this.getFaostatapiCore().createDimensionOutputStream("dimensions", this.getO());
+            StreamingOutput stream = sb.createDimensionOutputStream("dimensions", datasourceBean, this.getO());
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -51,6 +67,14 @@ public class V10Dimensions extends V10 {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
+    }
+
+    public void setO(DefaultOptionsBean o) {
+        this.o = o;
+    }
+
+    public DefaultOptionsBean getO() {
+        return o;
     }
 
 }
