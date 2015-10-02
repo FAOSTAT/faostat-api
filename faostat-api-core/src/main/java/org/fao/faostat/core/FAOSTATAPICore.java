@@ -536,16 +536,17 @@ public class FAOSTATAPICore {
         sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
         sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
         sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
-        sb.append("\"parameters\": [");
+        sb.append("\"parameters\": {");
         int count = 0;
         for (String key : o.getProcedureParameters().keySet()) {
-            sb.append("{\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"}");
+//            sb.append("{\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"}");
+            sb.append("\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"");
             if (count < o.getProcedureParameters().keySet().size() - 1) {
                 sb.append(",");
                 count++;
             }
         }
-        sb.append("]");
+        sb.append("}");
         sb.append("},");
         return sb.toString();
     }
