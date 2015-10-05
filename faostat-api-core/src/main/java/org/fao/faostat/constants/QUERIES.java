@@ -25,6 +25,7 @@ public class QUERIES {
         this.getQueries().put("abbreviations", "SELECT M.AbbreviationTitle{{lang}} AS code, AbbreviationDefinition{{lang}} AS label FROM Metadata_Abbreviation AS M ORDER BY AbbreviationTitle{{lang}} ASC");
         this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
         this.getQueries().put("bulkdownloads", "SELECT B.Domain AS code, B.Source AS label, B.Filename AS filename, B.FileContent AS content, B.CreatedDate AS date FROM BulkDownloads B WHERE B.LanguageID = '{{lang}}' AND B.Domain = '{{domain_code}}'");
+        this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{list_1_codes}}', @List2Codes = '{{list_2_codes}}', @List3Codes = '{{list_3_codes}}', @List4Codes = '{{list_4_codes}}', @List5Codes = '{{list_5_codes}}', @List6Codes = '{{list_6_codes}}', @List7Codes = '{{list_7_codes}}', @NullValues = {{null_values}}, @Thousand = '{{thousand_separator}}', @Decimal = '{{decimal_separator}}', @DecPlaces = {{decimal_places}}, @Limit = {{limit}}");
     }
 
     public String getQuery(String id, Map<String, String> procedureParameters) throws IOException {
