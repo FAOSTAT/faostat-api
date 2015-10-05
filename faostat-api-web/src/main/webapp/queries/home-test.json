@@ -1,3 +1,0 @@
-{
-  "groups": "SELECT GroupCode, GroupName{{this}}, Ord FROM Groups ORDER BY Ord"
-}

@@ -25,11 +25,6 @@
 		<constructor-arg value="/json" />
 	</bean>
 
-	<bean id="queriesPool" class="org.fao.faostat.core.QueriesPool" lazy-init="false" init-method="init">
-		<constructor-arg value="/queries" />
-		<constructor-arg value="${datasource}" />
-	</bean>
-
 	<bean id="jsonSchemaPool" class="org.fao.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>

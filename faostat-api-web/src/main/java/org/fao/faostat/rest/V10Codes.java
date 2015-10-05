@@ -39,6 +39,7 @@ public class V10Codes {
                                   @QueryParam("output_type") String output_type,
                                   @QueryParam("show_lists") boolean show_lists,
                                   @QueryParam("show_full_metadata") boolean show_full_metadata,
+                                  @QueryParam("group_subdimensions") boolean group_subdimensions,
                                   @QueryParam("subdimensions") String subdimensions,
                                   @QueryParam("whitelist") String whitelist,
                                   @QueryParam("blacklist") String blacklist) {
@@ -56,6 +57,7 @@ public class V10Codes {
         this.getO().addParameter("subdimensions", subdimensions);
         this.getO().addParameter("whitelist", whitelist);
         this.getO().addParameter("blacklist", blacklist);
+        this.getO().addParameter("group_subdimensions", String.valueOf(group_subdimensions));
 
         /* Query the DB and return the results. */
         try {

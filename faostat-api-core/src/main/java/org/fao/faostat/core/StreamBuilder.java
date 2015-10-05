@@ -153,6 +153,11 @@ public class StreamBuilder {
         o.setBlackList(blackList);
         o.setWhiteList(whiteList);
 
+        /* Boolean parameters. */
+        boolean show_lists = Boolean.parseBoolean(o.getProcedureParameters().get("show_lists"));
+        boolean show_full_metadata = Boolean.parseBoolean(o.getProcedureParameters().get("show_full_metadata"));
+        boolean group_subdimensions = Boolean.parseBoolean(o.getProcedureParameters().get("group_subdimensions"));
+
         try {
 
             /* Get domain's dimensions. */
@@ -179,7 +184,7 @@ public class StreamBuilder {
             }
 
             /* Prepare output. */
-            final List<Map<String, Object>> codes = new ArrayList<>();
+            List<Map<String, Object>> codes = new ArrayList<>();
             Map<String, Object> row;
 
             /* Get subdimensions. */
@@ -189,17 +194,25 @@ public class StreamBuilder {
 
                 /* Fetch codes for each sub-dimension. */
                 for (Map<String, Object> m : subDimensions) {
+
+                    /* Define options to fetch codes. */
                     DefaultOptionsBean subDimensionOptions = new DefaultOptionsBean();
                     subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
                     subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
                     subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
                     subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
                     JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
+
+                    /* Iterate over codes. */
                     while (subDimensionIterable.hasNext()) {
                         row = createCode(subDimensionIterable.nextMap());
+                        row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
+                        row.put("subdimension_ord", m.get("TabOrder").toString());
+                        row.put("subdimension_label", m.get("TabName").toString());
                         if (isAdmissibleCode(row, o))
                             codes.add(row);
                     }
+
                 }
 
             } else {
@@ -228,6 +241,56 @@ public class StreamBuilder {
                         }
                     }
                 }
+            }
+
+            /* Group subdimensions, if required. */
+            final List<Map<String, Object>> output = new ArrayList<>();
+            if (group_subdimensions) {
+
+                /* Prepare output. */
+                for (Map<String, Object> m : subDimensions) {
+                    Map<String, Object> subdimension = new HashMap<>();
+                    subdimension.put("metadata", new HashMap<String, Object>());
+                    subdimension.put("data", new ArrayList<HashMap<String, Object>>());
+                    output.add(subdimension);
+                }
+
+                /* Group codes. */
+                String current_id = codes.get(0).get("subdimension_id").toString();
+                String current_ord = codes.get(0).get("subdimension_ord").toString();
+                String current_label = codes.get(0).get("subdimension_label").toString();
+                int current_idx = 0;
+                for (int i = 0; i < codes.size(); i += 1) {
+
+                    /* Current code. */
+                    Map<String, Object> c = codes.get(i);
+
+                    if (c.get("subdimension_id").toString().equalsIgnoreCase(current_id)) {
+                        ((ArrayList<Map<String, Object>>)output.get(current_idx).get("data")).add(c);
+                    } else {
+
+                        /* Write metadata. */
+                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("id", current_id);
+                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("ord", current_ord);
+                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("label", current_label);
+
+                        /* Reset parameters. */
+                        current_id = codes.get(i).get("subdimension_id").toString();
+                        current_ord = codes.get(i).get("subdimension_ord").toString();
+                        current_label = codes.get(i).get("subdimension_label").toString();
+                        current_idx += 1;
+                        ((ArrayList<Map<String, Object>>)output.get(current_idx).get("data")).add(c);
+
+                    }
+                }
+
+                /* Write metadata for the last iteration. */
+                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("id", current_id);
+                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("ord", current_ord);
+                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("label", current_label);
+
+            } else {
+                output.addAll(codes);
             }
 
             /* Initiate the output stream. */
@@ -259,7 +322,7 @@ public class StreamBuilder {
                             break;
                         default:
                             Gson g = new Gson();
-                            writer.write(g.toJson(codes));
+                            writer.write(g.toJson(output));
                             break;
 
                     }

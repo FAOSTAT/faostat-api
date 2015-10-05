@@ -560,6 +560,12 @@
           "blacklist": {
             "$ref": "#/definitions/blacklist"
           },
+          "group_subdimensions": {
+            "type": "boolean",
+            "title": "Group Subdimensions",
+            "description": "Determines whether codes must be grouped in the final output. For instance, the 'areagroup' codelist returns three different objects within 'data': 'countries', 'regions' and 'specialgroups'.",
+            "default": false
+          },
           "subcodelists": {
             "type": "array",
             "title": "Sub Codelists",
