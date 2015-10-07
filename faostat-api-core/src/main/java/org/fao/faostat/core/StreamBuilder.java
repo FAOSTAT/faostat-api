@@ -98,20 +98,25 @@ public class StreamBuilder {
             while (i.hasNext()) {
 
                 Map<String, String> row = i.nextMap();
+                System.out.println(row);
 
                 /* Create descriptors for code and label columns. */
                 if (!row.get("Col").equalsIgnoreCase("Unit") && !row.get("Col").equalsIgnoreCase("Value")) {
                     Map<String, Object> codeCol = new HashMap<>();
                     codeCol.put("index", Integer.parseInt(row.get("CodeIndex")));
-                    codeCol.put("label", row.get("CodeName").toString());
+                    codeCol.put("label", row.get("CodeName"));
                     codeCol.put("type", "code");
-                    codeCol.put("key", row.get("CodeName").toString());
+                    codeCol.put("key", row.get("CodeName"));
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").length() > 0)
+                        codeCol.put("dimension_id", row.get("VarTypeGroup") + "group");
                     dsd.add(codeCol);
                     Map<String, Object> labelCol = new HashMap<>();
                     labelCol.put("index", Integer.parseInt(row.get("NameIndex")));
-                    labelCol.put("label", row.get("ColName").toString());
+                    labelCol.put("label", row.get("ColName"));
                     labelCol.put("type", "label");
-                    labelCol.put("key", row.get("ColName").toString());
+                    labelCol.put("key", row.get("ColName"));
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").length() > 0)
+                        labelCol.put("dimension_id", row.get("VarTypeGroup") + "group");
                     dsd.add(labelCol);
                 }
 
@@ -122,6 +127,7 @@ public class StreamBuilder {
                     unitCol.put("label", row.get("ColName").toString());
                     unitCol.put("type", "unit");
                     unitCol.put("key", row.get("ColName").toString());
+                    unitCol.put("dimension_id", "unit");
                     dsd.add(unitCol);
                 }
 
@@ -132,6 +138,7 @@ public class StreamBuilder {
                     valueCol.put("label", row.get("ColName").toString());
                     valueCol.put("type", "value");
                     valueCol.put("key", row.get("ColName").toString());
+                    valueCol.put("dimension_id", "value");
                     dsd.add(valueCol);
                 }
 
