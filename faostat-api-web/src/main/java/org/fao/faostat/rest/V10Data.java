@@ -1,11 +1,9 @@
 package org.fao.faostat.rest;
 
-import com.google.gson.Gson;
 import com.sun.jersey.api.core.InjectParam;
 import org.fao.faostat.beans.DatasourceBean;
 import org.fao.faostat.beans.DefaultOptionsBean;
 import org.fao.faostat.core.FAOSTATAPICore;
-import org.fao.faostat.core.ListHolder;
 import org.fao.faostat.core.StreamBuilder;
 import org.springframework.stereotype.Component;
 
