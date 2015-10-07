@@ -7,12 +7,14 @@
     "api_key": {
       "type": "string",
       "title": "API Key",
-      "description": "Not available in Version 1.0."
+      "description": "Not available in Version 1.0.",
+      "default": "n.a."
     },
     "client_key": {
       "type": "string",
       "title": "Client Key",
-      "description": "Not available in Version 1.0."
+      "description": "Not available in Version 1.0.",
+      "default": "n.a."
     },
     "datasource": {
       "type": "string",
@@ -125,26 +127,16 @@
       "description": "Meta information about the request.",
       "properties": {
         "datasource": {
-          "type": "string",
-          "title": "Datasource",
-          "description": "Name of the datasource. Default: 'faostat'.",
-          "default": "faostat"
+          "$ref": "#/definitions/datasource"
         },
         "output_type": {
-          "type": "string",
-          "title": "Output Type",
-          "description": "Type of the output: 'objects' or 'arrays'. Default: 'objects'.",
-          "default": "objects"
+          "$ref": "#/definitions/output_type"
         },
         "api_key": {
-          "type": "string",
-          "title": "API Key",
-          "description": "Not available in Version 1.0."
+          "$ref": "#/definitions/api_key"
         },
         "client_key": {
-          "type": "string",
-          "title": "Client Key",
-          "description": "Not available in Version 1.0."
+          "$ref": "#/definitions/client_key"
         },
         "parameters": {
           "type": "array",
@@ -179,6 +171,146 @@
   },
   "links": [
     {
+      "href": "{lang}/data/",
+      "method": "GET",
+      "rel": "data",
+      "title": "Data",
+      "description": "FAOSTAT Data.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "title": "Domain code",
+            "description": "FAOSTAT domain code.",
+            "$ref": "#/definitions/code"
+          },
+          "list_1_codes": {
+            "type": "array",
+            "title": "Dimension 1 codes",
+            "description": "List of codes for dimension 1.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_2_codes": {
+            "type": "array",
+            "title": "Dimension 2 codes",
+            "description": "List of codes for dimension 2.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_3_codes": {
+            "type": "array",
+            "title": "Dimension 3 codes",
+            "description": "List of codes for dimension 3.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_4_codes": {
+            "type": "array",
+            "title": "Dimension 4 codes",
+            "description": "List of codes for dimension 4.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_5_codes": {
+            "type": "array",
+            "title": "Dimension 5 codes",
+            "description": "List of codes for dimension 5.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_6_codes": {
+            "type": "array",
+            "title": "Dimension 6 codes",
+            "description": "List of codes for dimension 6.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "list_7_codes": {
+            "type": "array",
+            "title": "Dimension 7 codes",
+            "description": "List of codes for dimension 7.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "null_values": {
+            "type": "boolean",
+            "title": "Null Values",
+            "description": "Flag to determine whether null values will be shown or not.",
+            "default": false
+          },
+          "thousand_separator": {
+            "type": "string",
+            "title": "Thousand Separator",
+            "description": "Thousand separator.",
+            "default": ","
+          },
+          "decimal_separator": {
+            "type": "string",
+            "title": "Decimal Separator",
+            "description": "Decimal separator.",
+            "default": "."
+          },
+          "decimal_places": {
+            "type": "integer",
+            "title": "Decimal Places",
+            "description": "Number of decimal places.",
+            "default": 2
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Number of rows for the result.",
+            "default": -1
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Abbreviations Output",
+        "description": "Output of 'abbreviations' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Abbreviations",
+            "description": "FAOSTAT abbreviations.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/abbreviations/",
       "method": "GET",
       "rel": "abbreviations",
@@ -186,6 +318,18 @@
       "description": "FAOSTAT abbreviations.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           }
@@ -223,6 +367,18 @@
       "description": "FAOSTAT glossary.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           }
@@ -263,6 +419,18 @@
       "description": "FAOSTAT units.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           }
@@ -300,6 +468,18 @@
       "description": "FAOSTAT classifications.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           },
@@ -343,6 +523,18 @@
       "description": "Description of FAOSTAT methodology.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           },
@@ -402,6 +594,18 @@
       "description": "List of FAOSTAT methodologies.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           }
@@ -447,6 +651,15 @@
           "datasource": {
             "$ref": "#/definitions/datasource"
           },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           },
@@ -476,40 +689,6 @@
       }
     },
     {
-      "href": "{lang}/data/",
-      "method": "GET",
-      "rel": "data",
-      "description": "Extract and filter FAOSTAT data.",
-      "title": "Data",
-      "schema": {
-        "properties": {
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Data Output",
-        "description": "Output of 'data' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "array",
-            "title": "Data",
-            "description": "FAOSTAT Data.",
-            "items": {
-              "type": "object",
-              "title": "Row",
-              "description": "Object representing a single row of the output."
-            }
-          }
-        }
-      }
-    },
-    {
       "href": "{lang}/codes/{id}/{domain_code}/",
       "method": "GET",
       "rel": "codes",
@@ -522,6 +701,15 @@
         "properties": {
           "datasource": {
             "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
           },
           "domain_code": {
             "title": "Domain code",
@@ -634,6 +822,15 @@
           "datasource": {
             "$ref": "#/definitions/datasource"
           },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
           "lang": {
             "$ref": "#/definitions/lang"
           }
@@ -669,6 +866,15 @@
         "properties": {
           "datasource": {
             "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
           },
           "lang": {
             "$ref": "#/definitions/lang"
@@ -725,6 +931,15 @@
         "properties": {
           "datasource": {
             "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
           },
           "lang": {
             "$ref": "#/definitions/lang"
@@ -790,6 +1005,15 @@
         "properties": {
           "datasource": {
             "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
           },
           "lang": {
             "$ref": "#/definitions/lang"

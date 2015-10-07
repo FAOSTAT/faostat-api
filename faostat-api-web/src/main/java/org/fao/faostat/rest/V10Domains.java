@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -32,8 +33,8 @@ public class V10Domains {
     @GET
     public Response getDomains(@PathParam("lang") String lang,
                                @PathParam("group_code") String group_code,
-                               @QueryParam("blacklist") String blacklist,
-                               @QueryParam("whitelist") String whitelist,
+                               @QueryParam("blacklist") List<String> blacklist,
+                               @QueryParam("whitelist") List<String> whitelist,
                                @QueryParam("datasource") String datasource,
                                @QueryParam("api_key") String api_key,
                                @QueryParam("client_key") String client_key,

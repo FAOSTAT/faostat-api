@@ -2,6 +2,7 @@ package org.fao.faostat.constants;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,16 +27,41 @@ public class QUERIES {
         this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
         this.getQueries().put("bulkdownloads", "SELECT B.Domain AS code, B.Source AS label, B.Filename AS filename, B.FileContent AS content, B.CreatedDate AS date FROM BulkDownloads B WHERE B.LanguageID = '{{lang}}' AND B.Domain = '{{domain_code}}'");
         this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{list_1_codes}}', @List2Codes = '{{list_2_codes}}', @List3Codes = '{{list_3_codes}}', @List4Codes = '{{list_4_codes}}', @List5Codes = '{{list_5_codes}}', @List6Codes = '{{list_6_codes}}', @List7Codes = '{{list_7_codes}}', @NullValues = {{null_values}}, @Thousand = '{{thousand_separator}}', @Decimal = '{{decimal_separator}}', @DecPlaces = {{decimal_places}}, @Limit = {{limit}}");
+        this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
     }
 
-    public String getQuery(String id, Map<String, String> procedureParameters) throws IOException {
-        String query = this.getQueries().get(id.toLowerCase());
-        for (String key : procedureParameters.keySet()) {
-            String tmp = "\\{\\{" + key + "\\}\\}";
-            query = query.replaceAll(tmp, procedureParameters.get(key));
+    public String getQuery(String id, Map<String, Object> procedureParameters) throws Exception {
+        try {
+            String query = this.getQueries().get(id.toLowerCase());
+            for (String key : procedureParameters.keySet()) {
+                String tmp = "\\{\\{" + key + "\\}\\}";
+                if (procedureParameters.get(key) != null) {
+                    if (procedureParameters.get(key) instanceof List) {
+                        List<String> l = (List<String>)procedureParameters.get(key);
+                        String s = "";
+                        if (l != null && l.size() > 0 && l.get(0).length() > 0) {
+                            s = "(";
+                            for (int z = 0; z < l.size(); z += 1) {
+                                s += "''" + l.get(z) + "''";
+                                if (z < l.size() - 1)
+                                    s += ",";
+                            }
+                            s += ")";
+                        } else {
+                            s = "";
+                        }
+                        query = query.replaceAll(tmp, s);
+                    } else {
+                        query = query.replaceAll(tmp, procedureParameters.get(key).toString());
+                    }
+                } else {
+                    query = query.replaceAll(tmp, "null");
+                }
+            }
+            return query;
+        } catch (Exception e) {
+            throw e;
         }
-        System.out.println(query);
-        return query;
     }
 
     public Map<String, String> getQueries() {

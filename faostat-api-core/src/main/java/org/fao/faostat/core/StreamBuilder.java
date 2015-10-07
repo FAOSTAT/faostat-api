@@ -18,8 +18,11 @@ public class StreamBuilder {
 
     private QUERIES queries;
 
+    private Gson g;
+
     public StreamBuilder() {
         this.setQueries(new QUERIES());
+        this.setG(new Gson());
     }
 
     public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, final DefaultOptionsBean o) throws Exception {
@@ -80,6 +83,145 @@ public class StreamBuilder {
 
     }
 
+    private List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, DefaultOptionsBean o) {
+
+        /* Initiate DSD. */
+        List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
+        JDBCIterable i;
+
+        try {
+
+            /* Query DB. */
+            i = getJDBCIterable("data_structure", datasourceBean, o);
+
+            /* Iterate over results. */
+            while (i.hasNext()) {
+
+                Map<String, String> row = i.nextMap();
+
+                /* Create descriptors for code and label columns. */
+                if (!row.get("Col").equalsIgnoreCase("Unit") && !row.get("Col").equalsIgnoreCase("Value")) {
+                    Map<String, Object> codeCol = new HashMap<>();
+                    codeCol.put("index", Integer.parseInt(row.get("CodeIndex")));
+                    codeCol.put("label", row.get("CodeName").toString());
+                    codeCol.put("type", "code");
+                    codeCol.put("key", row.get("CodeName").toString());
+                    dsd.add(codeCol);
+                    Map<String, Object> labelCol = new HashMap<>();
+                    labelCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    labelCol.put("label", row.get("ColName").toString());
+                    labelCol.put("type", "label");
+                    labelCol.put("key", row.get("ColName").toString());
+                    dsd.add(labelCol);
+                }
+
+                /* Create descriptor for the unit. */
+                if (row.get("Col").equalsIgnoreCase("Unit")) {
+                    Map<String, Object> unitCol = new HashMap<>();
+                    unitCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    unitCol.put("label", row.get("ColName").toString());
+                    unitCol.put("type", "unit");
+                    unitCol.put("key", row.get("ColName").toString());
+                    dsd.add(unitCol);
+                }
+
+                /* Create descriptor for the value. */
+                if (row.get("Col").equalsIgnoreCase("Value")) {
+                    Map<String, Object> valueCol = new HashMap<>();
+                    valueCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    valueCol.put("label", row.get("ColName").toString());
+                    valueCol.put("type", "value");
+                    valueCol.put("key", row.get("ColName").toString());
+                    dsd.add(valueCol);
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /* Return DSD. */
+        return dsd;
+
+    }
+
+    public StreamingOutput createDataOutputStream(final DatasourceBean datasourceBean, final DefaultOptionsBean o) throws Exception {
+
+        /* Query the DB. */
+        final JDBCIterable i = getJDBCIterable("data", datasourceBean, o);
+
+        try {
+
+            /* Initiate the output stream. */
+            return new StreamingOutput() {
+
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Initiate the output. */
+                    writer.write("{");
+
+                    /* Add DSD. */
+                    o.setDsd(createDSD(datasourceBean, o));
+
+                    /* Add metadata. */
+                    writer.write(createMetadata(o));
+
+                    /* Initiate the array. */
+                    writer.write("\"data\": [");
+
+                    /* Generate an array of objects of arrays. */
+                    switch (o.getOutputType()) {
+
+                        case "arrays":
+                            while (i.hasNext()) {
+                                writer.write(i.nextArray());
+                                if (i.hasNext())
+                                    writer.write(",");
+                            }
+                            break;
+                        default:
+                            while (i.hasNext()) {
+                                writer.write(i.nextJSON());
+                                if (i.hasNext())
+                                    writer.write(",");
+                            }
+                            break;
+
+                    }
+
+                    /* Close the array. */
+                    writer.write("]");
+
+                    /* Close the object. */
+                    writer.write("}");
+
+                    /* Flush the writer. */
+                    writer.flush();
+
+                }
+
+            };
+
+        } catch (final Exception e) {
+            return new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write("StreamBuilder EXCEPTION\n");
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
+                    writer.flush();
+                }
+            };
+        }
+
+    }
+
     public StreamingOutput createDomainsOutputStream(String queryCode, DatasourceBean datasourceBean, final DefaultOptionsBean o) throws Exception {
 
         /* Query the DB. */
@@ -87,8 +229,8 @@ public class StreamBuilder {
         final Gson g = new Gson();
 
         /* Add blacklist and whitelist to the options. */
-        final String[] blackList = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
-        final String[] whiteList = g.fromJson(o.getProcedureParameters().get("whitelist"), String[].class);
+        List<String> blackList = (List<String>)o.getProcedureParameters().get("blacklist");
+        List<String> whiteList = (List<String>)o.getProcedureParameters().get("whitelist");
         o.setBlackList(blackList);
         o.setWhiteList(whiteList);
 
@@ -148,15 +290,15 @@ public class StreamBuilder {
         final Gson g = new Gson();
 
         /* Add blacklist and whitelist to the options. */
-        final String[] blackList = g.fromJson(o.getProcedureParameters().get("blacklist"), String[].class);
-        final String[] whiteList = g.fromJson(o.getProcedureParameters().get("whitelist"), String[].class);
+        List<String> blackList = (List<String>)o.getProcedureParameters().get("blacklist");
+        List<String> whiteList = (List<String>)o.getProcedureParameters().get("whitelist");
         o.setBlackList(blackList);
         o.setWhiteList(whiteList);
 
         /* Boolean parameters. */
-        boolean show_lists = Boolean.parseBoolean(o.getProcedureParameters().get("show_lists"));
-        boolean show_full_metadata = Boolean.parseBoolean(o.getProcedureParameters().get("show_full_metadata"));
-        boolean group_subdimensions = Boolean.parseBoolean(o.getProcedureParameters().get("group_subdimensions"));
+        boolean show_lists = Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
+        boolean show_full_metadata = Boolean.parseBoolean(o.getProcedureParameters().get("show_full_metadata").toString());
+        boolean group_subdimensions = Boolean.parseBoolean(o.getProcedureParameters().get("group_subdimensions").toString());
 
         try {
 
@@ -168,7 +310,7 @@ public class StreamBuilder {
 
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
-            String dimensionCode = o.getProcedureParameters().get("id");
+            String dimensionCode = o.getProcedureParameters().get("id").toString();
             for (Map<String, Object> m : structuredDimensions) {
                 if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
                     dimension = m;
@@ -209,6 +351,7 @@ public class StreamBuilder {
                         row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
                         row.put("subdimension_ord", m.get("TabOrder").toString());
                         row.put("subdimension_label", m.get("TabName").toString());
+                        log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(o.getBlackList()).contains(row.get("code").toString().toUpperCase())).append("\n");
                         if (isAdmissibleCode(row, o))
                             codes.add(row);
                     }
@@ -514,6 +657,24 @@ public class StreamBuilder {
     private String createMetadata(DefaultOptionsBean o) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"metadata\": {");
+        if (o.getDsd() != null && o.getDsd().size() > 0) {
+            sb.append("\"dsd\": [");
+            for (int a = 0; a < o.getDsd().size(); a += 1) {
+                sb.append("{");
+                HashMap<String, Object> col = (HashMap<String, Object>)o.getDsd().get(a);
+                int counter = 0;
+                for (String key : col.keySet()) {
+                    sb.append("\"").append(key).append("\": \"").append(col.get(key)).append("\"");
+                    if (counter < col.keySet().size() - 1)
+                        sb.append(",");
+                    counter += 1;
+                }
+                sb.append("}");
+                if (a < o.getDsd().size() - 1)
+                    sb.append(",");
+            }
+            sb.append("],");
+        }
         sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
         sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
         sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
@@ -548,19 +709,19 @@ public class StreamBuilder {
 
         /* Check wheter the code is a list. */
         if (row.get("aggregate_type").equals(">")) {
-            return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists"));
+            return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
         } else {
 
             /* Check the blacklist. */
-            if (o.getBlackList() != null && o.getBlackList().length > 0) {
-                if (Arrays.asList(o.getBlackList()).contains(row.get("code").toString())) {
+            if (o.getBlackList() != null && o.getBlackList().size() > 0) {
+                if (o.getBlackList().contains(row.get("code").toString())) {
                     return false;
                 }
             }
 
             /* Check the whitelist. */
-            if (o.getWhiteList() != null && o.getWhiteList().length > 0) {
-                if (!Arrays.asList(o.getWhiteList()).contains(row.get("code").toString())) {
+            if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
+                if (!o.getWhiteList().contains(row.get("code").toString())) {
                     return false;
                 }
             }
@@ -575,15 +736,15 @@ public class StreamBuilder {
     private boolean isAdmissibleDBRow(Map<String, String> row, DefaultOptionsBean o) {
 
         /* Check the blacklist. */
-        if (o.getBlackList() != null && o.getBlackList().length > 0) {
-            if (Arrays.asList(o.getBlackList()).contains(row.get("code").toUpperCase())) {
+        if (o.getBlackList() != null && o.getBlackList().size() > 0) {
+            if (o.getBlackList().contains(row.get("code").toUpperCase())) {
                 return false;
             }
         }
 
         /* Check the whitelist. */
-        if (o.getWhiteList() != null && o.getWhiteList().length > 0) {
-            if (!Arrays.asList(o.getWhiteList()).contains(row.get("code").toUpperCase())) {
+        if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
+            if (!o.getWhiteList().contains(row.get("code").toUpperCase())) {
                 return false;
             }
         }
@@ -599,6 +760,14 @@ public class StreamBuilder {
 
     public void setQueries(QUERIES queries) {
         this.queries = queries;
+    }
+
+    public Gson getG() {
+        return g;
+    }
+
+    public void setG(Gson g) {
+        this.g = g;
     }
 
 }

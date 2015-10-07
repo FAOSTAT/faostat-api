@@ -1,6 +1,8 @@
 package org.fao.faostat.beans;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,18 +18,21 @@ public class DefaultOptionsBean {
 
     private String outputType;
 
-    private String[] blackList;
+    private List<String> blackList;
 
-    private String[] whiteList;
+    private List<String> whiteList;
 
-    private Map<String, String> procedureParameters;
+    private Map<String, Object> procedureParameters;
+
+    private List<Map<String, Object>> dsd;
 
     public DefaultOptionsBean() {
         this.setDatasource("faostat");
         this.setApiKey(null);
         this.setClientKey(null);
         this.setOutputType("objects");
-        this.setProcedureParameters(new HashMap<String, String>());
+        this.setProcedureParameters(new HashMap<String, Object>());
+        this.setDsd(new ArrayList<Map<String, Object>>());
     }
 
     public DefaultOptionsBean(String datasource, String apiKey, String clientKey, String outputType) {
@@ -39,26 +44,27 @@ public class DefaultOptionsBean {
         this.setApiKey(apiKey != null ? apiKey : this.getApiKey());
         this.setClientKey(clientKey != null ? clientKey : this.getClientKey());
         this.setOutputType(outputType != null ? outputType : this.getOutputType());
-        this.setProcedureParameters(new HashMap<String, String>());
+        this.setProcedureParameters(new HashMap<String, Object>());
+        this.setDsd(new ArrayList<Map<String, Object>>());
     }
 
-    public String[] getBlackList() {
+    public List<String> getBlackList() {
         return blackList;
     }
 
-    public void setBlackList(String[] blackList) {
+    public void setBlackList(List<String> blackList) {
         this.blackList = blackList;
     }
 
-    public String[] getWhiteList() {
+    public List<String> getWhiteList() {
         return whiteList;
     }
 
-    public void setWhiteList(String[] whiteList) {
+    public void setWhiteList(List<String> whiteList) {
         this.whiteList = whiteList;
     }
 
-    public void addParameter(String key, String value) {
+    public void addParameter(String key, Object value) {
         this.getProcedureParameters().put(key, value);
     }
 
@@ -94,12 +100,20 @@ public class DefaultOptionsBean {
         this.outputType = outputType;
     }
 
-    public Map<String, String> getProcedureParameters() {
+    public Map<String, Object> getProcedureParameters() {
         return procedureParameters;
     }
 
-    public void setProcedureParameters(Map<String, String> procedureParameters) {
+    public void setProcedureParameters(Map<String, Object> procedureParameters) {
         this.procedureParameters = procedureParameters;
+    }
+
+    public List<Map<String, Object>> getDsd() {
+        return dsd;
+    }
+
+    public void setDsd(List<Map<String, Object>> dsd) {
+        this.dsd = dsd;
     }
 
     @Override
