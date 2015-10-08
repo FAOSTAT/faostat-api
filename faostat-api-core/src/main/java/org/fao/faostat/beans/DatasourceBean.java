@@ -23,7 +23,7 @@ public class DatasourceBean {
                 this.setDbName("Warehouse");
                 this.setDriver("SQLServer2000");
                 this.setPassword("w@reh0use");
-                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
+                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\\\Internal;databaseName=Warehouse;");
                 this.setUsername("Warehouse");
                 break;
             default:

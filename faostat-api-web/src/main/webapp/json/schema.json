@@ -21,9 +21,18 @@
       "title": "Datasource",
       "description": "Name code of the datasource.",
       "enum": [
-        "faostat"
+        "production", "test"
       ],
-      "default": "faostat"
+      "default": "production"
+    },
+    "output_type": {
+      "type": "string",
+      "title": "Output Type",
+      "description": "Format of the output.",
+      "enum": [
+        "objects", "arrays"
+      ],
+      "default": "objects"
     },
     "lang": {
       "type": "string",
