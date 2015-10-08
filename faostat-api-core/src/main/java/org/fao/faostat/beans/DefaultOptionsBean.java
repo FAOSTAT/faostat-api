@@ -27,7 +27,7 @@ public class DefaultOptionsBean {
     private List<Map<String, Object>> dsd;
 
     public DefaultOptionsBean() {
-        this.setDatasource("faostat");
+        this.setDatasource("production");
         this.setApiKey(null);
         this.setClientKey(null);
         this.setOutputType("objects");

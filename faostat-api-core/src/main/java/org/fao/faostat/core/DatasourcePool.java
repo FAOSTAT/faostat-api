@@ -40,8 +40,8 @@ public class DatasourcePool {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         String s = new String(encoded, Charset.defaultCharset());
         DatasourceBean[] a = g.fromJson(s, DatasourceBean[].class);
-        for (DatasourceBean b : a)
-            this.datasources.put(b.getId(), b);
+//        for (DatasourceBean b : a)
+//            this.datasources.put(b.getId(), b);
     }
 
     public void setDatasourcePath(String datasourcePath) {
