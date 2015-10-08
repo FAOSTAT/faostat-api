@@ -21,17 +21,12 @@
 		<constructor-arg value="${outputType}" />
 	</bean>
 
-	<bean id="datasourcePool" class="org.fao.faostat.core.DatasourcePool" lazy-init="false" init-method="init">
-		<constructor-arg value="/json" />
-	</bean>
-
 	<bean id="jsonSchemaPool" class="org.fao.faostat.core.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
 	</bean>
 
 	<bean id="faostatapiCore" class="org.fao.faostat.core.FAOSTATAPICore">
 		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
-		<property name="datasourcePool" ref="datasourcePool"/>
 	</bean>
 
 </beans>

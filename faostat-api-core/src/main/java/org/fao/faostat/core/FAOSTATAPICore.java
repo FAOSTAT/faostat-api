@@ -10,9 +10,6 @@ public class FAOSTATAPICore {
     @InjectParam
     JSONSchemaPool jsonSchemaPool;
 
-    @InjectParam
-    DatasourcePool datasourcePool;
-
     public String getSchema() {
         return jsonSchemaPool.getSchema();
     }
@@ -31,14 +28,6 @@ public class FAOSTATAPICore {
             case "es": return "S";
             default: return "E";
         }
-    }
-
-    public DatasourcePool getDatasourcePool() {
-        return datasourcePool;
-    }
-
-    public void setDatasourcePool(DatasourcePool datasourcePool) {
-        this.datasourcePool = datasourcePool;
     }
 
 }

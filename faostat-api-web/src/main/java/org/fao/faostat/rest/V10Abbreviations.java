@@ -52,7 +52,6 @@ public class V10Abbreviations {
 
             /* Datasource bean. */
             DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(this.getO().getDatasource().toUpperCase()));
-//            DatasourceBean datasourceBean = this.faostatapiCore.getDatasourcePool().getDatasource(this.getO().getDatasource().toUpperCase());
 
             /* Query the DB and create an output stream. */
             StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, this.getO());

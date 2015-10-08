@@ -5,6 +5,7 @@ import org.fao.faostat.beans.DatasourceBean;
 import org.fao.faostat.beans.DefaultOptionsBean;
 import org.fao.faostat.core.FAOSTATAPICore;
 import org.fao.faostat.core.StreamBuilder;
+import org.fao.faostat.datasources.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -50,7 +51,7 @@ public class V10GroupsAndDomains {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = this.faostatapiCore.getDatasourcePool().getDatasource(this.getO().getDatasource().toUpperCase());
+            DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(this.getO().getDatasource().toUpperCase()));
 
             /* Query the DB and create an output stream. */
             StreamingOutput stream = sb.createOutputStream("groupsanddomains", datasourceBean, this.getO());
