@@ -25,8 +25,4 @@
 		<constructor-arg value="/json" />
 	</bean>
 
-	<bean id="faostatapiCore" class="org.fao.faostat.api.core.FAOSTATAPICore">
-		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
-	</bean>
-
 </beans>

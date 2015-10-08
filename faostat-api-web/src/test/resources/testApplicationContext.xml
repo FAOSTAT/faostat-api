@@ -10,7 +10,7 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.fao.faostat.*" />
+    <context:component-scan base-package="org.fao.faostat.api.web.*" />
 
 	<context:property-placeholder location="classpath:faostat-api.config"/>
 
@@ -23,10 +23,6 @@
 
 	<bean id="jsonSchemaPool" class="org.fao.faostat.api.core.schema.JSONSchemaPool" lazy-init="false" init-method="init">
 		<constructor-arg value="/json" />
-	</bean>
-
-	<bean id="faostatapiCore" class="org.fao.faostat.api.core.FAOSTATAPICore">
-		<property name="jsonSchemaPool" ref="jsonSchemaPool"/>
 	</bean>
 
 </beans>

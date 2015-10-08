@@ -341,46 +341,35 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import junit.framework.TestCase;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
-public class OutputBean {
+public class OutputBeanTest extends TestCase {
 
-    private MetadataBean metadata;
-
-    private FAOSTATIterable data;
-
-    public OutputBean() {
-
+    public void testEmptyConstructor() {
+        OutputBean b = new OutputBean();
+        assertNull(b.getMetadata());
+        assertNull(b.getData());
     }
 
-    public OutputBean(MetadataBean metadata) {
-        this.setMetadata(metadata);
+    public void testMetadataConstructor() {
+        OutputBean b = new OutputBean(new MetadataBean());
+        assertNotNull(b.getMetadata());
+        assertNull(b.getData());
     }
 
-    public OutputBean(FAOSTATIterable data) {
-        this.setData(data);
+    public void testDataConstructor() {
+        OutputBean b = new OutputBean(new FAOSTATIterable());
+        assertNull(b.getMetadata());
+        assertNotNull(b.getData());
     }
 
-    public OutputBean(MetadataBean metadata, FAOSTATIterable data) {
-        this.setMetadata(metadata);
-        this.setData(data);
-    }
-
-    public MetadataBean getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(MetadataBean metadata) {
-        this.metadata = metadata;
-    }
-
-    public FAOSTATIterable getData() {
-        return data;
-    }
-
-    public void setData(FAOSTATIterable data) {
-        this.data = data;
+    public void testFullConstructor() {
+        OutputBean b = new OutputBean(new MetadataBean(), new FAOSTATIterable());
+        assertNotNull(b.getMetadata());
+        assertNotNull(b.getData());
     }
 
 }

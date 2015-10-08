@@ -359,19 +359,19 @@ import static org.junit.Assert.assertNotNull;
 public class TestFAOSTATAPI extends JerseyTest {
 
     public TestFAOSTATAPI() {
-        super(new WebAppDescriptor.Builder("org.fao.faostat.rest").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+//        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+//                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+//                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+//                .requestListenerClass(RequestContextListener.class).build());
     }
 
-    @Test
-    public void testGetSchema(){
-        WebResource ws = resource().path("v1.0/");
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
-    }
+//    @Test
+//    public void testGetSchema(){
+//        WebResource ws = resource().path("v1.0/");
+//        ClientResponse response = ws.get(ClientResponse.class);
+//        assertEquals(200, response.getStatus());
+//        String out = response.getEntity(String.class);
+//        assertNotNull(out);
+//    }
 
 }
