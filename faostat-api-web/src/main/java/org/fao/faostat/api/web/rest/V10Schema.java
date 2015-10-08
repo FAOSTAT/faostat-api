@@ -339,34 +339,35 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.web.rest;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
+import com.sun.jersey.api.core.InjectParam;
 import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.stereotype.Component;
 
-import static org.junit.Assert.assertNotNull;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+@Component
+@Path("/v1.0")
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+public class V10Schema {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
-    }
+    @InjectParam
+    JSONSchemaPool jsonSchemaPool;
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    @GET
+    public Response getSchema() {
+
+        /* Stream result */
+        return Response.status(200).entity(jsonSchemaPool.getSchema()).build();
+
     }
 
 }

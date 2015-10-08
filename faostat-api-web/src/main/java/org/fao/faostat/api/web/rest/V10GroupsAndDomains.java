@@ -339,34 +339,78 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.web.rest;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
+import org.fao.faostat.api.core.beans.DatasourceBean;
+import org.fao.faostat.api.core.beans.MetadataBean;
+import org.fao.faostat.api.core.FAOSTATAPICore;
+import org.fao.faostat.api.core.StreamBuilder;
+import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.springframework.stereotype.Component;
 
-import static org.junit.Assert.assertNotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+@Component
+@Path("/v1.0/{lang}/groupsanddomains/")
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+public class V10GroupsAndDomains {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+    private MetadataBean o;
+
+    public V10GroupsAndDomains() {
+        this.setO(new MetadataBean());
     }
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    @GET
+    public Response getGroupsAndDomains(@PathParam("lang") String lang,
+                                        @QueryParam("datasource") String datasource,
+                                        @QueryParam("api_key") String api_key,
+                                        @QueryParam("client_key") String client_key,
+                                        @QueryParam("output_type") String output_type) {
+
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Store procedure parameters. */
+        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Datasource bean. */
+            DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(this.getO().getDatasource().toUpperCase()));
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("groupsanddomains", datasourceBean, this.getO());
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+    public void setO(MetadataBean o) {
+        this.o = o;
+    }
+
+    public MetadataBean getO() {
+        return o;
     }
 
 }

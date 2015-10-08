@@ -339,34 +339,93 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.core.beans;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
-
-import static org.junit.Assert.assertNotNull;
+import org.fao.faostat.api.core.constants.DATASOURCE;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+public class DatasourceBean {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+    private String driver;
+
+    private String url;
+
+    private String dbName;
+
+    private String username;
+
+    private String password;
+
+    public DatasourceBean(DATASOURCE datasource) {
+        switch (datasource) {
+            case TEST:
+                this.setDbName("Warehouse");
+                this.setDriver("SQLServer2000");
+                this.setPassword("w@reh0use");
+                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
+                this.setUsername("Warehouse");
+                break;
+            default:
+                this.setDbName("Warehouse");
+                this.setDriver("SQLServer2000");
+                this.setPassword("w@reh0use");
+                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
+                this.setUsername("Warehouse");
+                break;
+        }
     }
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "DatasourceBean{" +
+                "driver='" + driver + '\'' +
+                ", url='" + url + '\'' +
+                ", dbName='" + dbName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
 }

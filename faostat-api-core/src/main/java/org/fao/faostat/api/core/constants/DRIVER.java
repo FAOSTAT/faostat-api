@@ -339,34 +339,13 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
-
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
-
-import static org.junit.Assert.assertNotNull;
+package org.fao.faostat.api.core.constants;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class TestJSONSchemaPool extends JerseyTest {
+ */
+public enum DRIVER {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
-    }
-
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
-    }
+    SQLSERVER2000;
 
 }

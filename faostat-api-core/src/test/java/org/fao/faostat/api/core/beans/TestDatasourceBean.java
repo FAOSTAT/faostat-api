@@ -339,34 +339,44 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.core.beans;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
-
-import static org.junit.Assert.assertNotNull;
+import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+public class TestDatasourceBean extends TestCase {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+    private DatasourceBean b;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+//        b = new DatasourceBean();
     }
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    public void testSetters() {
+//        b.setId("id");
+//        assertEquals("id", b.getId());
+//        b.setPassword("password");
+//        assertEquals("password", b.getPassword());
+//        b.setUsername("username");
+//        assertEquals("username", b.getUsername());
+//        b.setDbName("dbName");
+//        assertEquals("dbName", b.getDbName());
+//        b.setUrl("url");
+//        assertEquals("url", b.getUrl());
+//        b.setCreate(true);
+//        assertEquals(true, b.isCreate());
+//        b.setDelete(true);
+//        assertEquals(true, b.isDelete());
+//        b.setDriver("driver");
+//        assertEquals("driver", b.getDriver());
+//        b.setRetrieve(true);
+//        assertEquals(true, b.isRetrieve());
+//        b.setUpdate(true);
+//        assertEquals(true, b.isRetrieve());
     }
 
 }

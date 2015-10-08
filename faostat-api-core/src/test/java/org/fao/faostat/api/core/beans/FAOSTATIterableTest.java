@@ -339,34 +339,75 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.core.beans;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
+import junit.framework.TestCase;
 
-import static org.junit.Assert.assertNotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+public class FAOSTATIterableTest extends TestCase {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+    private FAOSTATIterable i;
+
+    public void testFAOSTATIterableEmptyConstructor() {
+
+        /* Initiate iterable. */
+        i = new FAOSTATIterable();
+
+        /* Add test data. */
+        Map<String, Object> data = new HashMap<>();
+        data.put("Area", "Afghanistan");
+        data.put("Area Code", "2");
+        data.put("Value", 123.45);
+        i.addData(data);
+        data = new HashMap<>();
+        data.put("Area", "Angola");
+        data.put("Area Code", "8");
+        data.put("Value", 678.90);
+        i.addData(data);
+
+        /* Tests. */
+        assertEquals(2, i.size());
+        assertTrue(i.hasNext());
+        Map<String, Object> next = i.next();
+        assertEquals("Afghanistan", next.get("Area"));
+        assertEquals("2", next.get("Area Code"));
+        assertEquals(123.45, next.get("Value"));
+
     }
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    public void testFAOSTATIterableConstructor() {
+
+        /* Add test data. */
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<String, Object> row = new HashMap<>();
+        row.put("Area", "Afghanistan");
+        row.put("Area Code", "2");
+        row.put("Value", 123.45);
+        data.add(row);
+        row = new HashMap<>();
+        row.put("Area", "Angola");
+        row.put("Area Code", "8");
+        row.put("Value", 678.90);
+        data.add(row);
+
+        /* Initiate iterable. */
+        i = new FAOSTATIterable(data);
+
+        /* Tests. */
+        assertEquals(2, i.size());
+        assertTrue(i.hasNext());
+        Map<String, Object> next = i.next();
+        assertEquals("Afghanistan", next.get("Area"));
+        assertEquals("2", next.get("Area Code"));
+        assertEquals(123.45, next.get("Value"));
+
     }
 
 }

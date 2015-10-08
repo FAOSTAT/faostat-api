@@ -339,34 +339,49 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.core;
+package org.fao.faostat.api.core.schema;
 
-import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.fao.faostat.api.core.schema.JSONSchemaPool;
-import org.junit.Test;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.core.io.Resource;
 
-import static org.junit.Assert.assertNotNull;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class TestJSONSchemaPool extends JerseyTest {
+public class JSONSchemaPool {
 
-    public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
-                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-                .requestListenerClass(RequestContextListener.class).build());
+    private String schemaPath;
+
+    private String schema;
+
+    public JSONSchemaPool(Resource datasourcePath) throws Exception {
+        try {
+            this.setDatasourcePath(datasourcePath.getFile().getPath());
+        } catch (IOException e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
-    @Test
-    public void testGetSchema() {
-        JSONSchemaPool j = ContextLoaderListener.getCurrentWebApplicationContext().getBean(JSONSchemaPool.class);
-        assertNotNull(j.getSchema());
+    public void init() throws IOException {
+        String path = this.schemaPath + File.separator + "schema.json";
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        this.setSchema(new String(encoded, Charset.defaultCharset()));
+    }
+
+    public void setDatasourcePath(String datasourcePath) {
+        this.schemaPath = datasourcePath;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
 }
