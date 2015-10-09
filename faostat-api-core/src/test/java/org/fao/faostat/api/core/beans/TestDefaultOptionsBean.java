@@ -342,6 +342,8 @@
 package org.fao.faostat.api.core.beans;
 
 import junit.framework.TestCase;
+import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -353,14 +355,14 @@ public class TestDefaultOptionsBean extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        b = new MetadataBean("datasource", "apiKey", "clientKey", "outputType");
+        b = new MetadataBean("test", "apiKey", "clientKey", "objects");
     }
 
     public void testSetters() {
-        assertEquals("datasource", b.getDatasource());
+        assertEquals(DATASOURCE.TEST, b.getDatasource());
         assertEquals("apiKey", b.getApiKey());
         assertEquals("clientKey", b.getClientKey());
-        assertEquals("outputType", b.getOutputType());
+        assertEquals(OUTPUTTYPE.OBJECTS, b.getOutputType());
     }
 
 }

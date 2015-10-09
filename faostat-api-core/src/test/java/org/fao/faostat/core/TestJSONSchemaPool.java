@@ -357,7 +357,7 @@ import static org.junit.Assert.assertNotNull;
 public class TestJSONSchemaPool extends JerseyTest {
 
     public TestJSONSchemaPool() {
-        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.core").contextPath("testing")
+        super(new WebAppDescriptor.Builder("org.fao.fenix.faostat.api.core").contextPath("testing")
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
                 .requestListenerClass(RequestContextListener.class).build());

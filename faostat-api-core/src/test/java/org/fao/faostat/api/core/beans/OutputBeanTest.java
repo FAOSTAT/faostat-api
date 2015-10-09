@@ -350,8 +350,8 @@ public class OutputBeanTest extends TestCase {
 
     public void testEmptyConstructor() {
         OutputBean b = new OutputBean();
-        assertNull(b.getMetadata());
-        assertNull(b.getData());
+        assertNotNull(b.getMetadata());
+        assertNotNull(b.getData());
     }
 
     public void testMetadataConstructor() {
