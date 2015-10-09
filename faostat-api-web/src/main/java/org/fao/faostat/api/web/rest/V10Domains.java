@@ -388,8 +388,8 @@ public class V10Domains {
         /* Store procedure parameters. */
         this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
         this.getO().addParameter("group_code", group_code);
-        this.getO().addParameter("blacklist", blacklist);
-        this.getO().addParameter("whitelist", whitelist);
+        this.getO().setBlackList(blacklist);
+        this.getO().setWhiteList(whitelist);
 
         /* Query the DB and return the results. */
         try {

@@ -542,71 +542,90 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createDomainsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean o) throws Exception {
+    public StreamingOutput createDomainsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
-        /* Statistics. */
-        final long t0 = System.currentTimeMillis();
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
 
-        /* Query the DB. */
-        final JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
-        final Gson g = new Gson();
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
-        /* Add blacklist and whitelist to the options. */
-        List<String> blackList = (List<String>)o.getProcedureParameters().get("blacklist");
-        List<String> whiteList = (List<String>)o.getProcedureParameters().get("whitelist");
-        o.setBlackList(blackList);
-        o.setWhiteList(whiteList);
+        try {
 
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryDomains(queryCode, datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
+            /* Initiate the output stream. */
+            return new StreamingOutput() {
 
-                final List<Map<String, Object>> codes = new ArrayList<>();
-                while (i.hasNext()) {
-                    Map<String, Object> dbRow = i.nextMap();
-                    if (isAdmissibleDBRow(dbRow, o))
-                        codes.add(dbRow);
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                     /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Initiate the output. */
+                    writer.write("{");
+
+                    /* Add metadata. */
+                    writer.write(createMetadata(metadataBean));
+
+                    /* Initiate the array. */
+                    writer.write("\"data\": [");
+
+                    /* Generate an array of objects of arrays. */
+                    switch (out.getMetadata().getOutputType()) {
+
+                        case ARRAYS:
+                            while (out.getData().hasNextList()) {
+                                writer.write(out.getData().nextJSONList());
+                                if (out.getData().hasNextList())
+                                    writer.write(",");
+                            }
+                            break;
+                        default:
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSON());
+                                if (out.getData().hasNext())
+                                    writer.write(",");
+                            }
+                            break;
+
+                    }
+
+                    /* Close the array. */
+                    writer.write("]");
+
+                    /* Close the object. */
+                    writer.write("}");
+
+                    /* Flush the writer. */
+                    writer.flush();
+
+                    /* Close the writer. */
+                    writer.close();
+
                 }
 
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            };
 
-                /* Initiate the output. */
-                writer.write("{");
-
-                /* Statistics. */
-                long tf = System.currentTimeMillis();
-                o.setProcessingTime(tf - t0);
-
-                /* Add metadata. */
-                writer.write(createMetadata(o));
-
-                /* Initiate the array. */
-                writer.write("\"data\": ");
-
-                /* Generate an array of objects of arrays. */
-                switch (o.getOutputType()) {
-
-                    case ARRAYS:
-                        writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
-                        break;
-                    default:
-                        writer.write(g.toJson(codes));
-                        break;
-
+        } catch (final Exception e) {
+            return new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write(log.toString());
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
+                    writer.flush();
+                    writer.close();
                 }
-
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-            }
-
-        };
+            };
+        }
 
     }
 
