@@ -342,12 +342,9 @@
 package org.fao.faostat.api.core;
 
 
-import com.google.gson.Gson;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.beans.OutputBean;
-import org.fao.faostat.api.core.constants.QUERIES;
-import org.fao.faostat.api.core.jdbc.JDBCIterable;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
@@ -358,12 +355,6 @@ import java.util.*;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 public class StreamBuilder {
-
-    private QUERIES queries;
-
-    public StreamBuilder() {
-        this.setQueries(new QUERIES());
-    }
 
     public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
@@ -800,52 +791,6 @@ public class StreamBuilder {
 
     }
 
-    private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
-
-        /* Query the DB. */
-        JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
-
-        /* Store the original result. */
-        List<Map<String, Object>> l = new ArrayList<>();
-        while (i.hasNext()) {
-            l.add(i.nextMap());
-        }
-
-        /* Initiate variables. */
-        List<List<Map<String, Object>>> dimensions = new ArrayList<>();
-
-        /* Create groups. */
-        List<Map<String, Object>> groups = new ArrayList<>();
-        String current = "1";
-        for (Map<String, Object> m : l) {
-            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
-            if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
-                groups.add(m);
-            } else {
-                dimensions.add(groups);
-                current = m.get("ListBoxNo").toString();
-                groups = new ArrayList<>();
-                groups.add(m);
-            }
-        }
-        dimensions.add(groups);
-
-        /* Return output. */
-        return dimensions;
-
-    }
-
-    private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
-        String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
-        if (query == null)
-            throw new Exception("Query \'" + queryCode + "' not found.");
-        if (datasourceBean == null)
-            throw new Exception("Datasource \'" + o.getDatasource().name() + "' not found.");
-        JDBCIterable i = new JDBCIterable();
-        i.query(datasourceBean, query);
-        return i;
-    }
-
     private String createMetadata(MetadataBean o) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"metadata\": {");
@@ -886,14 +831,6 @@ public class StreamBuilder {
         sb.append("}");
         sb.append("},");
         return sb.toString();
-    }
-
-    public QUERIES getQueries() {
-        return queries;
-    }
-
-    public void setQueries(QUERIES queries) {
-        this.queries = queries;
     }
 
 }
