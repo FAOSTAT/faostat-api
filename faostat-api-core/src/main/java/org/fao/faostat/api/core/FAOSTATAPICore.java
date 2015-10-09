@@ -347,6 +347,11 @@ import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.QUERIES;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
@@ -401,6 +406,126 @@ public class FAOSTATAPICore {
         } catch (Exception e) {
             throw new Exception(log.toString());
         }
+
+    }
+
+    public OutputBean queryData(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+            /* Statistics. */
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate output. */
+            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            OutputBean out = new OutputBean();
+
+            /* Add metadata. */
+            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            out.setMetadata(metadataBean);
+
+            /* Add DSD. */
+            log.append("FAOSTATAPICore\t").append("add DSD...").append("\n");
+            out.getMetadata().setDsd(createDSD(datasourceBean, metadataBean));
+            log.append("FAOSTATAPICore\t").append("add DSD: done").append("\n");
+
+            /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add data to the output. */
+            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            while (i.hasNext())
+                out.getData().add(i.nextMap());
+            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            /* Return output. */
+            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            return out;
+
+        } catch (Exception e) {
+            throw new Exception(log.toString());
+        }
+
+    }
+
+    private List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, MetadataBean o) {
+
+        /* Initiate DSD. */
+        List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
+        JDBCIterable i;
+
+        try {
+
+            /* Query DB. */
+            i = getJDBCIterable("data_structure", datasourceBean, o);
+
+            /* Iterate over results. */
+            while (i.hasNext()) {
+
+                Map<String, Object> row = i.nextMap();
+
+                /* Create descriptors for code and label columns. */
+                if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
+                    Map<String, Object> codeCol = new HashMap<>();
+                    codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
+                    codeCol.put("label", row.get("CodeName"));
+                    codeCol.put("type", "code");
+                    codeCol.put("key", row.get("CodeName"));
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
+                        codeCol.put("dimension_id", row.get("VarTypeGroup") + "group");
+                    dsd.add(codeCol);
+                    Map<String, Object> labelCol = new HashMap<>();
+                    labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    labelCol.put("label", row.get("ColName"));
+                    labelCol.put("type", "label");
+                    labelCol.put("key", row.get("ColName"));
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
+                        labelCol.put("dimension_id", row.get("VarTypeGroup") + "group");
+                    dsd.add(labelCol);
+                }
+
+                /* Create descriptor for the unit. */
+                if (row.get("Col").toString().equalsIgnoreCase("Unit")) {
+                    Map<String, Object> unitCol = new HashMap<>();
+                    unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    unitCol.put("label", row.get("ColName").toString());
+                    unitCol.put("type", "unit");
+                    unitCol.put("key", row.get("ColName").toString());
+                    unitCol.put("dimension_id", "unit");
+                    dsd.add(unitCol);
+                }
+
+                /* Create descriptor for the value. */
+                if (row.get("Col").toString().equalsIgnoreCase("Value")) {
+                    Map<String, Object> valueCol = new HashMap<>();
+                    valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    valueCol.put("label", row.get("ColName").toString());
+                    valueCol.put("type", "value");
+                    valueCol.put("key", row.get("ColName").toString());
+                    valueCol.put("dimension_id", "value");
+                    dsd.add(valueCol);
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /* Return DSD. */
+        return dsd;
 
     }
 

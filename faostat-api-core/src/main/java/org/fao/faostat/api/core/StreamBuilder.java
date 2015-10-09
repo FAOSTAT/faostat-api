@@ -455,15 +455,22 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createDataOutputStream(final DatasourceBean datasourceBean, final MetadataBean o) throws Exception {
+    public StreamingOutput createDataOutputStream(DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
-        /* Statistics. */
-        final long t0 = System.currentTimeMillis();
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
 
-        /* Query the DB. */
-        final JDBCIterable i = getJDBCIterable("data", datasourceBean, o);
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
         try {
+
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryData(datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
             /* Initiate the output stream. */
             return new StreamingOutput() {
@@ -477,33 +484,26 @@ public class StreamBuilder {
                     /* Initiate the output. */
                     writer.write("{");
 
-                    /* Add DSD. */
-                    o.setDsd(createDSD(datasourceBean, o));
-
-                    /* Statistics. */
-                    long tf = System.currentTimeMillis();
-                    o.setProcessingTime(tf - t0);
-
                     /* Add metadata. */
-                    writer.write(createMetadata(o));
+                    writer.write(createMetadata(out.getMetadata()));
 
                     /* Initiate the array. */
                     writer.write("\"data\": [");
 
                     /* Generate an array of objects of arrays. */
-                    switch (o.getOutputType()) {
+                    switch (out.getMetadata().getOutputType()) {
 
                         case ARRAYS:
-                            while (i.hasNext()) {
-                                writer.write(i.nextArray());
-                                if (i.hasNext())
+                            while (out.getData().hasNextList()) {
+                                writer.write(out.getData().nextJSONList());
+                                if (out.getData().hasNextList())
                                     writer.write(",");
                             }
                             break;
                         default:
-                            while (i.hasNext()) {
-                                writer.write(i.nextJSON());
-                                if (i.hasNext())
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSON());
+                                if (out.getData().hasNext())
                                     writer.write(",");
                             }
                             break;
@@ -519,6 +519,9 @@ public class StreamBuilder {
                     /* Flush the writer. */
                     writer.flush();
 
+                    /* Close the writer. */
+                    writer.close();
+
                 }
 
             };
@@ -528,10 +531,11 @@ public class StreamBuilder {
                 @Override
                 public void write(OutputStream os) throws IOException, WebApplicationException {
                     Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-                    writer.write("StreamBuilder EXCEPTION\n");
+                    writer.write(log.toString());
                     if (e.getMessage() != null)
                         writer.write(e.getMessage());
                     writer.flush();
+                    writer.close();
                 }
             };
         }
