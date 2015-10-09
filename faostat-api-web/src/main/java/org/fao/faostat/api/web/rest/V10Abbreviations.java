@@ -378,6 +378,9 @@ public class V10Abbreviations {
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
+
         /* Store user preferences. */
         this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
 
@@ -389,9 +392,6 @@ public class V10Abbreviations {
 
             /* Stream builder. */
             StreamBuilder sb = new StreamBuilder();
-
-            /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(this.getO().getDatasource().toUpperCase()));
 
             /* Query the DB and create an output stream. */
             StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, this.getO());

@@ -351,14 +351,17 @@ public class OutputBean {
     private FAOSTATIterable data;
 
     public OutputBean() {
-
+        this.setMetadata(new MetadataBean());
+        this.setData(new FAOSTATIterable());
     }
 
     public OutputBean(MetadataBean metadata) {
-        this.setMetadata(metadata);
+        super();
+        this.setData(new FAOSTATIterable());
     }
 
     public OutputBean(FAOSTATIterable data) {
+        super();
         this.setData(data);
     }
 

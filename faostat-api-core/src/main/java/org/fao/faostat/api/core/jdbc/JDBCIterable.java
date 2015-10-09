@@ -521,9 +521,9 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     }
 
-    public Map<String, String> nextMap() {
+    public Map<String, Object> nextMap() {
 
-        Map<String, String> out = new HashMap<String, String>();
+        Map<String, Object> out = new HashMap<String, Object>();
         String value;
 
         if (this.isHasNext()) {

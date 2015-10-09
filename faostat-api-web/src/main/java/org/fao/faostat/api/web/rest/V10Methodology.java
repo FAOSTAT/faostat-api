@@ -393,7 +393,7 @@ public class V10Methodology {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(this.getO().getDatasource().toUpperCase()));
+            DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
 
             /* Query the DB and create an output stream. */
             StreamingOutput stream = sb.createOutputStream("methodology", datasourceBean, this.getO());

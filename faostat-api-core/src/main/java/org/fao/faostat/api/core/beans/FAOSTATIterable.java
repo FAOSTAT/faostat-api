@@ -341,6 +341,8 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -351,35 +353,79 @@ import java.util.Map;
  * */
 public class FAOSTATIterable implements Iterator<Map<String, Object>> {
 
-    private boolean hasNext;
+    private boolean hasNextMap;
 
-    private List<Map<String, Object>> datastore;
+    private boolean hasNextList;
 
-    private int currentIndex;
+    private List<Map<String, Object>> datastoreMap;
+
+    private List<List<String>> datastoreList;
+
+    private int currentIndexMap;
+
+    private int currentIndexList;
+
+    private Gson g;
 
     public FAOSTATIterable() {
-        this.setCurrentIndex(0);
-        this.setDatastore(new ArrayList<Map<String, Object>>());
-        this.setHasNext(this.getDatastore().size() > 0);
+        this.setG(new Gson());
+        this.setCurrentIndexMap(0);
+        this.setCurrentIndexList(0);
+        this.setDatastoreMap(new ArrayList<Map<String, Object>>());
+        this.setDatastoreList(new ArrayList<List<String>>());
+        this.setHasNext(this.getDatastoreMap().size() > 0);
+        this.setHasNextList(this.getDatastoreList().size() > 0);
     }
 
-    public FAOSTATIterable(List<Map<String, Object>> datastore) {
-        this.setCurrentIndex(0);
-        this.setDatastore(datastore);
-        this.setHasNext(this.getDatastore().size() > 0);
+    public FAOSTATIterable(List<Map<String, Object>> data) {
+        super();
+        this.setDatastoreMap(data);
+        this.setHasNext(this.getDatastoreMap().size() > 0);
     }
 
     @Override
     public boolean hasNext() {
-        return this.hasNext;
+        return this.hasNextMap;
+    }
+
+    public boolean hasNextMap() {
+        return this.hasNext();
+    }
+
+    public boolean hasNextList() {
+        return this.hasNextList;
     }
 
     @Override
     public Map<String, Object> next() {
-        Map<String, Object> out = this.getDatastore().get(this.getCurrentIndex());
-        this.setCurrentIndex(1 + this.getCurrentIndex());
-        if (this.getCurrentIndex() == this.getDatastore().size())
+        Map<String, Object> out = this.getDatastoreMap().get(this.getCurrentIndexMap());
+        this.setCurrentIndexMap(1 + this.getCurrentIndexMap());
+        if (this.getCurrentIndexMap() == this.getDatastoreMap().size())
             this.setHasNext(false);
+        return out;
+    }
+
+    public String nextJSON() {
+        Map<String, Object> out = this.getDatastoreMap().get(this.getCurrentIndexMap());
+        this.setCurrentIndexMap(1 + this.getCurrentIndexMap());
+        if (this.getCurrentIndexMap() == this.getDatastoreMap().size())
+            this.setHasNext(false);
+        return this.getG().toJson(out);
+    }
+
+    public String nextJSONList() {
+        List<String> out = this.getDatastoreList().get(this.getCurrentIndexList());
+        this.setCurrentIndexList(1 + this.getCurrentIndexList());
+        if (this.getCurrentIndexList() == this.getDatastoreList().size())
+            this.setHasNextList(false);
+        return g.toJson(out);
+    }
+
+    public List<String> nextList() {
+        List<String> out = this.getDatastoreList().get(this.getCurrentIndexList());
+        this.setCurrentIndexList(1 + this.getCurrentIndexList());
+        if (this.getCurrentIndexList() == this.getDatastoreList().size())
+            this.setHasNextList(false);
         return out;
     }
 
@@ -389,32 +435,69 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
     }
 
     public void setHasNext(boolean hasNext) {
-        this.hasNext = hasNext;
+        this.hasNextMap = hasNext;
     }
 
-    public List<Map<String, Object>> getDatastore() {
-        return datastore;
+    public void setHasNextList(boolean hasNextList) {
+        this.hasNextList = hasNextList;
     }
 
-    public void setDatastore(List<Map<String, Object>> datastore) {
-        this.datastore = datastore;
+    public int getCurrentIndexMap() {
+        return currentIndexMap;
     }
 
-    public int getCurrentIndex() {
-        return currentIndex;
+    public void setCurrentIndexMap(int currentIndexMap) {
+        this.currentIndexMap = currentIndexMap;
     }
 
-    public void setCurrentIndex(int currentIndex) {
-        this.currentIndex = currentIndex;
+    public void add(Map<String, Object> map) {
+        this.getDatastoreMap().add(map);
+        this.setHasNext(this.getDatastoreMap().size() > 0);
     }
 
-    public void addData(Map<String, Object> data) {
-        this.getDatastore().add(data);
-        this.setHasNext(this.getDatastore().size() > 0);
+    public void addList(List<String> list) {
+        this.getDatastoreList().add(list);
+        this.setHasNextList(this.getDatastoreList().size() > 0);
     }
 
     public int size() {
-        return this.getDatastore().size();
+        return this.getDatastoreMap().size();
+    }
+
+    public int sizeList() {
+        return this.getDatastoreList().size();
+    }
+
+    public Gson getG() {
+        return g;
+    }
+
+    public void setG(Gson g) {
+        this.g = g;
+    }
+
+    public List<List<String>> getDatastoreList() {
+        return datastoreList;
+    }
+
+    public void setDatastoreList(List<List<String>> datastoreList) {
+        this.datastoreList = datastoreList;
+    }
+
+    public List<Map<String, Object>> getDatastoreMap() {
+        return datastoreMap;
+    }
+
+    public void setDatastoreMap(List<Map<String, Object>> datastoreMap) {
+        this.datastoreMap = datastoreMap;
+    }
+
+    public int getCurrentIndexList() {
+        return currentIndexList;
+    }
+
+    public void setCurrentIndexList(int currentIndexList) {
+        this.currentIndexList = currentIndexList;
     }
 
 }

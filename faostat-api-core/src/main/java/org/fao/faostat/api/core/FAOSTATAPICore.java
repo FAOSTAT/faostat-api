@@ -341,10 +341,79 @@
  */
 package org.fao.faostat.api.core;
 
+import org.fao.faostat.api.core.beans.DatasourceBean;
+import org.fao.faostat.api.core.beans.MetadataBean;
+import org.fao.faostat.api.core.beans.OutputBean;
+import org.fao.faostat.api.core.constants.QUERIES;
+import org.fao.faostat.api.core.jdbc.JDBCIterable;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 public class FAOSTATAPICore {
+
+    private QUERIES queries;
+
+    public FAOSTATAPICore() {
+        this.setQueries(new QUERIES());
+    }
+
+    public OutputBean query(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+            /* Statistics. */
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate output. */
+            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            OutputBean out = new OutputBean();
+
+            /* Add metadata. */
+            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            out.setMetadata(metadataBean);
+
+            /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add data to the output. */
+            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            while (i.hasNext())
+                out.getData().add(i.nextMap());
+            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            /* Return output. */
+            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            return out;
+
+        } catch (Exception e) {
+            throw new Exception(log.toString());
+        }
+
+    }
+
+    private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
+        String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
+        if (query == null)
+            throw new Exception("Query \'" + queryCode + "' not found.");
+        if (datasourceBean == null)
+            throw new Exception("Datasource \'" + o.getDatasource() + "' not found.");
+        JDBCIterable i = new JDBCIterable();
+        i.query(datasourceBean, query);
+        return i;
+    }
 
     public String iso2faostat(String lang) {
         switch (lang.toLowerCase()) {
@@ -352,6 +421,14 @@ public class FAOSTATAPICore {
             case "es": return "S";
             default: return "E";
         }
+    }
+
+    public void setQueries(QUERIES queries) {
+        this.queries = queries;
+    }
+
+    public QUERIES getQueries() {
+        return queries;
     }
 
 }

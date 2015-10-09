@@ -345,6 +345,7 @@ package org.fao.faostat.api.core;
 import com.google.gson.Gson;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
+import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.QUERIES;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 
@@ -367,68 +368,90 @@ public class StreamBuilder {
         this.setG(new Gson());
     }
 
-    public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean o) throws Exception {
+    public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
-        /* Statistics. */
-        final long t0 = System.currentTimeMillis();
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
 
-        /* Query the DB. */
-        final JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
+        try {
 
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.query(queryCode, datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            /* Initiate the output stream. */
+            return new StreamingOutput() {
 
-                /* Initiate the output. */
-                writer.write("{");
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
 
-                /* Statistics. */
-                long tf = System.currentTimeMillis();
-                o.setProcessingTime(tf - t0);
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 
-                /* Add metadata. */
-                writer.write(createMetadata(o));
+                    /* Initiate the output. */
+                    writer.write("{");
 
-                /* Initiate the array. */
-                writer.write("\"data\": [");
+                    /* Add metadata. */
+                    writer.write(createMetadata(out.getMetadata()));
 
-                /* Generate an array of objects of arrays. */
-                switch (o.getOutputType()) {
+                    /* Initiate the array. */
+                    writer.write("\"data\": [");
 
-                    case "arrays":
-                        while (i.hasNext()) {
-                            writer.write(i.nextArray());
-                            if (i.hasNext())
-                                writer.write(",");
-                        }
-                        break;
-                    default:
-                        while (i.hasNext()) {
-                            writer.write(i.nextJSON());
-                            if (i.hasNext())
-                                writer.write(",");
-                        }
-                        break;
+                    /* Generate an array of objects of arrays. */
+                    switch (out.getMetadata().getOutputType()) {
+
+                        case ARRAYS:
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSONList());
+                                if (out.getData().hasNext())
+                                    writer.write(",");
+                            }
+                            break;
+                        default:
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSON());
+                                if (out.getData().hasNext())
+                                    writer.write(",");
+                            }
+                            break;
+
+                    }
+
+                    /* Close the array. */
+                    writer.write("]");
+
+                    /* Close the object. */
+                    writer.write("}");
+
+                    /* Flush the writer. */
+                    writer.flush();
+
+                    /* Close the writer. */
+                    writer.flush();
 
                 }
 
-                /* Close the array. */
-                writer.write("]");
+            };
 
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-            }
-
-        };
+        } catch (final Exception e) {
+            return new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write(log.toString());
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
+                    writer.flush();
+                    writer.close();
+                }
+            };
+        }
 
     }
 
@@ -470,7 +493,7 @@ public class StreamBuilder {
                     /* Generate an array of objects of arrays. */
                     switch (o.getOutputType()) {
 
-                        case "arrays":
+                        case ARRAYS:
                             while (i.hasNext()) {
                                 writer.write(i.nextArray());
                                 if (i.hasNext())
@@ -536,9 +559,9 @@ public class StreamBuilder {
             @Override
             public void write(OutputStream os) throws IOException, WebApplicationException {
 
-                final List<Map<String, String>> codes = new ArrayList<>();
+                final List<Map<String, Object>> codes = new ArrayList<>();
                 while (i.hasNext()) {
-                    Map<String, String> dbRow = i.nextMap();
+                    Map<String, Object> dbRow = i.nextMap();
                     if (isAdmissibleDBRow(dbRow, o))
                         codes.add(dbRow);
                 }
@@ -562,7 +585,7 @@ public class StreamBuilder {
                 /* Generate an array of objects of arrays. */
                 switch (o.getOutputType()) {
 
-                    case "arrays":
+                    case ARRAYS:
                         writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
                         break;
                     default:
@@ -606,7 +629,7 @@ public class StreamBuilder {
         try {
 
             /* Get domain's dimensions. */
-            List<List<Map<String, String>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
+            List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
 
             /* Organize data in an object. */
             final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
@@ -767,7 +790,7 @@ public class StreamBuilder {
                     /* Generate an array of objects of arrays. */
                     switch (o.getOutputType()) {
 
-                        case "arrays":
+                        case ARRAYS:
                             writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
                             break;
                         default:
@@ -807,7 +830,7 @@ public class StreamBuilder {
         final long t0 = System.currentTimeMillis();
 
         /* Initiate variables. */
-        final List<List<Map<String, String>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
+        final List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
         final List<String> groupJSONs = new ArrayList<String>();
 
         /* Iterate over the stored dimensions. */
@@ -827,11 +850,11 @@ public class StreamBuilder {
             s += "\"subdimensions\": [";
             for (int idx = 0; idx < dimensions.get(z).size(); idx += 1) {
                 s += "{";
-                s += "\"id\": \"" + dimensions.get(z).get(idx).get("TabName").replace(" ", "").toLowerCase() + "\",";
+                s += "\"id\": \"" + dimensions.get(z).get(idx).get("TabName").toString().replace(" ", "").toLowerCase() + "\",";
                 s += "\"ord\": " + dimensions.get(z).get(idx).get("TabOrder") + ",";
                 s += "\"label\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
                 s += "\"description\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
-                s += "\"href\": \"/codes/" + dimensions.get(z).get(idx).get("TabName").replace(" ", "").toLowerCase() + "/\"";
+                s += "\"href\": \"/codes/" + dimensions.get(z).get(idx).get("TabName").toString().replace(" ", "").toLowerCase() + "/\"";
                 s += "}";
                 if (idx < dimensions.get(z).size() - 1)
                     s += ",";
@@ -869,7 +892,7 @@ public class StreamBuilder {
                 /* Generate an array of objects of arrays. */
                 switch (o.getOutputType()) {
 
-                    case "arrays":
+                    case ARRAYS:
                         writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
                         break;
                     default:
@@ -911,33 +934,32 @@ public class StreamBuilder {
             /* Iterate over results. */
             while (i.hasNext()) {
 
-                Map<String, String> row = i.nextMap();
-                System.out.println(row);
+                Map<String, Object> row = i.nextMap();
 
                 /* Create descriptors for code and label columns. */
-                if (!row.get("Col").equalsIgnoreCase("Unit") && !row.get("Col").equalsIgnoreCase("Value")) {
+                if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
                     Map<String, Object> codeCol = new HashMap<>();
-                    codeCol.put("index", Integer.parseInt(row.get("CodeIndex")));
+                    codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
                     codeCol.put("label", row.get("CodeName"));
                     codeCol.put("type", "code");
                     codeCol.put("key", row.get("CodeName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").length() > 0)
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
                         codeCol.put("dimension_id", row.get("VarTypeGroup") + "group");
                     dsd.add(codeCol);
                     Map<String, Object> labelCol = new HashMap<>();
-                    labelCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     labelCol.put("label", row.get("ColName"));
                     labelCol.put("type", "label");
                     labelCol.put("key", row.get("ColName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").length() > 0)
+                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
                         labelCol.put("dimension_id", row.get("VarTypeGroup") + "group");
                     dsd.add(labelCol);
                 }
 
                 /* Create descriptor for the unit. */
-                if (row.get("Col").equalsIgnoreCase("Unit")) {
+                if (row.get("Col").toString().equalsIgnoreCase("Unit")) {
                     Map<String, Object> unitCol = new HashMap<>();
-                    unitCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     unitCol.put("label", row.get("ColName").toString());
                     unitCol.put("type", "unit");
                     unitCol.put("key", row.get("ColName").toString());
@@ -946,9 +968,9 @@ public class StreamBuilder {
                 }
 
                 /* Create descriptor for the value. */
-                if (row.get("Col").equalsIgnoreCase("Value")) {
+                if (row.get("Col").toString().equalsIgnoreCase("Value")) {
                     Map<String, Object> valueCol = new HashMap<>();
-                    valueCol.put("index", Integer.parseInt(row.get("NameIndex")));
+                    valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     valueCol.put("label", row.get("ColName").toString());
                     valueCol.put("type", "value");
                     valueCol.put("key", row.get("ColName").toString());
@@ -967,30 +989,30 @@ public class StreamBuilder {
 
     }
 
-    private List<List<Map<String, String>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
+    private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
 
         /* Query the DB. */
         JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
 
         /* Store the original result. */
-        List<Map<String, String>> l = new ArrayList<>();
+        List<Map<String, Object>> l = new ArrayList<>();
         while (i.hasNext()) {
             l.add(i.nextMap());
         }
 
         /* Initiate variables. */
-        List<List<Map<String, String>>> dimensions = new ArrayList<>();
+        List<List<Map<String, Object>>> dimensions = new ArrayList<>();
 
         /* Create groups. */
-        List<Map<String, String>> groups = new ArrayList<>();
+        List<Map<String, Object>> groups = new ArrayList<>();
         String current = "1";
-        for (Map<String, String> m : l) {
-            m.put("id", m.get("TabName").replaceAll(" ", "").toLowerCase());
-            if (m.get("ListBoxNo").equalsIgnoreCase(current)) {
+        for (Map<String, Object> m : l) {
+            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
+            if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
                 groups.add(m);
             } else {
                 dimensions.add(groups);
-                current = m.get("ListBoxNo");
+                current = m.get("ListBoxNo").toString();
                 groups = new ArrayList<>();
                 groups.add(m);
             }
@@ -1002,10 +1024,10 @@ public class StreamBuilder {
 
     }
 
-    private List<Map<String, Object>> organizeDomainDimensions(List<List<Map<String, String>>> dimensions) {
+    private List<Map<String, Object>> organizeDomainDimensions(List<List<Map<String, Object>>> dimensions) {
         List<Map<String, Object>> out = new ArrayList<>();
         List<String> idsBuffer = new ArrayList<>();
-        for (List<Map<String, String>> dimension : dimensions) {
+        for (List<Map<String, Object>> dimension : dimensions) {
             Map<String, Object> tmp = new HashMap<>();
             if (!idsBuffer.contains(dimension.get(0).get("VarTypeGroup") + "group")) {
                 idsBuffer.add(dimension.get(0).get("VarTypeGroup") + "group");
@@ -1019,7 +1041,7 @@ public class StreamBuilder {
             tmp.put("parameter", "@List" + dimension.get(0).get("ListBoxNo") + "Codes");
             tmp.put("href", "/codes/" + dimension.get(0).get("VarTypeGroup") + "group/");
             tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
-            for (Map<String, String> subdimension : dimension) {
+            for (Map<String, Object> subdimension : dimension) {
                 ((ArrayList)tmp.get("subdimensions")).add(subdimension);
             }
             out.add(tmp);
@@ -1032,7 +1054,7 @@ public class StreamBuilder {
         if (query == null)
             throw new Exception("Query \'" + queryCode + "' not found.");
         if (datasourceBean == null)
-            throw new Exception("Datasource \'" + o.getDatasource().toUpperCase() + "' not found.");
+            throw new Exception("Datasource \'" + o.getDatasource().name() + "' not found.");
         JDBCIterable i = new JDBCIterable();
         i.query(datasourceBean, query);
         return i;
@@ -1080,7 +1102,7 @@ public class StreamBuilder {
         return sb.toString();
     }
 
-    private Map<String, Object> createCode(Map<String, String> dbRow) {
+    private Map<String, Object> createCode(Map<String, Object> dbRow) {
         Map<String, Object> code = new HashMap<>();
         code.put("code", dbRow.get("Code"));
         code.put("label", dbRow.get("Label"));
@@ -1120,18 +1142,18 @@ public class StreamBuilder {
 
     }
 
-    private boolean isAdmissibleDBRow(Map<String, String> row, MetadataBean o) {
+    private boolean isAdmissibleDBRow(Map<String, Object> row, MetadataBean o) {
 
         /* Check the blacklist. */
         if (o.getBlackList() != null && o.getBlackList().size() > 0) {
-            if (o.getBlackList().contains(row.get("code").toUpperCase())) {
+            if (o.getBlackList().contains(row.get("code").toString().toUpperCase())) {
                 return false;
             }
         }
 
         /* Check the whitelist. */
         if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
-            if (!o.getWhiteList().contains(row.get("code").toUpperCase())) {
+            if (!o.getWhiteList().contains(row.get("code").toString().toUpperCase())) {
                 return false;
             }
         }

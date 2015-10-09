@@ -339,102 +339,13 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.beans;
-
-import junit.framework.TestCase;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.fao.faostat.api.core.constants;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class FAOSTATIterableTest extends TestCase {
+ */
+public enum OUTPUTTYPE {
 
-    private FAOSTATIterable i;
-
-    public void testFAOSTATIterableEmptyConstructor() {
-
-        /* Initiate iterable. */
-        i = new FAOSTATIterable();
-
-        /* Add test data. */
-        Map<String, Object> data = new HashMap<>();
-        data.put("Area", "Afghanistan");
-        data.put("Area Code", "2");
-        data.put("Value", 123.45);
-        i.add(data);
-        data = new HashMap<>();
-        data.put("Area", "Angola");
-        data.put("Area Code", "8");
-        data.put("Value", 678.90);
-        i.add(data);
-
-        /* Tests. */
-        assertEquals(2, i.size());
-        assertTrue(i.hasNext());
-        Map<String, Object> next = i.next();
-        assertEquals("Afghanistan", next.get("Area"));
-        assertEquals("2", next.get("Area Code"));
-        assertEquals(123.45, next.get("Value"));
-
-    }
-
-    public void testFAOSTATIterableConstructor() {
-
-        /* Add test data. */
-        List<Map<String, Object>> data = new ArrayList<>();
-        Map<String, Object> row = new HashMap<>();
-        row.put("Area", "Afghanistan");
-        row.put("Area Code", "2");
-        row.put("Value", 123.45);
-        data.add(row);
-        row = new HashMap<>();
-        row.put("Area", "Angola");
-        row.put("Area Code", "8");
-        row.put("Value", 678.90);
-        data.add(row);
-
-        /* Initiate iterable. */
-        i = new FAOSTATIterable(data);
-
-        /* Tests. */
-        assertEquals(2, i.size());
-        assertTrue(i.hasNext());
-        Map<String, Object> next = i.next();
-        assertEquals("Afghanistan", next.get("Area"));
-        assertEquals("2", next.get("Area Code"));
-        assertEquals(123.45, next.get("Value"));
-
-    }
-
-    public void testFAOSTATIterableList() {
-
-        /* Initiate iterable. */
-        i = new FAOSTATIterable();
-
-        /* Add test data. */
-        List<String> data = new ArrayList<>();
-        data.add("Afghanistan");
-        data.add("2");
-        data.add("123.45");
-        i.addList(data);
-        data = new ArrayList<>();
-        data.add("Angola");
-        data.add("8");
-        data.add("678.90");
-        i.addList(data);
-
-        /* Tests. */
-        assertEquals(2, i.sizeList());
-        assertTrue(i.hasNextList());
-        List<String> next = i.nextList();
-        assertEquals("Afghanistan", next.get(0));
-        assertEquals("2", next.get(1));
-        assertEquals("123.45", next.get(2));
-
-    }
+    ARRAYS, OBJECTS;
 
 }

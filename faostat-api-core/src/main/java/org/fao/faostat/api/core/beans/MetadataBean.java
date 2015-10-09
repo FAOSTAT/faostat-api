@@ -341,6 +341,9 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -351,13 +354,13 @@ import java.util.Map;
  */
 public class MetadataBean {
 
-    private String datasource;
+    private DATASOURCE datasource;
 
     private String apiKey;
 
     private String clientKey;
 
-    private String outputType;
+    private OUTPUTTYPE outputType;
 
     private List<String> blackList;
 
@@ -370,10 +373,10 @@ public class MetadataBean {
     private Long processingTime;
 
     public MetadataBean() {
-        this.setDatasource("production");
+        this.setDatasource(DATASOURCE.PRODUCTION);
         this.setApiKey(null);
         this.setClientKey(null);
-        this.setOutputType("objects");
+        this.setOutputType(OUTPUTTYPE.OBJECTS);
         this.setProcedureParameters(new HashMap<String, Object>());
         this.setDsd(new ArrayList<Map<String, Object>>());
     }
@@ -383,10 +386,10 @@ public class MetadataBean {
     }
 
     public void storeUserOptions(String datasource, String apiKey, String clientKey, String outputType) {
-        this.setDatasource(datasource != null ? datasource : this.getDatasource());
+        this.setDatasource(datasource != null ? DATASOURCE.valueOf(datasource.toUpperCase()) : DATASOURCE.PRODUCTION);
         this.setApiKey(apiKey != null ? apiKey : this.getApiKey());
         this.setClientKey(clientKey != null ? clientKey : this.getClientKey());
-        this.setOutputType(outputType != null ? outputType : this.getOutputType());
+        this.setOutputType(outputType != null ? OUTPUTTYPE.valueOf(outputType.toUpperCase()) : OUTPUTTYPE.OBJECTS);
         this.setProcedureParameters(new HashMap<String, Object>());
         this.setDsd(new ArrayList<Map<String, Object>>());
     }
@@ -411,11 +414,11 @@ public class MetadataBean {
         this.getProcedureParameters().put(key, value);
     }
 
-    public String getDatasource() {
+    public DATASOURCE getDatasource() {
         return datasource;
     }
 
-    public void setDatasource(String datasource) {
+    public void setDatasource(DATASOURCE datasource) {
         this.datasource = datasource;
     }
 
@@ -435,11 +438,11 @@ public class MetadataBean {
         this.clientKey = clientKey;
     }
 
-    public String getOutputType() {
+    public OUTPUTTYPE getOutputType() {
         return outputType;
     }
 
-    public void setOutputType(String outputType) {
+    public void setOutputType(OUTPUTTYPE outputType) {
         this.outputType = outputType;
     }
 
@@ -469,12 +472,16 @@ public class MetadataBean {
 
     @Override
     public String toString() {
-        return "DefaultOptionsBean{" +
+        return "MetadataBean{" +
                 "datasource='" + datasource + '\'' +
                 ", apiKey='" + apiKey + '\'' +
                 ", clientKey='" + clientKey + '\'' +
-                ", outputType='" + outputType + '\'' +
+                ", outputType=" + outputType +
+                ", blackList=" + blackList +
+                ", whiteList=" + whiteList +
                 ", procedureParameters=" + procedureParameters +
+                ", dsd=" + dsd +
+                ", processingTime=" + processingTime +
                 '}';
     }
 
