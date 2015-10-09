@@ -713,99 +713,90 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createDimensionOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean o) throws Exception {
+    public StreamingOutput createDimensionOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
-        /* Statistics. */
-        final long t0 = System.currentTimeMillis();
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
 
-        /* Initiate variables. */
-        final List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
-        final List<String> groupJSONs = new ArrayList<String>();
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
-        /* Iterate over the stored dimensions. */
-        for (int z = 0; z < dimensions.size(); z += 1) {
+        try {
 
-            /* Encode group. */
-            String s = "";
-            s += "{";
-            s += "\"ord\": " + dimensions.get(z).get(0).get("ListBoxNo") + ",";
-            s += "\"id\": \"" + dimensions.get(z).get(0).get("VarTypeGroup") + "group\",";
-            s += "\"label\": \"TODO\",";
-            s += "\"parameter\": \"@List" + dimensions.get(z).get(0).get("ListBoxNo") + "Codes\",";
-            s += "\"description\": \"TODO\",";
-            s += "\"href\": \"/codes/" + dimensions.get(z).get(0).get("VarTypeGroup") + "group/\",";
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
-            /* Encode subdimensions. */
-            s += "\"subdimensions\": [";
-            for (int idx = 0; idx < dimensions.get(z).size(); idx += 1) {
-                s += "{";
-                s += "\"id\": \"" + dimensions.get(z).get(idx).get("TabName").toString().replace(" ", "").toLowerCase() + "\",";
-                s += "\"ord\": " + dimensions.get(z).get(idx).get("TabOrder") + ",";
-                s += "\"label\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
-                s += "\"description\": \"" + dimensions.get(z).get(idx).get("TabName") + "\",";
-                s += "\"href\": \"/codes/" + dimensions.get(z).get(idx).get("TabName").toString().replace(" ", "").toLowerCase() + "/\"";
-                s += "}";
-                if (idx < dimensions.get(z).size() - 1)
-                    s += ",";
-            }
-            s += "]";
-            s += "}";
+            /* Initiate the output stream. */
+            return new StreamingOutput() {
 
-            /* Add to the final output. */
-            groupJSONs.add(s);
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
 
-        }
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
+                    /* Initiate the output. */
+                    writer.write("{");
 
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
+                    /* Add metadata. */
+                    writer.write(createMetadata(metadataBean));
 
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    /* Initiate the array. */
+                    writer.write("\"data\": [");
 
-                /* Initiate the output. */
-                writer.write("{");
+                    /* Generate an array of objects of arrays. */
+                    switch (out.getMetadata().getOutputType()) {
 
-                /* Statistics. */
-                long tf = System.currentTimeMillis();
-                o.setProcessingTime(tf - t0);
+                        case ARRAYS:
+                            while (out.getData().hasNextList()) {
+                                writer.write(out.getData().nextJSONList());
+                                if (out.getData().hasNextList())
+                                    writer.write(",");
+                            }
+                            break;
+                        default:
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSON());
+                                if (out.getData().hasNext())
+                                    writer.write(",");
+                            }
+                            break;
 
-                /* Add metadata. */
-                writer.write(createMetadata(o));
+                    }
 
-                /* Initiate the array. */
-                writer.write("\"data\": [");
+                    /* Close the array. */
+                    writer.write("]");
 
-                /* Generate an array of objects of arrays. */
-                switch (o.getOutputType()) {
+                    /* Close the object. */
+                    writer.write("}");
 
-                    case ARRAYS:
-                        writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
-                        break;
-                    default:
-                        for (int i = 0; i < groupJSONs.size(); i++) {
-                            writer.write(groupJSONs.get(i).toString());
-                            if (i < groupJSONs.size() - 1)
-                                writer.write(",");
-                        }
-                        break;
+                    /* Flush the writer. */
+                    writer.flush();
+
+                    /* Close the writer. */
+                    writer.close();
 
                 }
 
-                /* Close the array. */
-                writer.write("]");
+            };
 
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-            }
-
-        };
+        } catch (final Exception e) {
+            return new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write(log.toString());
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
+                    writer.flush();
+                    writer.close();
+                }
+            };
+        }
 
     }
 

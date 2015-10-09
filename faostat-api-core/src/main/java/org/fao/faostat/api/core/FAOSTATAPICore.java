@@ -407,6 +407,98 @@ public class FAOSTATAPICore {
 
     }
 
+    public OutputBean queryDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+            /* Statistics. */
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate variables. */
+            List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
+            List<Map<String, Object>> tmp = new ArrayList<>();
+            for (List<Map<String, Object>> l : dimensions)
+                tmp.addAll(l);
+
+            /* Group Dimensions. */
+            List<Map<String, Object>> output = new ArrayList<>();
+            String currentList = tmp.get(0).get("ListBoxNo").toString();
+            Map<String, Object> group = new HashMap<>();
+            group.put("ord", Integer.parseInt(currentList));
+            group.put("parameter", "@List" + currentList + "Codes");
+            group.put("id", tmp.get(0).get("VarTypeGroup").toString() + "group");
+            group.put("href", "/codes/" + tmp.get(0).get("VarTypeGroup").toString() + "group/");
+            group.put("subdimensions", new ArrayList<Map<String, Object>>());
+            for (int i = 0; i < tmp.size(); i += 1) {
+                if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id", tmp.get(i).get("id").toString());
+                    m.put("label", tmp.get(i).get("TabName").toString());
+                    m.put("description", tmp.get(i).get("TabName").toString());
+                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
+                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+                    m.put("parameter", "@List" + currentList + "Codes");
+                    ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
+                } else {
+                    output.add(group);
+                    currentList = tmp.get(i).get("ListBoxNo").toString();
+                    group = new HashMap<>();
+                    group.put("ord", Integer.parseInt(currentList));
+                    group.put("@parameter", "List" + currentList + "Codes");
+                    group.put("id", tmp.get(i).get("VarTypeGroup").toString() + "group");
+                    group.put("href", "/codes/" + tmp.get(i).get("VarTypeGroup").toString() + "group/");
+                    group.put("subdimensions", new ArrayList<Map<String, Object>>());
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id", tmp.get(i).get("id").toString());
+                    m.put("label", tmp.get(i).get("TabName").toString());
+                    m.put("description", tmp.get(i).get("TabName").toString());
+                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
+                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+                    m.put("parameter", "@List" + currentList + "Codes");
+                    ((ArrayList<Map<String, Object>>)group.get("subdimensions")).add(m);
+                }
+            }
+            output.add(group);
+
+            /* Initiate output. */
+            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            OutputBean out = new OutputBean(new FAOSTATIterable(output));
+
+            /* Add metadata. */
+            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            out.setMetadata(metadataBean);
+
+            /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add data to the output. */
+            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            while (i.hasNext())
+                out.getData().add(i.nextMap());
+            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            /* Return output. */
+            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            return out;
+
+        } catch (Exception e) {
+            throw new Exception(log.toString());
+        }
+
+    }
+
     public OutputBean queryData(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
         /* Logs. */
