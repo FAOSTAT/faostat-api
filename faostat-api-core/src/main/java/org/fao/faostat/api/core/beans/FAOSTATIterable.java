@@ -378,9 +378,13 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
     }
 
     public FAOSTATIterable(List<Map<String, Object>> data) {
-        super();
+        this.setG(new Gson());
+        this.setCurrentIndexMap(0);
+        this.setCurrentIndexList(0);
         this.setDatastoreMap(data);
+        this.setDatastoreList(new ArrayList<List<String>>());
         this.setHasNext(this.getDatastoreMap().size() > 0);
+        this.setHasNextList(this.getDatastoreList().size() > 0);
     }
 
     @Override

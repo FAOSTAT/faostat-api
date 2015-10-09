@@ -361,11 +361,8 @@ public class StreamBuilder {
 
     private QUERIES queries;
 
-    private Gson g;
-
     public StreamBuilder() {
         this.setQueries(new QUERIES());
-        this.setG(new Gson());
     }
 
     public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
@@ -629,161 +626,22 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createCodesOutputStream(DatasourceBean datasourceBean, final MetadataBean o) throws Exception {
+    public StreamingOutput createCodesOutputStream(DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
-        /* Statistics. */
-        final long t0 = System.currentTimeMillis();
-
-        /* Logger. */
+        /* Log. */
         final StringBuilder log = new StringBuilder();
-        final Gson g = new Gson();
 
-        /* Add blacklist and whitelist to the options. */
-        List<String> blackList = (List<String>)o.getProcedureParameters().get("blacklist");
-        List<String> whiteList = (List<String>)o.getProcedureParameters().get("whitelist");
-        o.setBlackList(blackList);
-        o.setWhiteList(whiteList);
-
-        /* Boolean parameters. */
-        boolean show_lists = Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
-        boolean show_full_metadata = Boolean.parseBoolean(o.getProcedureParameters().get("show_full_metadata").toString());
-        boolean group_subdimensions = Boolean.parseBoolean(o.getProcedureParameters().get("group_subdimensions").toString());
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
         try {
 
-            /* Get domain's dimensions. */
-            List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, o);
-
-            /* Organize data in an object. */
-            final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
-
-            /* Get the dimension of interest. */
-            Map<String, Object> dimension = null;
-            String dimensionCode = o.getProcedureParameters().get("id").toString();
-            for (Map<String, Object> m : structuredDimensions) {
-                if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                    dimension = m;
-                    break;
-                }
-                ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) m.get("subdimensions");
-                for (Map<String, Object> subm : subdimensions) {
-                    if (subm.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                        dimension = subm;
-                        break;
-                    }
-                }
-            }
-
-            /* Prepare output. */
-            List<Map<String, Object>> codes = new ArrayList<>();
-            Map<String, Object> row;
-
-            /* Get subdimensions. */
-            ArrayList<Map<String, Object>> subDimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
-
-            if (subDimensions != null) {
-
-                /* Fetch codes for each sub-dimension. */
-                for (Map<String, Object> m : subDimensions) {
-
-                    /* Define options to fetch codes. */
-                    MetadataBean subDimensionOptions = new MetadataBean();
-                    subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
-                    subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
-                    subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
-                    subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
-                    JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
-
-                    /* Iterate over codes. */
-                    while (subDimensionIterable.hasNext()) {
-                        row = createCode(subDimensionIterable.nextMap());
-                        row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
-                        row.put("subdimension_ord", m.get("TabOrder").toString());
-                        row.put("subdimension_label", m.get("TabName").toString());
-                        log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(o.getBlackList()).contains(row.get("code").toString().toUpperCase())).append("\n");
-                        if (isAdmissibleCode(row, o))
-                            codes.add(row);
-                    }
-
-                }
-
-            } else {
-
-                /* Fetch codes. */
-                MetadataBean subDimensionOptions = new MetadataBean();
-                subDimensionOptions.addParameter("domain_code", o.getProcedureParameters().get("domain_code"));
-                subDimensionOptions.addParameter("lang", o.getProcedureParameters().get("lang"));
-                subDimensionOptions.addParameter("dimension", dimension.get("ListBoxNo").toString());
-                subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
-                JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
-                while (subDimensionIterable.hasNext()) {
-                    row = createCode(subDimensionIterable.nextMap());
-                    if (isAdmissibleCode(row, o))
-                        codes.add(row);
-                }
-
-            }
-
-            /* Add children. */
-            for (Map<String, Object> c1 : codes) {
-                if (c1.get("parent") != null) {
-                    for (Map<String, Object> c2 : codes) {
-                        if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
-                            ((ArrayList<Map<String, Object>>)c2.get("children")).add(c1);
-                        }
-                    }
-                }
-            }
-
-            /* Group subdimensions, if required. */
-            final List<Map<String, Object>> output = new ArrayList<>();
-            if (group_subdimensions) {
-
-                /* Prepare output. */
-                for (Map<String, Object> m : subDimensions) {
-                    Map<String, Object> subdimension = new HashMap<>();
-                    subdimension.put("metadata", new HashMap<String, Object>());
-                    subdimension.put("data", new ArrayList<HashMap<String, Object>>());
-                    output.add(subdimension);
-                }
-
-                /* Group codes. */
-                String current_id = codes.get(0).get("subdimension_id").toString();
-                String current_ord = codes.get(0).get("subdimension_ord").toString();
-                String current_label = codes.get(0).get("subdimension_label").toString();
-                int current_idx = 0;
-                for (int i = 0; i < codes.size(); i += 1) {
-
-                    /* Current code. */
-                    Map<String, Object> c = codes.get(i);
-
-                    if (c.get("subdimension_id").toString().equalsIgnoreCase(current_id)) {
-                        ((ArrayList<Map<String, Object>>)output.get(current_idx).get("data")).add(c);
-                    } else {
-
-                        /* Write metadata. */
-                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("id", current_id);
-                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("ord", current_ord);
-                        ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("label", current_label);
-
-                        /* Reset parameters. */
-                        current_id = codes.get(i).get("subdimension_id").toString();
-                        current_ord = codes.get(i).get("subdimension_ord").toString();
-                        current_label = codes.get(i).get("subdimension_label").toString();
-                        current_idx += 1;
-                        ((ArrayList<Map<String, Object>>)output.get(current_idx).get("data")).add(c);
-
-                    }
-                }
-
-                /* Write metadata for the last iteration. */
-                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("id", current_id);
-                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("ord", current_ord);
-                ((HashMap<String, Object>)output.get(current_idx).get("metadata")).put("label", current_label);
-
-            } else {
-                output.addAll(codes);
-            }
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
             /* Initiate the output stream. */
             return new StreamingOutput() {
@@ -797,31 +655,34 @@ public class StreamBuilder {
                     /* Initiate the output. */
                     writer.write("{");
 
-                    /* Add procedure parameter to the metadata. */
-                    o.addParameter("parameter", structuredDimensions.get(0).get("parameter").toString());
-
-                    /* Statistics. */
-                    long tf = System.currentTimeMillis();
-                    o.setProcessingTime(tf - t0);
-
                     /* Add metadata. */
-                    writer.write(createMetadata(o));
+                    writer.write(createMetadata(metadataBean));
 
                     /* Initiate the array. */
-                    writer.write("\"data\": ");
+                    writer.write("\"data\": [");
 
                     /* Generate an array of objects of arrays. */
-                    switch (o.getOutputType()) {
+                    switch (out.getMetadata().getOutputType()) {
 
                         case ARRAYS:
-                            writer.write("[\"The 'arrays' output type is not yet available for this service. We apologize for any inconvenience.\"]");
+                            while (out.getData().hasNextList()) {
+                                writer.write(out.getData().nextJSONList());
+                                if (out.getData().hasNextList())
+                                    writer.write(",");
+                            }
                             break;
                         default:
-                            Gson g = new Gson();
-                            writer.write(g.toJson(output));
+                            while (out.getData().hasNext()) {
+                                writer.write(out.getData().nextJSON());
+                                if (out.getData().hasNext())
+                                    writer.write(",");
+                            }
                             break;
 
                     }
+
+                    /* Close the array. */
+                    writer.write("]");
 
                     /* Close the object. */
                     writer.write("}");
@@ -829,18 +690,23 @@ public class StreamBuilder {
                     /* Flush the writer. */
                     writer.flush();
 
+                    /* Close the writer. */
+                    writer.close();
+
                 }
 
             };
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new StreamingOutput() {
                 @Override
                 public void write(OutputStream os) throws IOException, WebApplicationException {
-                    log.append("\n\n\nEXCEPTION!");
                     Writer writer = new BufferedWriter(new OutputStreamWriter(os));
                     writer.write(log.toString());
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
                     writer.flush();
+                    writer.close();
                 }
             };
         }
@@ -943,75 +809,6 @@ public class StreamBuilder {
 
     }
 
-    private List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, MetadataBean o) {
-
-        /* Initiate DSD. */
-        List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
-        JDBCIterable i;
-
-        try {
-
-            /* Query DB. */
-            i = getJDBCIterable("data_structure", datasourceBean, o);
-
-            /* Iterate over results. */
-            while (i.hasNext()) {
-
-                Map<String, Object> row = i.nextMap();
-
-                /* Create descriptors for code and label columns. */
-                if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
-                    Map<String, Object> codeCol = new HashMap<>();
-                    codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
-                    codeCol.put("label", row.get("CodeName"));
-                    codeCol.put("type", "code");
-                    codeCol.put("key", row.get("CodeName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
-                        codeCol.put("dimension_id", row.get("VarTypeGroup") + "group");
-                    dsd.add(codeCol);
-                    Map<String, Object> labelCol = new HashMap<>();
-                    labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
-                    labelCol.put("label", row.get("ColName"));
-                    labelCol.put("type", "label");
-                    labelCol.put("key", row.get("ColName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
-                        labelCol.put("dimension_id", row.get("VarTypeGroup") + "group");
-                    dsd.add(labelCol);
-                }
-
-                /* Create descriptor for the unit. */
-                if (row.get("Col").toString().equalsIgnoreCase("Unit")) {
-                    Map<String, Object> unitCol = new HashMap<>();
-                    unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
-                    unitCol.put("label", row.get("ColName").toString());
-                    unitCol.put("type", "unit");
-                    unitCol.put("key", row.get("ColName").toString());
-                    unitCol.put("dimension_id", "unit");
-                    dsd.add(unitCol);
-                }
-
-                /* Create descriptor for the value. */
-                if (row.get("Col").toString().equalsIgnoreCase("Value")) {
-                    Map<String, Object> valueCol = new HashMap<>();
-                    valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
-                    valueCol.put("label", row.get("ColName").toString());
-                    valueCol.put("type", "value");
-                    valueCol.put("key", row.get("ColName").toString());
-                    valueCol.put("dimension_id", "value");
-                    dsd.add(valueCol);
-                }
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        /* Return DSD. */
-        return dsd;
-
-    }
-
     private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
 
         /* Query the DB. */
@@ -1045,31 +842,6 @@ public class StreamBuilder {
         /* Return output. */
         return dimensions;
 
-    }
-
-    private List<Map<String, Object>> organizeDomainDimensions(List<List<Map<String, Object>>> dimensions) {
-        List<Map<String, Object>> out = new ArrayList<>();
-        List<String> idsBuffer = new ArrayList<>();
-        for (List<Map<String, Object>> dimension : dimensions) {
-            Map<String, Object> tmp = new HashMap<>();
-            if (!idsBuffer.contains(dimension.get(0).get("VarTypeGroup") + "group")) {
-                idsBuffer.add(dimension.get(0).get("VarTypeGroup") + "group");
-                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group");
-            } else {
-                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group2");
-            }
-            tmp.put("ord", dimension.get(0).get("ListBoxNo"));
-            tmp.put("label", "TODO");
-            tmp.put("description", "TODO");
-            tmp.put("parameter", "@List" + dimension.get(0).get("ListBoxNo") + "Codes");
-            tmp.put("href", "/codes/" + dimension.get(0).get("VarTypeGroup") + "group/");
-            tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
-            for (Map<String, Object> subdimension : dimension) {
-                ((ArrayList)tmp.get("subdimensions")).add(subdimension);
-            }
-            out.add(tmp);
-        }
-        return out;
     }
 
     private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
@@ -1125,81 +897,12 @@ public class StreamBuilder {
         return sb.toString();
     }
 
-    private Map<String, Object> createCode(Map<String, Object> dbRow) {
-        Map<String, Object> code = new HashMap<>();
-        code.put("code", dbRow.get("Code"));
-        code.put("label", dbRow.get("Label"));
-        code.put("ord", dbRow.get("Order"));
-        code.put("parent", dbRow.get("Parent"));
-        code.put("description", "TODO");
-        code.put("aggregate_type", dbRow.get("AggregateType"));
-        code.put("children", new ArrayList<Map<String, Object>>());
-        return code;
-    }
-
-    private boolean isAdmissibleCode(Map<String, Object> row, MetadataBean o) {
-
-        /* Check wheter the code is a list. */
-        if (row.get("aggregate_type").equals(">")) {
-            return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
-        } else {
-
-            /* Check the blacklist. */
-            if (o.getBlackList() != null && o.getBlackList().size() > 0) {
-                if (o.getBlackList().contains(row.get("code").toString())) {
-                    return false;
-                }
-            }
-
-            /* Check the whitelist. */
-            if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
-                if (!o.getWhiteList().contains(row.get("code").toString())) {
-                    return false;
-                }
-            }
-
-        }
-
-        /* Return. */
-        return true;
-
-    }
-
-    private boolean isAdmissibleDBRow(Map<String, Object> row, MetadataBean o) {
-
-        /* Check the blacklist. */
-        if (o.getBlackList() != null && o.getBlackList().size() > 0) {
-            if (o.getBlackList().contains(row.get("code").toString().toUpperCase())) {
-                return false;
-            }
-        }
-
-        /* Check the whitelist. */
-        if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
-            if (!o.getWhiteList().contains(row.get("code").toString().toUpperCase())) {
-                return false;
-            }
-        }
-
-        /* Return. */
-        return true;
-
-    }
-
     public QUERIES getQueries() {
         return queries;
     }
 
     public void setQueries(QUERIES queries) {
         this.queries = queries;
-    }
-
-    public Gson getG() {
-        return g;
-    }
-
-    public void setG(Gson g) {
-        this.g = g;
     }
 
 }
