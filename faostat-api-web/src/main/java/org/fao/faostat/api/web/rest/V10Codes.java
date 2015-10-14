@@ -359,13 +359,7 @@ import javax.ws.rs.core.StreamingOutput;
 @Component
 @Path("/v1.0/{lang}/codes/{id}/{domain_code}")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Codes {
-
-    private MetadataBean o;
-
-    public V10Codes() {
-        this.setO(new MetadataBean());
-    }
+public class V10Codes extends V10 {
 
     @GET
     public Response getDimensions(@PathParam("lang") String lang,
@@ -387,18 +381,19 @@ public class V10Codes {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Store user preferences. */
-        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
-        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
-        this.getO().addParameter("domain_code", domain_code);
-        this.getO().addParameter("id", id);
-        this.getO().addParameter("show_lists", String.valueOf(show_lists));
-        this.getO().addParameter("show_full_metadata", String.valueOf(show_full_metadata));
-        this.getO().addParameter("subdimensions", subdimensions);
-        this.getO().addParameter("whitelist", whitelist);
-        this.getO().addParameter("blacklist", blacklist);
-        this.getO().addParameter("group_subdimensions", String.valueOf(group_subdimensions));
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("id", id);
+        metadataBean.addParameter("show_lists", String.valueOf(show_lists));
+        metadataBean.addParameter("show_full_metadata", String.valueOf(show_full_metadata));
+        metadataBean.addParameter("subdimensions", subdimensions);
+        metadataBean.addParameter("whitelist", whitelist);
+        metadataBean.addParameter("blacklist", blacklist);
+        metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
 
         /* Query the DB and return the results. */
         try {
@@ -407,10 +402,10 @@ public class V10Codes {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createCodesOutputStream(datasourceBean, this.getO());
+            StreamingOutput stream = sb.createCodesOutputStream(datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -419,14 +414,6 @@ public class V10Codes {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-    }
-
-    public void setO(MetadataBean o) {
-        this.o = o;
-    }
-
-    public MetadataBean getO() {
-        return o;
     }
 
 }

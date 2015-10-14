@@ -345,7 +345,6 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -361,12 +360,6 @@ import javax.ws.rs.core.StreamingOutput;
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Abbreviations {
 
-    private MetadataBean o;
-
-    public V10Abbreviations() {
-        this.setO(new MetadataBean());
-    }
-
     @GET
     public Response getAbbreviations(@PathParam("lang") String lang,
                                      @QueryParam("datasource") String datasource,
@@ -378,14 +371,15 @@ public class V10Abbreviations {
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
-        /* Datasource bean. */
-        DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
-
         /* Store user preferences. */
-        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
         /* Store procedure parameters. */
-        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
 
         /* Query the DB and return the results. */
         try {
@@ -394,7 +388,7 @@ public class V10Abbreviations {
             StreamBuilder sb = new StreamBuilder();
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, this.getO());
+            StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -403,14 +397,6 @@ public class V10Abbreviations {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-    }
-
-    public void setO(MetadataBean o) {
-        this.o = o;
-    }
-
-    public MetadataBean getO() {
-        return o;
     }
 
 }

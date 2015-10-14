@@ -345,7 +345,6 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -361,12 +360,6 @@ import javax.ws.rs.core.StreamingOutput;
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Dimensions {
 
-    private MetadataBean o;
-
-    public V10Dimensions() {
-        this.setO(new MetadataBean());
-    }
-
     @GET
     public Response getDimensions(@PathParam("lang") String lang,
                                   @PathParam("domain_code") String domain_code,
@@ -379,11 +372,12 @@ public class V10Dimensions {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Store user preferences. */
-        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
-        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
-        this.getO().addParameter("domain_code", domain_code);
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
 
         /* Query the DB and return the results. */
         try {
@@ -392,10 +386,10 @@ public class V10Dimensions {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createDimensionOutputStream("dimensions", datasourceBean, this.getO());
+            StreamingOutput stream = sb.createDimensionOutputStream("dimensions", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -404,14 +398,6 @@ public class V10Dimensions {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-    }
-
-    public void setO(MetadataBean o) {
-        this.o = o;
-    }
-
-    public MetadataBean getO() {
-        return o;
     }
 
 }

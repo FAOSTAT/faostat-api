@@ -345,7 +345,6 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -361,12 +360,6 @@ import javax.ws.rs.core.StreamingOutput;
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Units {
 
-    private MetadataBean o;
-
-    public V10Units() {
-        this.setO(new MetadataBean());
-    }
-
     @GET
     public Response getUnits(@PathParam("lang") String lang,
                              @QueryParam("datasource") String datasource,
@@ -379,10 +372,11 @@ public class V10Units {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Store user preferences. */
-        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
-        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
 
         /* Query the DB and return the results. */
         try {
@@ -391,10 +385,10 @@ public class V10Units {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("units", datasourceBean, this.getO());
+            StreamingOutput stream = sb.createOutputStream("units", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -403,14 +397,6 @@ public class V10Units {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-    }
-
-    public void setO(MetadataBean o) {
-        this.o = o;
-    }
-
-    public MetadataBean getO() {
-        return o;
     }
 
 }

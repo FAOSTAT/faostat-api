@@ -345,7 +345,6 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -361,12 +360,6 @@ import java.util.List;
 @Path("/v1.0/{lang}/data")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Data {
-
-    private MetadataBean o;
-
-    public V10Data() {
-        this.setO(new MetadataBean());
-    }
 
     @GET
     public Response getData(@PathParam("lang") String lang,
@@ -393,23 +386,24 @@ public class V10Data {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Store user preferences. */
-        this.getO().storeUserOptions(datasource, api_key, client_key, output_type);
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
-        this.getO().addParameter("lang", faostatapiCore.iso2faostat(lang));
-        this.getO().addParameter("domain_code", domain_code);
-        this.getO().addParameter("list_1_codes", list_1_codes);
-        this.getO().addParameter("list_2_codes", list_2_codes);
-        this.getO().addParameter("list_3_codes", list_3_codes);
-        this.getO().addParameter("list_4_codes", list_4_codes);
-        this.getO().addParameter("list_5_codes", list_5_codes);
-        this.getO().addParameter("list_6_codes", list_6_codes);
-        this.getO().addParameter("list_7_codes", list_7_codes);
-        this.getO().addParameter("null_values", null_values);
-        this.getO().addParameter("thousand_separator", thousand_separator);
-        this.getO().addParameter("decimal_separator", decimal_separator);
-        this.getO().addParameter("decimal_places", decimal_places);
-        this.getO().addParameter("limit", limit);
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("list_1_codes", list_1_codes);
+        metadataBean.addParameter("list_2_codes", list_2_codes);
+        metadataBean.addParameter("list_3_codes", list_3_codes);
+        metadataBean.addParameter("list_4_codes", list_4_codes);
+        metadataBean.addParameter("list_5_codes", list_5_codes);
+        metadataBean.addParameter("list_6_codes", list_6_codes);
+        metadataBean.addParameter("list_7_codes", list_7_codes);
+        metadataBean.addParameter("null_values", null_values);
+        metadataBean.addParameter("thousand_separator", thousand_separator);
+        metadataBean.addParameter("decimal_separator", decimal_separator);
+        metadataBean.addParameter("decimal_places", decimal_places);
+        metadataBean.addParameter("limit", limit);
 
         /* Query the DB and return the results. */
         try {
@@ -418,10 +412,10 @@ public class V10Data {
             StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(this.getO().getDatasource());
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createDataOutputStream(datasourceBean, this.getO());
+            StreamingOutput stream = sb.createDataOutputStream(datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
@@ -430,14 +424,6 @@ public class V10Data {
             return Response.status(500).entity(e).build();
         }
 
-    }
-
-    public void setO(MetadataBean o) {
-        this.o = o;
-    }
-
-    public MetadataBean getO() {
-        return o;
     }
 
 }

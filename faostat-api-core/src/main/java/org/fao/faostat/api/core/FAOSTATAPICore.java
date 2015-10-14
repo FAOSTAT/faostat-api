@@ -448,7 +448,7 @@ public class FAOSTATAPICore {
                     currentList = tmp.get(i).get("ListBoxNo").toString();
                     group = new HashMap<>();
                     group.put("ord", Integer.parseInt(currentList));
-                    group.put("@parameter", "List" + currentList + "Codes");
+                    group.put("parameter", "@List" + currentList + "Codes");
                     group.put("id", tmp.get(i).get("VarTypeGroup").toString() + "group");
                     group.put("href", "/codes/" + tmp.get(i).get("VarTypeGroup").toString() + "group/");
                     group.put("subdimensions", new ArrayList<Map<String, Object>>());
