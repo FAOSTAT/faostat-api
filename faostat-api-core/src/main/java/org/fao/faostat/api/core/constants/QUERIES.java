@@ -371,7 +371,7 @@ public class QUERIES {
         this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
     }
 
-    public String getQuery(String id, Map<String, Object> procedureParameters) throws Exception {
+    public String getQuery(String id, Map<String, Object> procedureParameters) {
         try {
             String query = this.getQueries().get(id.toLowerCase());
             for (String key : procedureParameters.keySet()) {
@@ -401,7 +401,8 @@ public class QUERIES {
             }
             return query;
         } catch (Exception e) {
-            throw e;
+            e.printStackTrace();
+            return null;
         }
     }
 

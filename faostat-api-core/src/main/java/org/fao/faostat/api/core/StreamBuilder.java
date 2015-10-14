@@ -617,28 +617,28 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createCodesOutputStream(DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
+    public StreamingOutput createCodesOutputStream(final DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
         /* Log. */
         final StringBuilder log = new StringBuilder();
 
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
         try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
             /* Initiate the output stream. */
             return new StreamingOutput() {
 
                 @Override
                 public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate core library. */
+                    log.append("StreamBuilder\t").append("initiate api...").append("\n");
+                    FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+                    log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+
+                    /* Query FAOSTAT. */
+                    log.append("StreamBuilder\t").append("initiate output...").append("\n");
+                    final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
+                    log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
                     /* Initiate the buffer writer. */
                     Writer writer = new BufferedWriter(new OutputStreamWriter(os));

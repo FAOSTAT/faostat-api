@@ -365,14 +365,16 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     private int columns;
 
-    public void query(DatasourceBean db, String sql) throws Exception {
+    public void query(DatasourceBean db, String sql) {
         DRIVER d = DRIVER.valueOf(db.getDriver().toUpperCase());
         switch (d) {
             case SQLSERVER2000:
-                querySQLServer(db, sql);
+                try {
+                    querySQLServer(db, sql);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
-            default:
-                throw new Exception(db.getDriver().toUpperCase() + " driver has not been implemented (yet).");
         }
     }
 
@@ -387,17 +389,6 @@ public class JDBCIterable implements Iterator<List<String>> {
         this.setResultSet(this.getStatement().getResultSet());
 
         this.setColumns(this.getResultSet().getMetaData().getColumnCount());
-
-    }
-
-    public void queryMySQL(DatasourceBean db, String sql) throws IOException, InstantiationException, SQLException, ClassNotFoundException {
-
-        /* Open connections. */
-        Class.forName("com.mysql.jdbc.Driver");
-        this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
-        this.setStatement(this.getConnection().createStatement());
-        this.getStatement().executeQuery(sql);
-        this.setResultSet(this.getStatement().getResultSet());
 
     }
 
