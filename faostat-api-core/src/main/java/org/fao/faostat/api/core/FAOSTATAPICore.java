@@ -576,7 +576,7 @@ public class FAOSTATAPICore {
             while (i.hasNext()) {
                 Map<String, Object> dbRow = i.nextMap();
                 if (isAdmissibleDBRow(dbRow, out.getMetadata()))
-                    out.getData().add(i.nextMap());
+                    out.getData().add(dbRow);
             }
             log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
 
