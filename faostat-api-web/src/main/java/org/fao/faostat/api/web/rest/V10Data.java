@@ -361,25 +361,25 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Data {
 
-    @GET
+    @POST
     public Response getData(@PathParam("lang") String lang,
-                            @QueryParam("domain_code") String domain_code,
-                            @QueryParam("datasource") String datasource,
-                            @QueryParam("api_key") String api_key,
-                            @QueryParam("client_key") String client_key,
-                            @QueryParam("output_type") String output_type,
-                            @QueryParam("list_1_codes") List<String> list_1_codes,
-                            @QueryParam("list_2_codes") List<String> list_2_codes,
-                            @QueryParam("list_3_codes") List<String> list_3_codes,
-                            @QueryParam("list_4_codes") List<String> list_4_codes,
-                            @QueryParam("list_5_codes") List<String> list_5_codes,
-                            @QueryParam("list_6_codes") List<String> list_6_codes,
-                            @QueryParam("list_7_codes") List<String> list_7_codes,
-                            @QueryParam("null_values") boolean null_values,
-                            @QueryParam("thousand_separator") String thousand_separator,
-                            @QueryParam("decimal_separator") String decimal_separator,
-                            @QueryParam("decimal_places") int decimal_places,
-                            @QueryParam("limit") int limit) {
+                            @FormParam("domain_code") String domain_code,
+                            @FormParam("datasource") String datasource,
+                            @FormParam("api_key") String api_key,
+                            @FormParam("client_key") String client_key,
+                            @FormParam("output_type") String output_type,
+                            @FormParam("List1Codes") List<String> list_1_codes,
+                            @FormParam("List2Codes") List<String> list_2_codes,
+                            @FormParam("List3Codes") List<String> list_3_codes,
+                            @FormParam("List4Codes") List<String> list_4_codes,
+                            @FormParam("List5Codes") List<String> list_5_codes,
+                            @FormParam("List6Codes") List<String> list_6_codes,
+                            @FormParam("List7Codes") List<String> list_7_codes,
+                            @FormParam("null_values") boolean null_values,
+                            @FormParam("thousand_separator") String thousand_separator,
+                            @FormParam("decimal_separator") String decimal_separator,
+                            @FormParam("decimal_places") int decimal_places,
+                            @FormParam("limit") int limit) {
 
 
         /* Init Core library. */
@@ -392,13 +392,13 @@ public class V10Data {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
-        metadataBean.addParameter("list_1_codes", list_1_codes);
-        metadataBean.addParameter("list_2_codes", list_2_codes);
-        metadataBean.addParameter("list_3_codes", list_3_codes);
-        metadataBean.addParameter("list_4_codes", list_4_codes);
-        metadataBean.addParameter("list_5_codes", list_5_codes);
-        metadataBean.addParameter("list_6_codes", list_6_codes);
-        metadataBean.addParameter("list_7_codes", list_7_codes);
+        metadataBean.addParameter("List1Codes", list_1_codes);
+        metadataBean.addParameter("List2Codes", list_2_codes);
+        metadataBean.addParameter("List3Codes", list_3_codes);
+        metadataBean.addParameter("List4Codes", list_4_codes);
+        metadataBean.addParameter("List5Codes", list_5_codes);
+        metadataBean.addParameter("List6Codes", list_6_codes);
+        metadataBean.addParameter("List7Codes", list_7_codes);
         metadataBean.addParameter("null_values", null_values);
         metadataBean.addParameter("thousand_separator", thousand_separator);
         metadataBean.addParameter("decimal_separator", decimal_separator);

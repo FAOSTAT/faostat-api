@@ -429,7 +429,7 @@ public class FAOSTATAPICore {
             String currentList = tmp.get(0).get("ListBoxNo").toString();
             Map<String, Object> group = new HashMap<>();
             group.put("ord", Integer.parseInt(currentList));
-            group.put("parameter", "@List" + currentList + "Codes");
+            group.put("parameter", "List" + currentList + "Codes");
             group.put("id", tmp.get(0).get("VarTypeGroup").toString() + "group");
             group.put("href", "/codes/" + tmp.get(0).get("VarTypeGroup").toString() + "group/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
@@ -441,14 +441,14 @@ public class FAOSTATAPICore {
                     m.put("description", tmp.get(i).get("TabName").toString());
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-                    m.put("parameter", "@List" + currentList + "Codes");
+                    m.put("parameter", "List" + currentList + "Codes");
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
                     output.add(group);
                     currentList = tmp.get(i).get("ListBoxNo").toString();
                     group = new HashMap<>();
                     group.put("ord", Integer.parseInt(currentList));
-                    group.put("parameter", "@List" + currentList + "Codes");
+                    group.put("parameter", "List" + currentList + "Codes");
                     group.put("id", tmp.get(i).get("VarTypeGroup").toString() + "group");
                     group.put("href", "/codes/" + tmp.get(i).get("VarTypeGroup").toString() + "group/");
                     group.put("subdimensions", new ArrayList<Map<String, Object>>());
@@ -458,7 +458,7 @@ public class FAOSTATAPICore {
                     m.put("description", tmp.get(i).get("TabName").toString());
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-                    m.put("parameter", "@List" + currentList + "Codes");
+                    m.put("parameter", "List" + currentList + "Codes");
                     ((ArrayList<Map<String, Object>>)group.get("subdimensions")).add(m);
                 }
             }
@@ -541,6 +541,7 @@ public class FAOSTATAPICore {
             return out;
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception(log.toString());
         }
 
@@ -847,7 +848,7 @@ public class FAOSTATAPICore {
             tmp.put("ord", dimension.get(0).get("ListBoxNo"));
             tmp.put("label", "TODO");
             tmp.put("description", "TODO");
-            tmp.put("parameter", "@List" + dimension.get(0).get("ListBoxNo") + "Codes");
+            tmp.put("parameter", "List" + dimension.get(0).get("ListBoxNo") + "Codes");
             tmp.put("href", "/codes/" + dimension.get(0).get("VarTypeGroup") + "group/");
             tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (Map<String, Object> subdimension : dimension) {

@@ -800,9 +800,8 @@
         "fr": "",
         "es": ""
       },
-      "type": "object",
-      "propertyOrder": 4,
-      "$ref": "#/definitions/OjCodeList"
+      "type": "string",
+      "propertyOrder": 4
     },
     "languageDetails": {
       "title": "Language details",
@@ -876,9 +875,8 @@
         "fr": "",
         "es": ""
       },
-      "type": "object",
-      "propertyOrder": 7,
-      "$ref": "#/definitions/OjCodeList"
+      "type": "string",
+      "propertyOrder": 7
     },
     "metadataStandardName": {
       "title": "Used metadata standard",
@@ -925,9 +923,8 @@
         "fr": "",
         "es": ""
       },
-      "type": "object",
-      "propertyOrder": 10,
-      "$ref": "#/definitions/OjCodeList"
+      "type": "string",
+      "propertyOrder": 10
     },
     "contacts": {
       "title": "Contact(s)",
@@ -1194,9 +1191,8 @@
                     "fr": "",
                     "es": ""
                   },
-                  "type": "object",
-                  "propertyOrder": 3,
-                  "$ref": "#/definitions/OjCodeList"
+                  "type": "string",
+                  "propertyOrder": 3
                 },
                 "embargoTime": {
                   "title": "Embargo time",
@@ -1345,9 +1341,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 3,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 3
             }
           }
         }
@@ -1518,9 +1513,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 3,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 3
             },
             "referenceArea": {
               "title": "Area of reference",
@@ -1535,9 +1529,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 4,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 4
             }
           }
         },
@@ -1570,9 +1563,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 1,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 1
             },
             "coverageSectorsDetails": {
               "title": "Main sector(s)",
@@ -1625,9 +1617,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 4,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 4
             }
           }
         },
@@ -2206,9 +2197,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 2,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 2
             }
           }
         },
@@ -2382,9 +2372,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 1,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 1
             },
             "projectionName": {
               "title": "Name of projection",
@@ -2781,9 +2770,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 1,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 1
             },
             "ellipsoidName": {
               "title": "Name of elliosoid",
@@ -2904,9 +2892,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 1,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 1
             },
             "datumName": {
               "title": "Name of datum",
@@ -3034,9 +3021,8 @@
             "fr": "",
             "es": ""
           },
-          "type": "object",
-          "propertyOrder": 2,
-          "$ref": "#/definitions/OjCodeList"
+          "type": "string",
+          "propertyOrder": 2
         },
         "processing": {
           "title": "Processing",
@@ -3051,9 +3037,8 @@
             "fr": "",
             "es": ""
           },
-          "type": "object",
-          "propertyOrder": 3,
-          "$ref": "#/definitions/OjCodeList"
+          "type": "string",
+          "propertyOrder": 3
         },
         "noDataValue": {
           "title": "Value assigned to No-data",
@@ -3279,9 +3264,8 @@
                     "fr": "",
                     "es": ""
                   },
-                  "type": "object",
-                  "propertyOrder": 1,
-                  "$ref": "#/definitions/OjCodeList"
+                  "type": "string",
+                  "propertyOrder": 1
                 },
                 "geometricObjects": {
                   "title": "Geometric object",
@@ -3383,9 +3367,8 @@
                     "fr": "",
                     "es": ""
                   },
-                  "type": "object",
-                  "propertyOrder": 2,
-                  "$ref": "#/definitions/OjCodeList"
+                  "type": "string",
+                  "propertyOrder": 2
                 },
                 "samplingProcedure": {
                   "title": "Sampling procedure",
@@ -3442,9 +3425,8 @@
                     "fr": "",
                     "es": ""
                   },
-                  "type": "object",
-                  "propertyOrder": 5,
-                  "$ref": "#/definitions/OjCodeList"
+                  "type": "string",
+                  "propertyOrder": 5
                 }
               }
             },
@@ -3477,9 +3459,8 @@
                     "fr": "",
                     "es": ""
                   },
-                  "type": "object",
-                  "propertyOrder": 1,
-                  "$ref": "#/definitions/OjCodeList"
+                  "type": "string",
+                  "propertyOrder": 1
                 },
                 "organization": {
                   "title": "Organization",
@@ -3656,9 +3637,8 @@
                 "fr": "",
                 "es": ""
               },
-              "type": "object",
-              "propertyOrder": 5,
-              "$ref": "#/definitions/OjCodeList"
+              "type": "string",
+              "propertyOrder": 5
             },
             "dataAdjustmentDetails": {
               "title": "Details on process of adjustment",
