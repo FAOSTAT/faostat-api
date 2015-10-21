@@ -89,3 +89,19 @@ body {
   max-height: 190px;
   overflow-y: auto;
 }
+
+.bs-docs-section {
+  margin-bottom: 0 !important;
+}
+
+.bs-docs-sidebar .nav .nav>li>a {
+  padding-right: 0 !important;
+}
+
+.bs-docs-sidebar {
+  padding-left: 0 !important;
+}
+
+#menu_holder {
+  padding-left: 0 !important;
+}

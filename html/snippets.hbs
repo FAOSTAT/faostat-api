@@ -2,31 +2,52 @@
 <script type='text/x-handlebars-template' id='introduction_output_structure_out_content'>
 {
     "metadata":{
-        "datasource":"faostat",
-        "output_type":"objects",
-        "api_key":"YOUR_API_KEY",
-        "client_key":"YOUR_CLIENT_KEY",
-        "parameters":[
-            {
-                "group_code":"q"
-            },
-            {
-                "blacklist":"null"
-            },
-            {
-                "lang":"E"
-            },
-            {
-                "whitelist":"null"
-            }
-        ]
+        "processing_time":12,
+        "datasource":"PRODUCTION",
+        "output_type":"OBJECTS",
+        "api_key":"null",
+        "client_key":"null",
+        "parameters":{
+            "group_code":"q",
+            "lang":"E"
+        }
     },
     "data":[
         {
-            "code":"AS",
-            "label":"ASTI R&D Indicators"
+            "ord":"110",
+            "label":"Crops",
+            "code":"QC"
         },
-        ...
+        {
+            "ord":"120",
+            "label":"Crops processed",
+            "code":"QD"
+        },
+        {
+            "ord":"130",
+            "label":"Live Animals",
+            "code":"QA"
+        },
+        {
+            "ord":"140",
+            "label":"Livestock Primary",
+            "code":"QL"
+        },
+        {
+            "ord":"150",
+            "label":"Livestock Processed",
+            "code":"QP"
+        },
+        {
+            "ord":"160",
+            "label":"Production Indices",
+            "code":"QI"
+        },
+        {
+            "ord":"170",
+            "label":"Value of Agricultural Production",
+            "code":"QV"
+        }
     ]
 }
 </script>
@@ -189,6 +210,106 @@ api.bulkdownloads(config).then(function (response) {
             "filename": "Emissions_Agriculture_Enteric_Fermentation_E_Africa_1.zip",
             "content": "Africa (423 KB)",
             "date": "2014-12-04 16:51:14.283"
+        },
+        ...
+    ]
+}
+</script>
+
+<!-- Abbreviations > IN. -->
+<script type='text/x-handlebars-template' id='abbreviations_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/abbreviations/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='abbreviations_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/abbreviations/
+</script>
+
+<script type='text/x-handlebars-template' id='abbreviations_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.abbreviations({}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Abbreviations > OUT. -->
+<script type='text/x-handlebars-template' id='abbreviations_out'>
+{
+    metadata: {
+        processing_time: 12,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            label: "Arab Authority for Agricultural Investment and Development",
+            code: "AAAID"
+        },
+        ...
+    ]
+}
+</script>
+
+<!-- Classifications > IN. -->
+<script type='text/x-handlebars-template' id='classifications_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/classifications/qc',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='classifications_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/classifications/
+</script>
+
+<script type='text/x-handlebars-template' id='classifications_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.classifications({
+    domain_code: 'qc'
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Classifications > OUT. -->
+<script type='text/x-handlebars-template' id='classifications_out'>
+{
+    metadata: {
+        processing_time: 21,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            domain_code: "QC",
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            description: "Including inter alia: Haiti hemp (Agave foetida); henequen (A. fourcroydes); ixtle, tampico (A. lecheguilla); maguey (A. cantala); pita (A. americana); Salvador hemp (A. letonae). See 789. The leaves of some agave varieties are used for the production of alcoholic beverages, such as aquamiel, mezcal, pulque and tequila.",
+            label: "Agave fibres nes",
+            code: "800"
         },
         ...
     ]

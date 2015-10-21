@@ -37,6 +37,8 @@ define(['jquery',
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
         Handlebars.registerPartial('home', $(templates).filter('#home').html());
         Handlebars.registerPartial('home_groups', $(templates).filter('#home_groups').html());
+        Handlebars.registerPartial('abbreviations', $(templates).filter('#abbreviations').html());
+        Handlebars.registerPartial('classifications', $(templates).filter('#classifications').html());
         Handlebars.registerPartial('home_db_updates', $(templates).filter('#home_db_updates').html());
         Handlebars.registerPartial('home_news', $(templates).filter('#home_news').html());
         Handlebars.registerPartial('home_coming_up', $(templates).filter('#home_coming_up').html());
@@ -79,6 +81,14 @@ define(['jquery',
         editor.setValue($(snippets).filter('#download_bulkdownloads_in_curl').html().trim());
         buffer.push('download_bulkdownloads_in_curl');
 
+        editor = CodeMirror.fromTextArea(document.getElementById('abbreviations_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#abbreviations_in_curl').html().trim());
+        buffer.push('abbreviations_in_curl');
+
+        editor = CodeMirror.fromTextArea(document.getElementById('classifications_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#classifications_in_curl').html().trim());
+        buffer.push('classifications_in_curl');
+
         /* Output snippet. */
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_out').html().trim());
@@ -88,6 +98,12 @@ define(['jquery',
 
         editor = CodeMirror.fromTextArea(document.getElementById('download_bulkdownloads_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#download_bulkdownloads_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('abbreviations_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#abbreviations_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('classifications_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#classifications_out').html().trim());
 
         /* Introduction > Output structure example. */
         editor = CodeMirror.fromTextArea(document.getElementById('introduction_output_structure_out_content'), {lineNumbers: true});
