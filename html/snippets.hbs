@@ -705,3 +705,52 @@ api.domains({
     ]
 }
 </script>
+
+<!-- Glossary > IN. -->
+<script type='text/x-handlebars-template' id='glossary_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/glossary/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='glossary_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/glossary/
+</script>
+
+<script type='text/x-handlebars-template' id='glossary_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.glossary({}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Glossary > OUT. -->
+<script type='text/x-handlebars-template' id='glossary_out'>
+{
+    metadata: {
+        processing_time: 30,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            source: "IPCC. 2006. 2006 IPCC Guidelines for National Greenhouse Gas Inventories, Prepared by the National Greenhouse Gas Inventories Programme, Eggleston H.S., Buendia L., Miwa K., Ngara T. and Tanabe K. (Eds), IGES, Hayama, Japan.",
+            label: "Data on the magnitude of a human activity resulting in emissions or removals taking place during a given period of time. Data on energy use, metal production, land areas, management systems, lime and fertilizer use and waste arisings are examples of activity data.",
+            code: "Activity data"
+        },
+        ...
+    ]
+}
+</script>

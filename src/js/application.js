@@ -44,6 +44,7 @@ define(['jquery',
         Handlebars.registerPartial('data', $(templates).filter('#data').html());
         Handlebars.registerPartial('dimensions', $(templates).filter('#dimensions').html());
         Handlebars.registerPartial('domains', $(templates).filter('#domains').html());
+        Handlebars.registerPartial('glossary', $(templates).filter('#glossary').html());
         Handlebars.registerPartial('home_db_updates', $(templates).filter('#home_db_updates').html());
         Handlebars.registerPartial('home_news', $(templates).filter('#home_news').html());
         Handlebars.registerPartial('home_coming_up', $(templates).filter('#home_coming_up').html());
@@ -110,6 +111,10 @@ define(['jquery',
         editor.setValue($(snippets).filter('#domains_in_curl').html().trim());
         buffer.push('domains_in_curl');
 
+        editor = CodeMirror.fromTextArea(document.getElementById('glossary_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#glossary_in_curl').html().trim());
+        buffer.push('glossary_in_curl');
+
         /* Output snippet. */
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_out').html().trim());
@@ -137,6 +142,9 @@ define(['jquery',
 
         editor = CodeMirror.fromTextArea(document.getElementById('domains_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#domains_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('glossary_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#glossary_out').html().trim());
 
         /* Introduction > Output structure example. */
         editor = CodeMirror.fromTextArea(document.getElementById('introduction_output_structure_out_content'), {lineNumbers: true});
