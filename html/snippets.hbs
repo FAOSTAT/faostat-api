@@ -80,26 +80,22 @@ api.groups({}).then(function (response) {
 <!-- Home > Groups > OUT. -->
 <script type='text/x-handlebars-template' id='home_groups_out'>
 {
-    "metadata":{
-        "datasource":"faostat",
-        "output_type":"objects",
-        "api_key":"YOUR_API_KEY",
-        "client_key":"YOUR_CLIENT_KEY",
-        "parameters":[
-            {
-                "lang":"E"
-            }
-        ]
-    },
-    "data":[
-        {
-            "code":"D",
-            "label":"Food Security",
-            "DomainCode":"HS",
-            "DomainNameE":"Indicators from Household Surveys (gender, area, socioeconomics)",
-            "ord":0
+    metadata: {
+        processing_time: 12,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
         }
-        ...
+    },
+    data: [
+        {
+            label: "ASTI R&D Indicators",
+            code: "AS"
+        },
+            ...
     ]
 }
 </script>
@@ -132,24 +128,23 @@ api.groupsanddomains({}).then(function (response) {
 <!-- Download > Groups and Domains > OUT. -->
 <script type='text/x-handlebars-template' id='download_groupsanddomains_out'>
 {
-    "metadata":{
-        "datasource":"faostat",
-        "output_type":"objects",
-        "api_key":"YOUR_API_KEY",
-        "client_key":"YOUR_CLIENT_KEY",
-        "parameters":[
-            {
-                "lang":"E"
-            }
-        ]
+    metadata: {
+        processing_time: 15,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
+        }
     },
-    "data":[
+    data: [
         {
-            "code":"Q",
-            "label":"Production",
-            "DomainCode":"QC",
-            "DomainNameE":"Crops",
-            "ord":110
+            DomainCode: "HS",
+            DomainNameE: "Indicators from Household Surveys (gender, area, socioeconomics)",
+            ord: "0",
+            label: "Food Security",
+            code: "D"
         },
         ...
     ]
@@ -189,27 +184,24 @@ api.bulkdownloads(config).then(function (response) {
 <!-- Download > Bulk Downloads > OUT. -->
 <script type='text/x-handlebars-template' id='download_bulkdownloads_out'>
 {
-    "metadata": {
-        "datasource": "faostat",
-        "output_type": "objects",
-        "api_key": "YOUR_API_KEY",
-        "client_key": "YOUR_CLIENT_KEY",
-        "parameters": [
-            {
-                "domain_code": "GE"
-            },
-            {
-                "lang": "E"
-            }
-        ]
+    metadata: {
+        processing_time: 32,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            domain_code: "QC",
+            lang: "E"
+        }
     },
-    "data": [
+    data: [
         {
-            "code": "GE",
-            "label": "Emissions - Agriculture\/Enteric Fermentation",
-            "filename": "Emissions_Agriculture_Enteric_Fermentation_E_Africa_1.zip",
-            "content": "Africa (423 KB)",
-            "date": "2014-12-04 16:51:14.283"
+            content: "Afghanistan - Zimbabwe (8,168 KB)",
+            filename: "Production_Crops_E_1.zip",
+            label: "Production/Crops",
+            code: "QC",
+            date: "2014-09-30 13:08:02.147"
         },
         ...
     ]
@@ -276,7 +268,7 @@ $.ajax({
 </script>
 
 <script type='text/x-handlebars-template' id='classifications_in_curl'>
-curl http://fenixapps2.fao.org/api/v1.0/en/classifications/
+curl http://fenixapps2.fao.org/api/v1.0/en/classifications/qc
 </script>
 
 <script type='text/x-handlebars-template' id='classifications_in_api'>
@@ -310,6 +302,69 @@ api.classifications({
             description: "Including inter alia: Haiti hemp (Agave foetida); henequen (A. fourcroydes); ixtle, tampico (A. lecheguilla); maguey (A. cantala); pita (A. americana); Salvador hemp (A. letonae). See 789. The leaves of some agave varieties are used for the production of alcoholic beverages, such as aquamiel, mezcal, pulque and tequila.",
             label: "Agave fibres nes",
             code: "800"
+        },
+        ...
+    ]
+}
+</script>
+
+<!-- Codes > IN. -->
+<script type='text/x-handlebars-template' id='codes_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/codes/countries/qc',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='codes_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/codes/countries/qc
+</script>
+
+<script type='text/x-handlebars-template' id='codes_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.codes({
+    domain_code: 'qc',
+    id: 'countries'
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Codes > OUT. -->
+<script type='text/x-handlebars-template' id='codes_out'>
+{
+    metadata: {
+        processing_time: 26,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            id: "countries",
+            show_full_metadata: "false",
+            blacklist: "null",
+            domain_code: "qc",
+            subdimensions: "null",
+            lang: "E",
+            group_subdimensions: "false",
+            whitelist: "null",
+            show_lists: "false"
+        }
+    },
+    data: [
+        {
+            description: "TODO",
+            aggregate_type: "0",
+            children: [ ],
+            ord: "0",
+            label: "Afghanistan",
+            code: "2"
         },
         ...
     ]

@@ -33,33 +33,35 @@ define(['jquery',
         Handlebars.registerPartial('introduction_languages', $(templates).filter('#introduction_languages').html());
         Handlebars.registerPartial('introduction_output_structure', $(templates).filter('#introduction_output_structure').html());
         Handlebars.registerPartial('introduction_http_codes', $(templates).filter('#introduction_http_codes').html());
+        Handlebars.registerPartial('javascript_client', $(templates).filter('#javascript_client').html());
         Handlebars.registerPartial('table_headers', $(templates).filter('#table_headers').html());
         Handlebars.registerPartial('table_commons', $(templates).filter('#table_commons').html());
-        Handlebars.registerPartial('home', $(templates).filter('#home').html());
+        //Handlebars.registerPartial('home', $(templates).filter('#home').html());
         Handlebars.registerPartial('home_groups', $(templates).filter('#home_groups').html());
         Handlebars.registerPartial('abbreviations', $(templates).filter('#abbreviations').html());
         Handlebars.registerPartial('classifications', $(templates).filter('#classifications').html());
+        Handlebars.registerPartial('codes', $(templates).filter('#codes').html());
         Handlebars.registerPartial('home_db_updates', $(templates).filter('#home_db_updates').html());
         Handlebars.registerPartial('home_news', $(templates).filter('#home_news').html());
         Handlebars.registerPartial('home_coming_up', $(templates).filter('#home_coming_up').html());
-        Handlebars.registerPartial('download', $(templates).filter('#download').html());
+        //Handlebars.registerPartial('download', $(templates).filter('#download').html());
         Handlebars.registerPartial('download_groups_domains', $(templates).filter('#download_groups_domains').html());
         Handlebars.registerPartial('download_metadata', $(templates).filter('#download_metadata').html());
         Handlebars.registerPartial('download_bulk', $(templates).filter('#download_bulk').html());
         Handlebars.registerPartial('download_filters', $(templates).filter('#download_filters').html());
-        Handlebars.registerPartial('download_codelists', $(templates).filter('#download_codelists').html());
+        //Handlebars.registerPartial('download_codelists', $(templates).filter('#download_codelists').html());
         Handlebars.registerPartial('download_data', $(templates).filter('#download_data').html());
-        Handlebars.registerPartial('standards', $(templates).filter('#standards').html());
+        //Handlebars.registerPartial('standards', $(templates).filter('#standards').html());
         Handlebars.registerPartial('standards_methodologies', $(templates).filter('#standards_methodologies').html());
         Handlebars.registerPartial('standards_methodology', $(templates).filter('#standards_methodology').html());
-        Handlebars.registerPartial('standards_classification', $(templates).filter('#standards_classification').html());
+        //Handlebars.registerPartial('standards_classification', $(templates).filter('#standards_classification').html());
         Handlebars.registerPartial('standards_units', $(templates).filter('#standards_units').html());
         Handlebars.registerPartial('standards_glossary', $(templates).filter('#standards_glossary').html());
-        Handlebars.registerPartial('standards_abbreviations', $(templates).filter('#standards_abbreviations').html());
-        Handlebars.registerPartial('compare', $(templates).filter('#compare').html());
-        Handlebars.registerPartial('search', $(templates).filter('#search').html());
-        Handlebars.registerPartial('analysis', $(templates).filter('#analysis').html());
-        Handlebars.registerPartial('browse', $(templates).filter('#browse').html());
+        //Handlebars.registerPartial('standards_abbreviations', $(templates).filter('#standards_abbreviations').html());
+        //Handlebars.registerPartial('compare', $(templates).filter('#compare').html());
+        //Handlebars.registerPartial('search', $(templates).filter('#search').html());
+        //Handlebars.registerPartial('analysis', $(templates).filter('#analysis').html());
+        //Handlebars.registerPartial('browse', $(templates).filter('#browse').html());
 
         /* Load template. */
         source = $(index).filter('#structure').html();
@@ -89,6 +91,10 @@ define(['jquery',
         editor.setValue($(snippets).filter('#classifications_in_curl').html().trim());
         buffer.push('classifications_in_curl');
 
+        editor = CodeMirror.fromTextArea(document.getElementById('codes_in_curl_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#codes_in_curl').html().trim());
+        buffer.push('codes_in_curl');
+
         /* Output snippet. */
         editor = CodeMirror.fromTextArea(document.getElementById('home_groups_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#home_groups_out').html().trim());
@@ -104,6 +110,9 @@ define(['jquery',
 
         editor = CodeMirror.fromTextArea(document.getElementById('classifications_out_content'), {lineNumbers: true});
         editor.setValue($(snippets).filter('#classifications_out').html().trim());
+
+        editor = CodeMirror.fromTextArea(document.getElementById('codes_out_content'), {lineNumbers: true});
+        editor.setValue($(snippets).filter('#codes_out').html().trim());
 
         /* Introduction > Output structure example. */
         editor = CodeMirror.fromTextArea(document.getElementById('introduction_output_structure_out_content'), {lineNumbers: true});
