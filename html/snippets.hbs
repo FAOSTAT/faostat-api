@@ -653,3 +653,55 @@ api.dimensions({
         ]
     }
 </script>
+
+<!-- Domains > IN. -->
+<script type='text/x-handlebars-template' id='domains_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/domains/q',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='domains_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/domains/q
+</script>
+
+<script type='text/x-handlebars-template' id='domains_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.domains({
+    group_code: 'q'
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Domains > OUT. -->
+<script type='text/x-handlebars-template' id='domains_out'>
+{
+    metadata: {
+        processing_time: 12,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            group_code: "q",
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            ord: "110",
+            label: "Crops",
+            code: "QC"
+        },
+        ...
+    ]
+}
+</script>
