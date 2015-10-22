@@ -754,3 +754,104 @@ api.glossary({}).then(function (response) {
     ]
 }
 </script>
+
+<!-- Methodologies > IN. -->
+<script type='text/x-handlebars-template' id='methodologies_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/methodologies/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='methodologies_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/methodologies/
+</script>
+
+<script type='text/x-handlebars-template' id='methodologies_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.methodologies({}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Methodologies > OUT. -->
+<script type='text/x-handlebars-template' id='methodologies_out'>
+{
+    metadata: {
+        processing_time: 10,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            label: "Agricultural production - Crops primary",
+            code: "4"
+        },
+        ...
+    ]
+}
+</script>
+
+<!-- Methodology > IN. -->
+<script type='text/x-handlebars-template' id='methodology_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/methodologies/4/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='methodology_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/methodologies/4/
+</script>
+
+<script type='text/x-handlebars-template' id='methodology_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.methodology({
+    methodology_code: '4'
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Methodologies > OUT. -->
+<script type='text/x-handlebars-template' id='methodology_out'>
+{
+    metadata: {
+        processing_time: 11,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            methodology_code: "4",
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            estimation: "",
+            coverage: "Crop areas: Figures for crop areas...",
+            collection: "In general, figures have been supplied by governments...",
+            reference: "",
+            note: "Introduction: This data domain contains production data for..."
+        }
+    ]
+}
+</script>
