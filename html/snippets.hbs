@@ -855,3 +855,51 @@ api.methodology({
     ]
 }
 </script>
+
+<!-- Units > IN. -->
+<script type='text/x-handlebars-template' id='units_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/units/',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='units_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/units/
+</script>
+
+<script type='text/x-handlebars-template' id='units_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.units({}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- units > OUT. -->
+<script type='text/x-handlebars-template' id='units_out'>
+{
+    metadata: {
+        processing_time: 12,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            label: "number",
+            code: "#"
+        },
+        ...
+    ]
+}
+</script>
