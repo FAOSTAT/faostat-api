@@ -370,3 +370,286 @@ api.codes({
     ]
 }
 </script>
+
+<!-- Data > IN. -->
+<script type='text/x-handlebars-template' id='data_in_js'>
+$.ajax({
+    type: 'POST',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/data/',
+    data: {
+        domain_code: 'QC',
+        List1Codes: ['2', '8'],
+        List2Codes: ['2510'],
+        List3Codes: ['15'],
+        List4Codes: ['2012', '2011', '2010'],
+        List5Codes: null,
+        List6Codes: null,
+        List7Codes: null,
+        limit: 10,
+        thousand_separator: '.',
+        decimal_separator: ','
+    },
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='data_in_curl'>
+curl -X POST
+     --data="domain_code=QC&List1Codes=2&List1Codes=8&List2Codes=2510&List3Codes=15&List4Codes=2010&List5Codes=null&List6Codes=null&List7Codes=null&limit=10&thousand_separator=,&decimal_separator-."
+    http://fenixapps2.fao.org/api/v1.0/en/data/
+</script>
+
+<script type='text/x-handlebars-template' id='data_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.data({
+    domain_code: 'QC',
+    List1Codes: ['2', '8'],
+    List2Codes: ['2510'],
+    List3Codes: ['15'],
+    List4Codes: ['2012', '2011', '2010'],
+    List5Codes: null,
+    List6Codes: null,
+    List7Codes: null,
+    limit: 10,
+    datasource: 'test',
+    thousand_separator: '.',
+    decimal_separator: ','
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Data > OUT. -->
+<script type='text/x-handlebars-template' id='data_out'>
+{
+    "metadata":{
+        "processing_time":2064,
+        "dsd":[
+            {
+                "index":"2",
+                "label":"Domain Code",
+                "type":"code",
+                "key":"Domain Code"
+            },
+            {
+                "index":"3",
+                "label":"Domain",
+                "type":"label",
+                "key":"Domain"
+            },
+            {
+                "index":"14",
+                "label":"Flag",
+                "type":"code",
+                "key":"Flag"
+            },
+            {
+                "index":"15",
+                "label":"Flag Description",
+                "type":"label",
+                "key":"Flag Description"
+            },
+            {
+                "index":"12",
+                "dimension_id":"unit",
+                "label":"Unit Description",
+                "type":"unit",
+                "key":"Unit Description"
+            },
+            {
+                "index":"13",
+                "dimension_id":"value",
+                "label":"Value",
+                "type":"value",
+                "key":"Value"
+            },
+            {
+                "index":"4",
+                "dimension_id":"areagroup",
+                "label":"Country Code",
+                "type":"code",
+                "key":"Country Code"
+            },
+            {
+                "index":"5",
+                "dimension_id":"areagroup",
+                "label":"Country",
+                "type":"label",
+                "key":"Country"
+            },
+            {
+                "index":"6",
+                "dimension_id":"elementgroup",
+                "label":"Element Code",
+                "type":"code",
+                "key":"Element Code"
+            },
+            {
+                "index":"7",
+                "dimension_id":"elementgroup",
+                "label":"Element",
+                "type":"label",
+                "key":"Element"
+            },
+            {
+                "index":"8",
+                "dimension_id":"itemgroup",
+                "label":"Item Code",
+                "type":"code",
+                "key":"Item Code"
+            },
+            {
+                "index":"9",
+                "dimension_id":"itemgroup",
+                "label":"Item",
+                "type":"label",
+                "key":"Item"
+            },
+            {
+                "index":"10",
+                "dimension_id":"yeargroup",
+                "label":"Year Code",
+                "type":"code",
+                "key":"Year Code"
+            },
+            {
+                "index":"11",
+                "dimension_id":"yeargroup",
+                "label":"Year",
+                "type":"label",
+                "key":"Year"
+            }
+        ],
+        "parameters": {
+            "datasource":"TEST",
+            "output_type":"OBJECTS",
+            "api_key":"n.a.",
+            "client_key":"n.a.",
+            "parameters":{
+            "limit":"10",
+            "List1Codes":"[2, 8]",
+            "List4Codes":"[2012, 2011, 2010]",
+            "List3Codes":"[15]",
+            "List7Codes":"[]",
+            "thousand_separator":".",
+            "domain_code":"QC",
+            "decimal_separator":",",
+            "lang":"E",
+            "null_values":"false",
+            "decimal_places":"2",
+            "List2Codes":"[2510]",
+            "List6Codes":"[]",
+            "List5Codes":"[]"
+        }
+    },
+    "data":[
+        {
+            "Var3Order":"168",
+            "Value":"4.532.000,00",
+            "Flag":"",
+            "Domain Code":"QC",
+            "Domain":"Crops",
+            "Flag Description":"Official data",
+            "Var2Order":"4",
+            "Element Code":"5510",
+            "Item Code":"15",
+            "Country":"Afghanistan",
+            "Country Code":"2",
+            "Var1Order":"001",
+            "Unit":"tonnes",
+            "Year":"2010",
+            "RecordOrder":"1",
+            "Item":"Wheat",
+            "Var4Order":"50",
+            "NoRecords":"3",
+            "Year Code":"2010",
+            "Element":"Production"
+        },
+        ...
+    ]
+}
+</script>
+
+<!-- Dimensions > IN. -->
+<script type='text/x-handlebars-template' id='dimensions_in_js'>
+$.ajax({
+    type: 'GET',
+    url: 'http://fenixapps2.fao.org/api/v1.0/en/dimensions/qc',
+    success: function(response) {
+        /* Do something with the result. */
+    }
+});
+</script>
+
+<script type='text/x-handlebars-template' id='dimensions_in_curl'>
+curl http://fenixapps2.fao.org/api/v1.0/en/dimensions/qc
+</script>
+
+<script type='text/x-handlebars-template' id='dimensions_in_api'>
+/* Initiate FAOSTAT API's client. */
+var api = new FAOSTATAPIClient();
+
+/* Fetch FAOSTAT abbreviations. */
+api.dimensions({
+    domain_code: 'qc'
+}).then(function (response) {
+    /* Do something with the result. */
+});
+</script>
+
+<!-- Codes > OUT. -->
+<script type='text/x-handlebars-template' id='dimensions_out'>
+{
+    metadata: {
+        processing_time: 12,
+        datasource: "PRODUCTION",
+        output_type: "OBJECTS",
+        api_key: "null",
+        client_key: "null",
+        parameters: {
+            domain_code: "qc",
+            lang: "E"
+        }
+    },
+    data: [
+        {
+            id: "areagroup",
+            parameter: "List1Codes",
+            ord: 1,
+            subdimensions: [
+                {
+                    id: "countries",
+                    parameter: "List1Codes",
+                    description: "Countries",
+                    ord: 1,
+                    label: "Countries",
+                    href: "/codes/countries/"
+                },
+                {
+                    id: "regions",
+                    parameter: "List1Codes",
+                    description: "Regions",
+                    ord: 2,
+                    label: "Regions",
+                    href: "/codes/regions/"
+                },
+                {
+                    id: "specialgroups",
+                    parameter: "List1Codes",
+                    description: "Special Groups",
+                    ord: 3,
+                    label: "Special Groups",
+                    href: "/codes/specialgroups/"
+                }
+            ],
+            href: "/codes/areagroup/"
+        },
+        ...
+        ]
+    }
+</script>

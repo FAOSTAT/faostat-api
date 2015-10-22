@@ -50,8 +50,23 @@
                         </a>
                     </li>
                     <li>
+                        <a href='#download_bulk'>
+                            Bulk Downloads
+                        </a>
+                    </li>
+                    <li>
                         <a href='#codes'>
                             Codes
+                        </a>
+                    </li>
+                    <li>
+                        <a href='#data'>
+                            Data
+                        </a>
+                    </li>
+                    <li>
+                        <a href='#dimensions'>
+                            Dimensions
                         </a>
                     </li>
                     <li>
@@ -342,6 +357,139 @@
             </a>
         </h1>
     </div>
+</script>
+
+<!-- Dimensions. -->
+<script type='text/x-handlebars-template' id='dimensions'>
+    <div class='bs-docs-section'>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h2 id='dimensions'>
+                    <a href='#dimensions'>
+                        Dimensions
+                    </a>
+                </h2>
+                <p>
+                    Provides the description of the structure of a domain.
+                </p>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Endpoint</h4>
+                <code>
+                    {{>base_url}}dimensions/{domain_code}/
+                </code>
+            </div>
+            <div class='col-lg-5'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Inputs</h4>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    {{> table_commons}}
+                    <tr>
+                        <td><kbd>domain_code</kbd></td>
+                        <td>Domain code.</td>
+                        <td><var>QC</var></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-12'>
+                <h4>Input Example</h4>
+                <div>
+                    <ul class='nav nav-tabs' role='tablist'>
+                        <li role='presentation' class='active'>
+                            <a href='#dimensions_in_curl' aria-controls='dimensions_in_curl' role='tab' data-toggle='tab'>
+                                cURL
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#dimensions_in_js' aria-controls='dimensions_in_js' role='tab' data-toggle='tab'>
+                                jQuery
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#dimensions_in_api' aria-controls='dimensions_in_api' role='tab' data-toggle='tab'>
+                                FAOSTAT API Client
+                            </a>
+                        </li>
+                    </ul>
+                    <div class='tab-content'>
+                        <div role='tabpanel' class='tab-pane active' id='dimensions_in_curl'>
+                            <textarea id='dimensions_in_curl_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='dimensions_in_js'>
+                            <textarea id='dimensions_in_js_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='dimensions_in_api'>
+                            <textarea id='dimensions_in_api_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Outputs</h4>
+                <p>
+                    The output is an array of objects. Please refer to the table below for the structure
+                    of the single object.
+                </p>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    <tr>
+                        <td><kbd>id</kbd></td>
+                        <td>ID of the dimension.</td>
+                        <td><var>areagroup</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>parameter</kbd></td>
+                        <td>This value is used in the <var>data</var> service.</td>
+                        <td><var>List1Codes</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>ord</kbd></td>
+                        <td>Order of the dimension. This parameter is useful to create user interfaces
+                            (<var>e.g. FAOSTAT Download section</var>).</td>
+                        <td><var>1</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>href</kbd></td>
+                        <td>The path to the REST service that provides the codes of the codelist associated to this dimension.</td>
+                        <td><var>/codes/areagroup/</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>subdimensions</kbd></td>
+                        <td>Array of objects describing the subdimensions. For instance,
+                            the <var>areagroup</var> codelist is composed by <var>countries</var>, <var>regions</var> and <var>specialgroups</var></td>
+                        <td><var>/codes/areagroup/</var>. Each subdimension has the same structure
+                            (<var>id, parameter, ord and href</var>) of the parent dimension.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-12'>
+                <h4>Output Example</h4>
+                <textarea id='dimensions_out_content' class='sourcecode'>
+
+                </textarea>
+            </div>
+        </div>
+    </div>
+    <hr>
 </script>
 
 <!-- Abbreviations. -->
@@ -636,7 +784,7 @@
                         <tr>
                             <td><kbd>group_subdimensions</kbd></td>
                             <td>Flag that determines whether codelists must be grouped in groups. For instance,
-                            the <var>areagroup</var> codelist is composed by <var>countries</var>, <var>regions</var> and <var>specialgroups</var></td>
+                            the <var>areagroup</var> codelist is composed by <var>countries</var>, <var>regions</var> and <var>specialgroups</var>.</td>
                             <td><var>n.a.</var></td>
                         </tr>
                         <tr>
@@ -743,6 +891,208 @@
             <div class='col-lg-12'>
                 <h4>Output Example</h4>
                 <textarea id='codes_out_content' class='sourcecode'>
+
+                </textarea>
+            </div>
+        </div>
+    </div>
+    <hr>
+</script>
+
+<!-- Data. -->
+<script type='text/x-handlebars-template' id='data'>
+    <div class='bs-docs-section'>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h2 id='data'>
+                    <a href='#data'>
+                        Data
+                    </a>
+                </h2>
+                <p>
+                    Fetch FAOSTAT data. Please note that this services uses the <kbd>POST</kbd> HTTP method.
+                </p>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Endpoint</h4>
+                <code>
+                    {{>base_url}}data/
+                </code>
+            </div>
+            <div class='col-lg-5'>
+                &nbsp;
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Inputs</h4>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    {{> table_commons}}
+                    <tr>
+                        <td><kbd>domain_code</kbd></td>
+                        <td>Domain code.</td>
+                        <td><var>QC</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>output_type</kbd></td>
+                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
+                        <td><var>objects</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List1Codes</kbd></td>
+                        <td>Filters to be applied to the 1st dimension of the domain.</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List2Codes</kbd></td>
+                        <td>Filters to be applied to the 2nd dimension of the domain.</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List3Codes</kbd></td>
+                        <td>Filters to be applied to the 3rd dimension of the domain.</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List4Codes</kbd></td>
+                        <td>Filters to be applied to the 4th dimension of the domain.</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List5Codes</kbd></td>
+                        <td>Filters to be applied to the 5th dimension of the domain (<var>if any</var>).</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List6Codes</kbd></td>
+                        <td>Filters to be applied to the 6th dimension of the domain (<var>if any</var>).</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>List7Codes</kbd></td>
+                        <td>Filters to be applied to the 7th dimension of the domain (<var>if any</var>).</td>
+                        <td><var>['2', '8']</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>null_values</kbd></td>
+                        <td>Flags that determines whether rows with null values must be included in the final output or not.</td>
+                        <td><var>false</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>thousand_separator</kbd></td>
+                        <td>Thousand separator.</td>
+                        <td><var>,</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>decimal_separator</kbd></td>
+                        <td>Decimal separator.</td>
+                        <td><var>.</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>decimal_places</kbd></td>
+                        <td>Decimal places.</td>
+                        <td><var>2</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>limit</kbd></td>
+                        <td>Maximum number of rows that will be returned in the final output.</td>
+                        <td><var>1000</var></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='col-lg-12'>
+                <h4>Input Example</h4>
+                <div>
+                    <ul class='nav nav-tabs' role='tablist'>
+                        <li role='presentation' class='active'>
+                            <a href='#data_in_curl' aria-controls='data_in_curl' role='tab' data-toggle='tab'>
+                                cURL
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#data_in_js' aria-controls='data_in_js' role='tab' data-toggle='tab'>
+                                jQuery
+                            </a>
+                        </li>
+                        <li role='presentation'>
+                            <a href='#data_in_api' aria-controls='data_in_api' role='tab' data-toggle='tab'>
+                                FAOSTAT API Client
+                            </a>
+                        </li>
+                    </ul>
+                    <div class='tab-content'>
+                        <div role='tabpanel' class='tab-pane active' id='data_in_curl'>
+                            <textarea id='data_in_curl_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='data_in_js'>
+                            <textarea id='data_in_js_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                        <div role='tabpanel' class='tab-pane' id='data_in_api'>
+                            <textarea id='data_in_api_content' class='sourcecode'>
+
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-lg-12'>
+                <h4>Outputs</h4>
+                <p>
+                    The <kbd>metadata</kbd> part of the output contains a field named <kbd>dsd</kbd> that describes the
+                    structure of the output. This variable is an array of objects, each of these objects describes one
+                    of the columns of the output. The structure of such objects is described below:
+                </p>
+                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
+                    {{> table_headers}}
+                    <tbody>
+                    <tr>
+                        <td><kbd>index</kbd></td>
+                        <td>Index of the column in the original output.</td>
+                        <td><var>5</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>label</kbd></td>
+                        <td>Column's  label</td>
+                        <td><var>Country</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>dimension_id</kbd></td>
+                        <td>ID of the codelist linked to this column.</td>
+                        <td><var>areagroup</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>type</kbd></td>
+                        <td>Type of the column (<var>code, label, value, etc.</var>).</td>
+                        <td><var>label</var></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>key</kbd></td>
+                        <td>When the <var>output_type</var> is set to <var>objects</var> the service returns an array of JSON object.
+                        This field specifies which is the JSON key of such objects corresponding to this column.</td>
+                        <td><var>Country</var></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>
+                    The output is an array of objects that is described by the aforementioned <kbd>dsd</kbd> variable.
+                    The structure of the output may be different for each domains, so please refer to the <kbd>dsd</kbd>
+                    section of the metadata.
+                </p>
+            </div>
+            <div class='col-lg-12'>
+                <h4>Output Example</h4>
+                <textarea id='data_out_content' class='sourcecode'>
 
                 </textarea>
             </div>
@@ -1277,8 +1627,8 @@
 <!-- Download > Bulk. -->
 <script type='text/x-handlebars-template' id='download_bulk'>
     <div class='bs-docs-section'>
-        <h2 id='download-bulk'>
-            <a href='#download-bulk'>
+        <h2 id='download_bulk'>
+            <a href='#download_bulk'>
                 Bulk Downloads
             </a>
         </h2>
@@ -1399,210 +1749,7 @@
     </div>
 </script>
 
-<!-- Download > Filters. -->
-<script type='text/x-handlebars-template' id='download_filters'>
-    <div class='bs-docs-section'>
-        <h2 id='download-filters'>
-            <a href='#download-filters'>
-                Filters
-            </a>
-        </h2>
-        <p>
-            List of available filters for the selected domain. This function is used to create the selection boxes
-            for the download section. Each filter may have sub-filters. For instance the <i>Geographic Area</i> filter
-            has three tabs: <var>Countries</var>, <var>Regions</var> and <var>Special Groups</var>.
-        </p>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Endpoint</h4>
-                <code>
-                    {{>base_url}}filters/{faostat_code}/
-                </code>
-            </div>
-            <div class='col-lg-6'>
-                &nbsp;
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Inputs</h4>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    {{> table_commons}}
-                    <tr>
-                        <td><kbd>faostat_code</kbd></td>
-                        <td>Domain or group code.</td>
-                        <td><var>Q</var></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Input Example</h4>
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Outputs</h4>
-                <p>
-                    The output is an array of objects. Please refer to the table below for the structure
-                    of the single object.
-                </p>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    <!--<tr>-->
-                    <!--<td><kbd>code</kbd></td>-->
-                    <!--<td>Group code.</td>-->
-                    <!--<td><var>Q</var></td>-->
-                    <!--</tr>-->
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Output Example</h4>
-            </div>
-        </div>
-    </div>
-</script>
 
-<!-- Download > Codelist. -->
-<script type='text/x-handlebars-template' id='download_codelists'>
-    <div class='bs-docs-section'>
-        <h2 id='download-codelists'>
-            <a href='#download-codelists'>
-                Codelists
-            </a>
-        </h2>
-        <p>
-            This function provides the codes and the labels of the required codelist.
-        </p>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Endpoint</h4>
-                <code>
-                    {{>base_url}}codelists/{faostat_code}/{filter_code}/{sub_filter_code}/
-                </code>
-            </div>
-            <div class='col-lg-6'>
-                &nbsp;
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Inputs</h4>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    {{> table_commons}}
-                        <tr>
-                            <td><kbd>faostat_code</kbd></td>
-                            <td>Domain or group code.</td>
-                            <td><var>Q</var></td>
-                        </tr>
-                        <tr>
-                            <td><kbd>filter_code</kbd></td>
-                            <td>Filter code.</td>
-                            <td><var>1</var></td>
-                        </tr>
-                        <tr>
-                            <td><kbd>sub_filter_code</kbd></td>
-                            <td>Sub-filter code.</td>
-                            <td><var>1</var></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Input Example</h4>
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Outputs</h4>
-                <p>
-                    The output is an array of objects. Please refer to the table below for the structure
-                    of the single object.
-                </p>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    <!--<tr>-->
-                    <!--<td><kbd>code</kbd></td>-->
-                    <!--<td>Group code.</td>-->
-                    <!--<td><var>Q</var></td>-->
-                    <!--</tr>-->
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Output Example</h4>
-            </div>
-        </div>
-    </div>
-</script>
-
-<!-- Download > Data. -->
-<script type='text/x-handlebars-template' id='download_data'>
-    <div class='bs-docs-section'>
-        <h2 id='download-data'>
-            <a href='#download-data'>
-                Data
-            </a>
-        </h2>
-        <p>
-            This function returns FAOSTAT data filtered according to the user selection.
-        </p>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Endpoint</h4>
-                <code>
-                    {{>base_url}}data/
-                </code>
-            </div>
-            <div class='col-lg-6'>
-                &nbsp;
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Inputs</h4>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    {{> table_commons}}
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Input Example</h4>
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-lg-6'>
-                <h4>Outputs</h4>
-                <p>
-                    The output is an array of objects. Please refer to the table below for the structure
-                    of the single object.
-                </p>
-                <table class='table table-bordered table-responsive table-striped table-hover table-condensed'>
-                    {{> table_headers}}
-                    <tbody>
-                    <!--<tr>-->
-                    <!--<td><kbd>code</kbd></td>-->
-                    <!--<td>Group code.</td>-->
-                    <!--<td><var>Q</var></td>-->
-                    <!--</tr>-->
-                    </tbody>
-                </table>
-            </div>
-            <div class='col-lg-6'>
-                <h4>Output Example</h4>
-            </div>
-        </div>
-    </div>
-</script>
 
 <!-- M&S. -->
 <script type='text/x-handlebars-template' id='standards'>
