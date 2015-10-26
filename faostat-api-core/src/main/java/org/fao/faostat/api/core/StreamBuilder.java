@@ -795,60 +795,6 @@ public class StreamBuilder {
 
             }
 
-//            /* Initiate the output stream. */
-//            return new StreamingOutput() {
-//
-//                @Override
-//                public void write(OutputStream os) throws IOException, WebApplicationException {
-//
-//                    /* Initiate the buffer writer. */
-//                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-//
-//                    /* Initiate the output. */
-//                    writer.write("{");
-//
-//                    /* Add metadata. */
-//                    writer.write(createMetadata(metadataBean));
-//
-//                    /* Initiate the array. */
-//                    writer.write("\"data\": [");
-//
-//                    /* Generate an array of objects of arrays. */
-//                    switch (out.getMetadata().getOutputType()) {
-//
-//                        case ARRAYS:
-//                            while (out.getData().hasNextList()) {
-//                                writer.write(out.getData().nextJSONList());
-//                                if (out.getData().hasNextList())
-//                                    writer.write(",");
-//                            }
-//                            break;
-//                        default:
-//                            while (out.getData().hasNext()) {
-//                                writer.write(out.getData().nextJSON());
-//                                if (out.getData().hasNext())
-//                                    writer.write(",");
-//                            }
-//                            break;
-//
-//                    }
-//
-//                    /* Close the array. */
-//                    writer.write("]");
-//
-//                    /* Close the object. */
-//                    writer.write("}");
-//
-//                    /* Flush the writer. */
-//                    writer.flush();
-//
-//                    /* Close the writer. */
-//                    writer.close();
-//
-//                }
-//
-//            };
-
         } catch (final Exception e) {
             return new StreamingOutput() {
                 @Override

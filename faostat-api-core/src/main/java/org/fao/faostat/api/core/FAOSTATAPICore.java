@@ -495,9 +495,8 @@ public class FAOSTATAPICore {
                         if (sl != null && sl.size() > 0) {
                             for (int j = 0; j < sl.size(); j += 1) {
                                 l.add(sl.get(j).get("id").toString());
-                                l.add(sl.get(j).get("label").toString());
+                                l.add(sl.get(j).get("parameter").toString());
                                 l.add(sl.get(j).get("ord").toString());
-                                l.add(sl.get(j).get("id").toString());
                                 l.add(sl.get(j).get("href").toString());
                                 if (j < sl.size() - 1) {
                                     out.getData().addList(l);
