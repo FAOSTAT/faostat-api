@@ -356,7 +356,7 @@ import java.util.*;
  * */
 public class StreamBuilder {
 
-    public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+    public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
 
         /* Log. */
         final StringBuilder log = new StringBuilder();
@@ -373,59 +373,22 @@ public class StreamBuilder {
             final OutputBean out = faostatapiCore.query(queryCode, datasourceBean, metadataBean);
             log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
-            /* Initiate the output stream. */
-            return new StreamingOutput() {
+            /* Create a JSON. */
+            switch (out.getMetadata().getOutputType()) {
 
-                @Override
-                public void write(OutputStream os) throws IOException, WebApplicationException {
+                /* Create a JSON. */
+                case JSON:
+                    return createOutputStreamJSON(out);
+                case OBJECTS:
+                    return createOutputStreamJSON(out);
+                case ARRAYS:
+                    return createOutputStreamJSON(out);
+                case CSV:
+                    return createOutputStreamCSV(out);
+                default:
+                    throw new WebApplicationException(400);
 
-                    /* Initiate the buffer writer. */
-                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                    /* Initiate the output. */
-                    writer.write("{");
-
-                    /* Add metadata. */
-                    writer.write(createMetadata(out.getMetadata()));
-
-                    /* Initiate the array. */
-                    writer.write("\"data\": [");
-
-                    /* Generate an array of objects of arrays. */
-                    switch (out.getMetadata().getOutputType()) {
-
-                        case ARRAYS:
-                            while (out.getData().hasNext()) {
-                                writer.write(out.getData().nextJSONList());
-                                if (out.getData().hasNext())
-                                    writer.write(",");
-                            }
-                            break;
-                        default:
-                            while (out.getData().hasNext()) {
-                                writer.write(out.getData().nextJSON());
-                                if (out.getData().hasNext())
-                                    writer.write(",");
-                            }
-                            break;
-
-                    }
-
-                    /* Close the array. */
-                    writer.write("]");
-
-                    /* Close the object. */
-                    writer.write("}");
-
-                    /* Flush the writer. */
-                    writer.flush();
-
-                    /* Close the writer. */
-                    writer.flush();
-
-                }
-
-            };
+            }
 
         } catch (final Exception e) {
             return new StreamingOutput() {
@@ -440,6 +403,108 @@ public class StreamBuilder {
                 }
             };
         }
+
+    }
+
+    private StreamingOutput createOutputStreamCSV(final OutputBean out) throws Exception {
+
+        /* Initiate the output stream. */
+        return new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Add column names. */
+                for (int i = 0; i < out.getColumnNames().size(); i += 1) {
+                    writer.write("\"" + out.getColumnNames().get(i) + "\"");
+                    if (i < out.getColumnNames().size() - 1)
+                        writer.write(",");
+                    else
+                        writer.write("\n");
+                }
+
+                /* Add data. */
+                while (out.getData().hasNextList()) {
+                    List<String> l = out.getData().nextList();
+                    for (int i = 0; i < l.size(); i += 1) {
+                        writer.write("\"" + l.get(i) + "\"");
+                        if (i < l.size() - 1)
+                            writer.write(",");
+                        else
+                            writer.write("\n");
+                    }
+                }
+
+                /* Flush the writer. */
+                writer.flush();
+
+                /* Close the writer. */
+                writer.flush();
+
+            }
+
+        };
+
+    }
+
+    private StreamingOutput createOutputStreamJSON(final OutputBean out) throws Exception {
+
+        /* Initiate the output stream. */
+        return new StreamingOutput() {
+
+            @Override
+            public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                /* Initiate the buffer writer. */
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                /* Initiate the output. */
+                writer.write("{");
+
+                /* Add metadata. */
+                writer.write(createMetadata(out.getMetadata()));
+
+                /* Initiate the array. */
+                writer.write("\"data\": [");
+
+                /* Generate an array of objects of arrays. */
+                switch (out.getMetadata().getOutputType()) {
+
+                    case ARRAYS:
+                        while (out.getData().hasNext()) {
+                            writer.write(out.getData().nextJSONList());
+                            if (out.getData().hasNext())
+                                writer.write(",");
+                        }
+                        break;
+                    default:
+                        while (out.getData().hasNext()) {
+                            writer.write(out.getData().nextJSON());
+                            if (out.getData().hasNext())
+                                writer.write(",");
+                        }
+                        break;
+
+                }
+
+                /* Close the array. */
+                writer.write("]");
+
+                /* Close the object. */
+                writer.write("}");
+
+                /* Flush the writer. */
+                writer.flush();
+
+                /* Close the writer. */
+                writer.flush();
+
+            }
+
+        };
 
     }
 

@@ -341,6 +341,8 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
@@ -349,6 +351,8 @@ public class OutputBean {
     private MetadataBean metadata;
 
     private FAOSTATIterable data;
+
+    private List<String> columnNames;
 
     public OutputBean() {
         this.setMetadata(new MetadataBean());
@@ -380,6 +384,14 @@ public class OutputBean {
 
     public FAOSTATIterable getData() {
         return data;
+    }
+
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
+
+    public void setColumnNames(List<String> columnNames) {
+        this.columnNames = columnNames;
     }
 
     public void setData(FAOSTATIterable data) {

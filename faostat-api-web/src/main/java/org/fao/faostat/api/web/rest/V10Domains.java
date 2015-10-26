@@ -371,7 +371,6 @@ public class V10Domains {
                                @QueryParam("client_key") String client_key,
                                @QueryParam("output_type") String output_type) {
 
-
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 

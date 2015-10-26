@@ -516,13 +516,25 @@ public class JDBCIterable implements Iterator<List<String>> {
 
         Map<String, Object> out = new HashMap<String, Object>();
         String value;
+        String columnType;
 
         if (this.isHasNext()) {
             try {
                 for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
                     try {
+                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
                         value = this.getResultSet().getString(i).trim();
-                        out.put(this.getResultSet().getMetaData().getColumnLabel(i), value);
+                        if (columnType.endsWith("Double")) {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Double(value));
+                        } else if (columnType.endsWith("Integer")) {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Integer(value));
+                        } else if (columnType.endsWith("Long")) {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Long(value));
+                        } else if (columnType.endsWith("Date")) {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Date(value));
+                        } else {
+                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), value.toString());
+                        }
                     } catch (NullPointerException ignored) {
                         if (i > 0) {
                             out.put(this.getResultSet().getMetaData().getColumnLabel(i), null);

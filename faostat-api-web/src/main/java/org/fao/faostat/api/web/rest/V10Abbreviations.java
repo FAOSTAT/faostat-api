@@ -357,7 +357,7 @@ import javax.ws.rs.core.StreamingOutput;
  * */
 @Component
 @Path("/v1.0/{lang}/abbreviations/")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
 public class V10Abbreviations {
 
     @GET
@@ -393,6 +393,8 @@ public class V10Abbreviations {
             /* Stream result */
             return Response.status(200).entity(stream).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }

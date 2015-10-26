@@ -343,10 +343,8 @@ package org.fao.faostat.api.core.beans;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -367,6 +365,8 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
 
     private Gson g;
 
+    private List<String> valueHeaders;
+
     public FAOSTATIterable() {
         this.setG(new Gson());
         this.setCurrentIndexMap(0);
@@ -375,6 +375,10 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
         this.setDatastoreList(new ArrayList<List<String>>());
         this.setHasNext(this.getDatastoreMap().size() > 0);
         this.setHasNextList(this.getDatastoreList().size() > 0);
+        valueHeaders = new ArrayList<String>();
+        valueHeaders.add("Value");
+        valueHeaders.add("Valeur");
+        valueHeaders.add("Valor");
     }
 
     public FAOSTATIterable(List<Map<String, Object>> data) {
@@ -385,6 +389,10 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
         this.setDatastoreList(new ArrayList<List<String>>());
         this.setHasNext(this.getDatastoreMap().size() > 0);
         this.setHasNextList(this.getDatastoreList().size() > 0);
+        valueHeaders = new ArrayList<String>();
+        valueHeaders.add("Value");
+        valueHeaders.add("Valeur");
+        valueHeaders.add("Valor");
     }
 
     @Override
@@ -414,6 +422,20 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
         this.setCurrentIndexMap(1 + this.getCurrentIndexMap());
         if (this.getCurrentIndexMap() == this.getDatastoreMap().size())
             this.setHasNext(false);
+//        for (int i = 0; i < valueHeaders.size(); i += 1) {
+//            try {
+//                String tmp = out.get(valueHeaders.get(i)).toString();
+//                System.out.println(tmp);
+//                NumberFormat nf = NumberFormat.getInstance(Locale.US);
+//                double myNumber = nf.parse(tmp).doubleValue();
+//                System.out.println(myNumber);
+//                out.put(valueHeaders.get(i), myNumber);
+//                break;
+//            } catch (Exception e) {
+//                System.out.println("cast exception!");
+//            }
+//        }
+//        System.out.println(this.getG().toJson(out));
         return this.getG().toJson(out);
     }
 

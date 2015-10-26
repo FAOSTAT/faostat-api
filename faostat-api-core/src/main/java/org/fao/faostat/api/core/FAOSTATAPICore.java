@@ -385,11 +385,27 @@ public class FAOSTATAPICore {
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
 
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
+
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
-            while (i.hasNext())
-                out.getData().add(i.nextMap());
+            while (i.hasNext()) {
+                switch (metadataBean.getOutputType()) {
+                    case ARRAYS:
+                        out.getData().addList(i.next());
+                        break;
+                    case CSV:
+                        out.getData().addList(i.next());
+                        break;
+                    default:
+                        out.getData().add(i.nextMap());
+                        break;
+                }
+            }
+//            while (i.hasNext())
+//                out.getData().add(i.nextMap());
             log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
 
             /* Statistics. */
@@ -516,6 +532,9 @@ public class FAOSTATAPICore {
             JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
 
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
+
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
@@ -570,6 +589,9 @@ public class FAOSTATAPICore {
             log.append("FAOSTATAPICore\t").append("query db...").append("\n");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
