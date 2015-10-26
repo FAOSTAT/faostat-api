@@ -531,13 +531,13 @@ public class StreamBuilder {
 
                 /* Create a JSON. */
                 case JSON:
-                    return createOutputStreamJSON(out);
+                    return createDataOutputStreamJSON(out);
                 case OBJECTS:
-                    return createOutputStreamJSON(out);
+                    return createDataOutputStreamJSON(out);
                 case ARRAYS:
-                    return createOutputStreamJSON(out);
+                    return createDataOutputStreamJSON(out);
                 case CSV:
-                    return createOutputStreamCSV(out);
+                    return createDataOutputStreamCSV(out);
                 default:
                     throw new WebApplicationException(400);
 
@@ -679,59 +679,76 @@ public class StreamBuilder {
             final OutputBean out = faostatapiCore.queryDomains(queryCode, datasourceBean, metadataBean);
             log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
-            /* Initiate the output stream. */
-            return new StreamingOutput() {
+            /* Switch the output format. */
+            switch (out.getMetadata().getOutputType()) {
 
-                @Override
-                public void write(OutputStream os) throws IOException, WebApplicationException {
+                /* Create a JSON. */
+                case JSON:
+                    return createOutputStreamJSON(out);
+                case OBJECTS:
+                    return createOutputStreamJSON(out);
+                case ARRAYS:
+                    return createOutputStreamJSON(out);
+                case CSV:
+                    return createOutputStreamCSV(out);
+                default:
+                    throw new WebApplicationException(400);
 
-                     /* Initiate the buffer writer. */
-                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+            }
 
-                    /* Initiate the output. */
-                    writer.write("{");
-
-                    /* Add metadata. */
-                    writer.write(createMetadata(metadataBean));
-
-                    /* Initiate the array. */
-                    writer.write("\"data\": [");
-
-                    /* Generate an array of objects of arrays. */
-                    switch (out.getMetadata().getOutputType()) {
-
-                        case ARRAYS:
-                            while (out.getData().hasNextList()) {
-                                writer.write(out.getData().nextJSONList());
-                                if (out.getData().hasNextList())
-                                    writer.write(",");
-                            }
-                            break;
-                        default:
-                            while (out.getData().hasNext()) {
-                                writer.write(out.getData().nextJSON());
-                                if (out.getData().hasNext())
-                                    writer.write(",");
-                            }
-                            break;
-
-                    }
-
-                    /* Close the array. */
-                    writer.write("]");
-
-                    /* Close the object. */
-                    writer.write("}");
-
-                    /* Flush the writer. */
-                    writer.flush();
-
-                    /* Close the writer. */
-                    writer.close();
-
-                }
-
-            };
+//            /* Initiate the output stream. */
+//            return new StreamingOutput() {
+//
+//                @Override
+//                public void write(OutputStream os) throws IOException, WebApplicationException {
+//
+//                     /* Initiate the buffer writer. */
+//                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+//
+//                    /* Initiate the output. */
+//                    writer.write("{");
+//
+//                    /* Add metadata. */
+//                    writer.write(createMetadata(metadataBean));
+//
+//                    /* Initiate the array. */
+//                    writer.write("\"data\": [");
+//
+//                    /* Generate an array of objects of arrays. */
+//                    switch (out.getMetadata().getOutputType()) {
+//
+//                        case ARRAYS:
+//                            while (out.getData().hasNextList()) {
+//                                writer.write(out.getData().nextJSONList());
+//                                if (out.getData().hasNextList())
+//                                    writer.write(",");
+//                            }
+//                            break;
+//                        default:
+//                            while (out.getData().hasNext()) {
+//                                writer.write(out.getData().nextJSON());
+//                                if (out.getData().hasNext())
+//                                    writer.write(",");
+//                            }
+//                            break;
+//
+//                    }
+//
+//                    /* Close the array. */
+//                    writer.write("]");
+//
+//                    /* Close the object. */
+//                    writer.write("}");
+//
+//                    /* Flush the writer. */
+//                    writer.flush();
+//
+//                    /* Close the writer. */
+//                    writer.close();
+//
+//                }
+//
+//            };
 
         } catch (final Exception e) {
             return new StreamingOutput() {

@@ -599,10 +599,25 @@ public class FAOSTATAPICore {
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+//            while (i.hasNext()) {
+//                Map<String, Object> dbRow = i.nextMap();
+//                if (isAdmissibleDBRow(dbRow, out.getMetadata()))
+//                    out.getData().add(dbRow);
+//            }
             while (i.hasNext()) {
-                Map<String, Object> dbRow = i.nextMap();
-                if (isAdmissibleDBRow(dbRow, out.getMetadata()))
-                    out.getData().add(dbRow);
+                switch (metadataBean.getOutputType()) {
+                    case ARRAYS:
+                        out.getData().addList(i.next());
+                        break;
+                    case CSV:
+                        out.getData().addList(i.next());
+                        break;
+                    default:
+                        Map<String, Object> dbRow = i.nextMap();
+                        if (isAdmissibleDBRow(dbRow, out.getMetadata()))
+                            out.getData().add(dbRow);
+                        break;
+                }
             }
             log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
 
