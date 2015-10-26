@@ -404,8 +404,6 @@ public class FAOSTATAPICore {
                         break;
                 }
             }
-//            while (i.hasNext())
-//                out.getData().add(i.nextMap());
             log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
 
             /* Statistics. */
@@ -483,6 +481,50 @@ public class FAOSTATAPICore {
             /* Initiate output. */
             log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
             OutputBean out = new OutputBean(new FAOSTATIterable(output));
+            ArrayList<Map<String, Object>> sl;
+
+            switch (metadataBean.getOutputType()) {
+                case CSV:
+                    for (int i = 0; i < output.size(); i += 1) {
+                        List<String> l = new ArrayList<>();
+                        l.add(output.get(i).get("id").toString());
+                        l.add(output.get(i).get("parameter").toString());
+                        l.add(output.get(i).get("ord").toString());
+                        l.add(output.get(i).get("href").toString());
+                        sl = (ArrayList<Map<String, Object>>)output.get(i).get("subdimensions");
+                        if (sl != null && sl.size() > 0) {
+                            for (int j = 0; j < sl.size(); j += 1) {
+                                l.add(sl.get(j).get("id").toString());
+                                l.add(sl.get(j).get("label").toString());
+                                l.add(sl.get(j).get("ord").toString());
+                                l.add(sl.get(j).get("id").toString());
+                                l.add(sl.get(j).get("href").toString());
+                                if (j < sl.size() - 1) {
+                                    out.getData().addList(l);
+                                    l = new ArrayList<>();
+                                    l.add(output.get(i).get("id").toString());
+                                    l.add(output.get(i).get("parameter").toString());
+                                    l.add(output.get(i).get("ord").toString());
+                                    l.add(output.get(i).get("href").toString());
+                                }
+                            }
+                        }
+                        out.getData().addList(l);
+                    }
+                    out.setColumnNames(new ArrayList<String>());
+                    out.getColumnNames().add("ID");
+                    out.getColumnNames().add("Parameter");
+                    out.getColumnNames().add("Order");
+                    out.getColumnNames().add("Href");
+                    sl = (ArrayList<Map<String, Object>>)output.get(0).get("subdimensions");
+                    if (sl != null && sl.size() > 0) {
+                        out.getColumnNames().add("Subdimension ID");
+                        out.getColumnNames().add("Subdimension Parameter");
+                        out.getColumnNames().add("Subdimension Order");
+                        out.getColumnNames().add("Subdimension Href");
+                    }
+                    break;
+            }
 
             /* Add metadata. */
             log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
@@ -780,23 +822,6 @@ public class FAOSTATAPICore {
         log.append("FAOSTATAPICore\t").append("initiate out: done").append("\n");
 
         switch (metadataBean.getOutputType()) {
-            case ARRAYS:
-                for (int i = 0; i < output.size(); i += 1) {
-                    List<String> l = new ArrayList<>();
-                    l.add(output.get(i).get("code").toString());
-                    l.add(output.get(i).get("label").toString());
-                    l.add(output.get(i).get("ord").toString());
-                    l.add(output.get(i).get("description").toString());
-                    l.add(output.get(i).get("aggregate_type").toString());
-                    out.getData().addList(l);
-                }
-                out.setColumnNames(new ArrayList<String>());
-                out.getColumnNames().add("Code");
-                out.getColumnNames().add("Label");
-                out.getColumnNames().add("Order");
-                out.getColumnNames().add("Description");
-                out.getColumnNames().add("Aggregate Type");
-                break;
             case CSV:
                 for (int i = 0; i < output.size(); i += 1) {
                     List<String> l = new ArrayList<>();
