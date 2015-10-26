@@ -148,6 +148,26 @@
             <var>en</var>
         </td>
     </tr>
+    <tr>
+        <td><kbd>output_type</kbd></td>
+        <td>
+            Format of the final output. There are three options:
+            <ul>
+                <li>
+                    <var>objects (default):</var> the output is in JSON format, it is composed by one <var>metadata</var> and one <var>data</var> object. The <var>data</var> object is an <b>array of JSON objects</b>.
+                </li>
+                <li>
+                    <var>arrays:</var> the output is in JSON format, it is composed by one <var>metadata</var> and one <var>data</var> object. The <var>data</var> object is an <b>array of arrays</b>.
+                </li>
+                <li>
+                    <var>csv:</var> the output is a string in the CSV (<var>comma separated values</var>) format.
+                </li>
+            </ul>
+        </td>
+        <td>
+            <var>objects</var>
+        </td>
+    </tr>
 </script>
 
 <!-- Introduction. -->
@@ -421,11 +441,11 @@
                         <td>Array of codes that have to be excluded in the final output.</td>
                         <td><var>[QA, QC]</var></td>
                     </tr>
-                    <tr>
-                        <td><kbd>output_type</kbd></td>
-                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                        <td><var>objects</var></td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><kbd>output_type</kbd></td>-->
+                        <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                        <!--<td><var>objects</var></td>-->
+                    <!--</tr>-->
                     </tbody>
                 </table>
             </div>
@@ -1030,11 +1050,11 @@
                             <td>Domain code.</td>
                             <td><var>QC</var></td>
                         </tr>
-                        <tr>
-                            <td><kbd>output_type</kbd></td>
-                            <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                            <td><var>objects</var></td>
-                        </tr>
+                        <!--<tr>-->
+                            <!--<td><kbd>output_type</kbd></td>-->
+                            <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                            <!--<td><var>objects</var></td>-->
+                        <!--</tr>-->
                         <tr>
                             <td><kbd>show_lists</kbd></td>
                             <td>Flag that determines whether list codes (<var>e.g. World > (List)</var> must be returned or not. Default set to <var>false</var>.</td>
@@ -1201,11 +1221,11 @@
                         <td>Domain code.</td>
                         <td><var>QC</var></td>
                     </tr>
-                    <tr>
-                        <td><kbd>output_type</kbd></td>
-                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                        <td><var>objects</var></td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><kbd>output_type</kbd></td>-->
+                        <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                        <!--<td><var>objects</var></td>-->
+                    <!--</tr>-->
                     <tr>
                         <td><kbd>List1Codes</kbd></td>
                         <td>Filters to be applied to the 1st dimension of the domain.</td>
@@ -2469,11 +2489,11 @@
                     {{> table_headers}}
                     <tbody>
                     {{> table_commons}}
-                    <tr>
-                        <td><kbd>output_type</kbd></td>
-                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                        <td><var>objects</var></td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><kbd>output_type</kbd></td>-->
+                        <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                        <!--<td><var>objects</var></td>-->
+                    <!--</tr>-->
                     </tbody>
                 </table>
             </div>
@@ -2589,11 +2609,11 @@
                         <td>Methodology code.</td>
                         <td><var>4</var></td>
                     </tr>
-                    <tr>
-                        <td><kbd>output_type</kbd></td>
-                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                        <td><var>objects</var></td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><kbd>output_type</kbd></td>-->
+                        <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                        <!--<td><var>objects</var></td>-->
+                    <!--</tr>-->
                     </tbody>
                 </table>
             </div>
@@ -2719,11 +2739,11 @@
                     {{> table_headers}}
                     <tbody>
                     {{> table_commons}}
-                    <tr>
-                        <td><kbd>output_type</kbd></td>
-                        <td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>
-                        <td><var>objects</var></td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><kbd>output_type</kbd></td>-->
+                        <!--<td>Format of the output. It can be either <var>objects</var> (default) or <var>arrays</var>.</td>-->
+                        <!--<td><var>objects</var></td>-->
+                    <!--</tr>-->
                     </tbody>
                 </table>
             </div>
