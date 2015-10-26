@@ -599,11 +599,6 @@ public class FAOSTATAPICore {
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
-//            while (i.hasNext()) {
-//                Map<String, Object> dbRow = i.nextMap();
-//                if (isAdmissibleDBRow(dbRow, out.getMetadata()))
-//                    out.getData().add(dbRow);
-//            }
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
                     case ARRAYS:
@@ -783,6 +778,43 @@ public class FAOSTATAPICore {
         log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
         OutputBean out = new OutputBean(new FAOSTATIterable(output));
         log.append("FAOSTATAPICore\t").append("initiate out: done").append("\n");
+
+        switch (metadataBean.getOutputType()) {
+            case ARRAYS:
+                for (int i = 0; i < output.size(); i += 1) {
+                    List<String> l = new ArrayList<>();
+                    l.add(output.get(i).get("code").toString());
+                    l.add(output.get(i).get("label").toString());
+                    l.add(output.get(i).get("ord").toString());
+                    l.add(output.get(i).get("description").toString());
+                    l.add(output.get(i).get("aggregate_type").toString());
+                    out.getData().addList(l);
+                }
+                out.setColumnNames(new ArrayList<String>());
+                out.getColumnNames().add("Code");
+                out.getColumnNames().add("Label");
+                out.getColumnNames().add("Order");
+                out.getColumnNames().add("Description");
+                out.getColumnNames().add("Aggregate Type");
+                break;
+            case CSV:
+                for (int i = 0; i < output.size(); i += 1) {
+                    List<String> l = new ArrayList<>();
+                    l.add(output.get(i).get("code").toString());
+                    l.add(output.get(i).get("label").toString());
+                    l.add(output.get(i).get("ord").toString());
+                    l.add(output.get(i).get("description").toString());
+                    l.add(output.get(i).get("aggregate_type").toString());
+                    out.getData().addList(l);
+                }
+                out.setColumnNames(new ArrayList<String>());
+                out.getColumnNames().add("Code");
+                out.getColumnNames().add("Label");
+                out.getColumnNames().add("Order");
+                out.getColumnNames().add("Description");
+                out.getColumnNames().add("Aggregate Type");
+                break;
+        }
 
         /* Add metadata. */
         log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
