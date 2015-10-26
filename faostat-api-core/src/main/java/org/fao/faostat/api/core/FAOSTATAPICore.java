@@ -543,6 +543,9 @@ public class FAOSTATAPICore {
                     case ARRAYS:
                         out.getData().addList(i.next());
                         break;
+                    case CSV:
+                        out.getData().addList(i.next());
+                        break;
                     default:
                         out.getData().add(i.nextMap());
                         break;
