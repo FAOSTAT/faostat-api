@@ -342,6 +342,7 @@
 package org.fao.faostat.api.core;
 
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.beans.OutputBean;
@@ -569,17 +570,34 @@ public class StreamBuilder {
                 /* Initiate the buffer writer. */
                 Writer writer = new BufferedWriter(new OutputStreamWriter(os));
 
-                /* Add column names. */
-                for (int i = 0; i < out.getColumnNames().size(); i += 1) {
-                    writer.write("\"" + out.getColumnNames().get(i) + "\"");
-                    if (i < out.getColumnNames().size() - 1)
+
+                /* Add column names from DSD. */
+                int max = 0;
+                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
+                    int idx = (int)(out.getMetadata().getDsd().get(i).get("index"));
+                    if (idx > max)
+                        max = idx;
+                }
+                String[] headers = new String[max];
+                for (int i = 0; i < headers.length; i += 1)
+                    headers[i] = "TODO";
+                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
+                    int idx = (int) (out.getMetadata().getDsd().get(i).get("index"));
+                    try {
+                        headers[idx] = out.getMetadata().getDsd().get(i).get("label").toString();
+                    } catch (Exception e) {
+                        System.out.println("\tskip this...");
+                    }
+                }
+                for (int i = 0; i < headers.length; i += 1) {
+                    writer.write("\"" + headers[i] + "\"");
+                    if (i < headers.length - 1)
                         writer.write(",");
                     else
                         writer.write("\n");
                 }
 
                 /* Add data. */
-                writer.write(out.getData().size() + "," + out.getData().sizeList() + "\n");
                 while (out.getData().hasNextList()) {
                     List<String> l = out.getData().nextList();
                     for (int i = 0; i < l.size(); i += 1) {
