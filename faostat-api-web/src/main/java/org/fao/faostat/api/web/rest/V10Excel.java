@@ -342,48 +342,33 @@
 package org.fao.faostat.api.web.rest;
 
 import com.sun.jersey.api.core.InjectParam;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.fao.faostat.api.core.ExcelExporter;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.beans.MetadataBean;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/csv2excel/")
-public class V10CSV2Excel {
+@Path("/v1.0/excels/{filename}")
+public class V10Excel {
 
     @InjectParam
     ExcelExporter excelExporter;
 
-    @POST
-    public Response csv2excel(@FormParam("csv") String csv,
-                              @FormParam("metadata") String metadata,
-                              @FormParam("filename") String filename) {
+    @GET
+    public Response getExcel(@PathParam("filename") String filename) {
 
-        /* Create the file and return the results. */
         try {
 
-            /* Create Excel file. */
-            filename = excelExporter.createExcel(csv, metadata, filename);
+            String filepath = excelExporter.getExcelPath() + File.separator + filename;
+            File file = new File(filepath);
 
             /* Stream result */
-            return Response.status(200).entity(filename).build();
+            return Response.status(200).entity((Object) file).header("Content-Disposition", "attachment").build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();

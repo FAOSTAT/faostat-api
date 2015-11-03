@@ -347,6 +347,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
+import java.util.UUID;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -365,6 +366,9 @@ public class ExcelExporter {
 
     public String createExcel(String csv, String metadata, String filename) throws FileNotFoundException, IOException {
 
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+
+        filename = uuid + filename;
         if (!filename.endsWith(".xls"))
             filename += ".xls";
 
@@ -406,6 +410,10 @@ public class ExcelExporter {
 
     public void setExcelPath(String excelPath) {
         this.excelPath = excelPath;
+    }
+
+    public String getExcelPath() {
+        return excelPath;
     }
 
 }
