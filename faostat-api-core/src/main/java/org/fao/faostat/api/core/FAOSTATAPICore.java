@@ -822,6 +822,7 @@ public class FAOSTATAPICore {
 
         switch (metadataBean.getOutputType()) {
             case CSV:
+                System.out.println("output.size()? " + output.size());
                 for (int i = 0; i < output.size(); i += 1) {
                     List<String> l = new ArrayList<>();
                     l.add(output.get(i).get("code").toString());

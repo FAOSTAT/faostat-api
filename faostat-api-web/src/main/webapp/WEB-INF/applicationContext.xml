@@ -25,4 +25,8 @@
 		<constructor-arg value="/json" />
 	</bean>
 
+	<bean id="excelExporter" class="org.fao.faostat.api.core.ExcelExporter">
+		<constructor-arg value="/excel" />
+	</bean>
+
 </beans>

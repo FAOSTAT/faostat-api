@@ -431,6 +431,7 @@ public class StreamBuilder {
                 while (out.getData().hasNextList()) {
                     List<String> l = out.getData().nextList();
                     for (int i = 0; i < l.size(); i += 1) {
+                        System.out.println(l.get(i));
                         writer.write("\"" + l.get(i) + "\"");
                         if (i < l.size() - 1)
                             writer.write(",");
