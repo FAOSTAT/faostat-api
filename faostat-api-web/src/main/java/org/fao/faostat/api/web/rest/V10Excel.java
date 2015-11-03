@@ -351,6 +351,9 @@ import java.io.File;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
+ *
+ * Jersey configuration overrides any access to static files, so the Excel generation has been divided into two
+ * services: csv2excel converts the CSV into Excel, while excels returns an Excel file.
  * */
 @Component
 @Path("/v1.0/excels/{filename}")
