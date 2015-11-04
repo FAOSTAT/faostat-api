@@ -434,9 +434,11 @@ public class FAOSTATAPICore {
 
             /* Initiate variables. */
             List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("dimensions? ").append(dimensions.size()).append("\n");
             List<Map<String, Object>> tmp = new ArrayList<>();
             for (List<Map<String, Object>> l : dimensions)
                 tmp.addAll(l);
+            log.append("FAOSTATAPICore\t").append("tmp? ").append(tmp.size()).append("\n");
 
             /* Group Dimensions. */
             List<Map<String, Object>> output = new ArrayList<>();
@@ -444,8 +446,9 @@ public class FAOSTATAPICore {
             Map<String, Object> group = new HashMap<>();
             group.put("ord", Integer.parseInt(currentList));
             group.put("parameter", "List" + currentList + "Codes");
-            group.put("id", tmp.get(0).get("VarTypeGroup").toString() + "group");
-            group.put("href", "/codes/" + tmp.get(0).get("VarTypeGroup").toString() + "group/");
+            System.out.println("tmp.get(0).get(\"VarType\").toString()? " + tmp.get(0).get("VarType").toString());
+            group.put("id", tmp.get(0).get("VarType").toString());
+            group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (int i = 0; i < tmp.size(); i += 1) {
                 if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
@@ -463,8 +466,8 @@ public class FAOSTATAPICore {
                     group = new HashMap<>();
                     group.put("ord", Integer.parseInt(currentList));
                     group.put("parameter", "List" + currentList + "Codes");
-                    group.put("id", tmp.get(i).get("VarTypeGroup").toString() + "group");
-                    group.put("href", "/codes/" + tmp.get(i).get("VarTypeGroup").toString() + "group/");
+                    group.put("id", tmp.get(i).get("VarType").toString());
+                    group.put("href", "/codes/" + tmp.get(i).get("VarType").toString() + "/");
                     group.put("subdimensions", new ArrayList<Map<String, Object>>());
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
@@ -904,7 +907,9 @@ public class FAOSTATAPICore {
         /* Store the original result. */
         List<Map<String, Object>> l = new ArrayList<>();
         while (i.hasNext()) {
-            l.add(i.nextMap());
+            Map<String, Object> m = i.nextMap();
+            System.out.println(m);
+            l.add(m);
         }
 
         /* Initiate variables. */
@@ -936,17 +941,17 @@ public class FAOSTATAPICore {
         List<String> idsBuffer = new ArrayList<>();
         for (List<Map<String, Object>> dimension : dimensions) {
             Map<String, Object> tmp = new HashMap<>();
-            if (!idsBuffer.contains(dimension.get(0).get("VarTypeGroup") + "group")) {
-                idsBuffer.add(dimension.get(0).get("VarTypeGroup") + "group");
-                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group");
+            if (!idsBuffer.contains(dimension.get(0).get("VarType"))) {
+                idsBuffer.add(dimension.get(0).get("VarType").toString());
+                tmp.put("id", dimension.get(0).get("VarType"));
             } else {
-                tmp.put("id", dimension.get(0).get("VarTypeGroup") + "group2");
+                tmp.put("id", dimension.get(0).get("VarType"));
             }
             tmp.put("ord", dimension.get(0).get("ListBoxNo"));
             tmp.put("label", "TODO");
             tmp.put("description", "TODO");
             tmp.put("parameter", "List" + dimension.get(0).get("ListBoxNo") + "Codes");
-            tmp.put("href", "/codes/" + dimension.get(0).get("VarTypeGroup") + "group/");
+            tmp.put("href", "/codes/" + dimension.get(0).get("VarType") + "/");
             tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (Map<String, Object> subdimension : dimension) {
                 ((ArrayList)tmp.get("subdimensions")).add(subdimension);
