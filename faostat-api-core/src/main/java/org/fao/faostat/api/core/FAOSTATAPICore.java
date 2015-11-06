@@ -1068,7 +1068,7 @@ public class FAOSTATAPICore {
                     Map<String, Object> labelCol = new HashMap<>();
                     labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     labelCol.put("label", row.get("ColName"));
-                    labelCol.put("type", "label");
+                    labelCol.put("type", "flag");
                     labelCol.put("key", row.get("ColName"));
                     labelCol.put("dimension_id", "flag");
                     dsd.add(labelCol);
