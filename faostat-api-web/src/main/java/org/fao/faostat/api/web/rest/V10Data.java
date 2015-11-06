@@ -376,10 +376,11 @@ public class V10Data {
                             @FormParam("List6Codes") List<String> list_6_codes,
                             @FormParam("List7Codes") List<String> list_7_codes,
                             @FormParam("null_values") boolean null_values,
-                            @FormParam("thousand_separator") String thousand_separator,
-                            @FormParam("decimal_separator") String decimal_separator,
-                            @FormParam("decimal_places") int decimal_places,
-                            @FormParam("limit") int limit) {
+                            @FormParam("group_by") String group_by,
+                            @FormParam("order_by") String order_by,
+                            @FormParam("operator") String operator,
+                            @FormParam("page_size") int page_size,
+                            @FormParam("page_number") int page_number) {
 
 
         /* Init Core library. */
@@ -400,10 +401,11 @@ public class V10Data {
         metadataBean.addParameter("List6Codes", list_6_codes);
         metadataBean.addParameter("List7Codes", list_7_codes);
         metadataBean.addParameter("null_values", null_values);
-        metadataBean.addParameter("thousand_separator", thousand_separator);
-        metadataBean.addParameter("decimal_separator", decimal_separator);
-        metadataBean.addParameter("decimal_places", decimal_places);
-        metadataBean.addParameter("limit", limit);
+        metadataBean.addParameter("group_by", group_by);
+        metadataBean.addParameter("order_by", order_by);
+        metadataBean.addParameter("operator", operator);
+        metadataBean.addParameter("page_size", page_size);
+        metadataBean.addParameter("page_number", page_number);
 
         /* Query the DB and return the results. */
         try {

@@ -269,29 +269,40 @@
             "description": "Flag to determine whether null values will be shown or not.",
             "default": false
           },
-          "thousand_separator": {
+          "group_by": {
             "type": "string",
-            "title": "Thousand Separator",
-            "description": "Thousand separator.",
-            "default": ","
+            "title": "Group By",
+            "description": "Comma separated string of the dimensions used to group the result of the query.",
+            "default": ""
           },
-          "decimal_separator": {
+          "order_by": {
             "type": "string",
-            "title": "Decimal Separator",
-            "description": "Decimal separator.",
-            "default": "."
+            "title": "Order By",
+            "description": "Comma separated string of the dimensions used to order the result of the query.",
+            "default": ""
           },
-          "decimal_places": {
-            "type": "integer",
-            "title": "Decimal Places",
-            "description": "Number of decimal places.",
-            "default": 2
+          "operator": {
+            "type": "string",
+            "enum": [
+              "",
+              "SUM",
+              "AVG"
+            ],
+            "title": "Operator",
+            "description": "Function to aggregate the result of the query.",
+            "default": ""
           },
-          "limit": {
+          "page_size": {
             "type": "integer",
-            "title": "Limit",
-            "description": "Number of rows for the result.",
-            "default": -1
+            "title": "Page Size",
+            "description": "Size of the page.",
+            "default": 100
+          },
+          "page_number": {
+            "type": "integer",
+            "title": "Page Number",
+            "description": "Number of the page to be retrieved.",
+            "default": 1
           }
         }
       },

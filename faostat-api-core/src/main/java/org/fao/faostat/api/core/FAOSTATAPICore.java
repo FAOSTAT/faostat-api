@@ -572,11 +572,14 @@ public class FAOSTATAPICore {
             log.append("FAOSTATAPICore\t").append("add DSD: done").append("\n");
 
             /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query? ").append(this.getQueries().getQuery("data", metadataBean.getProcedureParameters())).append("\n");
             log.append("FAOSTATAPICore\t").append("query db...").append("\n");
             JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+            log.append("FAOSTATAPICore\t").append("JDBCIterable? ").append(i != null).append("\n");
 
             /* Add column names. */
+            log.append("FAOSTATAPICore\t").append("column names? ").append(i.getColumnNames().size()).append("\n");
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
@@ -825,7 +828,6 @@ public class FAOSTATAPICore {
 
         switch (metadataBean.getOutputType()) {
             case CSV:
-                System.out.println("output.size()? " + output.size());
                 for (int i = 0; i < output.size(); i += 1) {
                     List<String> l = new ArrayList<>();
                     l.add(output.get(i).get("code").toString());
@@ -999,22 +1001,22 @@ public class FAOSTATAPICore {
                 Map<String, Object> row = i.nextMap();
 
                 /* Create descriptors for code and label columns. */
-                if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
+                if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Flag") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
                     Map<String, Object> codeCol = new HashMap<>();
                     codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
                     codeCol.put("label", row.get("CodeName"));
                     codeCol.put("type", "code");
                     codeCol.put("key", row.get("CodeName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
-                        codeCol.put("dimension_id", row.get("VarTypeGroup") + "group");
+                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
+                        codeCol.put("dimension_id", row.get("VarType"));
                     dsd.add(codeCol);
                     Map<String, Object> labelCol = new HashMap<>();
                     labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     labelCol.put("label", row.get("ColName"));
                     labelCol.put("type", "label");
                     labelCol.put("key", row.get("ColName"));
-                    if (row.get("VarTypeGroup") != null && row.get("VarTypeGroup").toString().length() > 0)
-                        labelCol.put("dimension_id", row.get("VarTypeGroup") + "group");
+                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
+                        labelCol.put("dimension_id", row.get("VarType"));
                     dsd.add(labelCol);
                 }
 
@@ -1022,11 +1024,54 @@ public class FAOSTATAPICore {
                 if (row.get("Col").toString().equalsIgnoreCase("Unit")) {
                     Map<String, Object> unitCol = new HashMap<>();
                     unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
-                    unitCol.put("label", row.get("ColName").toString());
+                    switch (o.getProcedureParameters().get("lang").toString()) {
+                        case "E":
+                            unitCol.put("label", "Unit");
+                            unitCol.put("key", "Unit");
+                            break;
+                        case "F":
+                            unitCol.put("label", "Unité");
+                            unitCol.put("key", "Unité");
+                            break;
+                        case "S":
+                            unitCol.put("label", "Unidad");
+                            unitCol.put("key", "Unidad");
+                            break;
+                    }
                     unitCol.put("type", "unit");
-                    unitCol.put("key", row.get("ColName").toString());
                     unitCol.put("dimension_id", "unit");
                     dsd.add(unitCol);
+                }
+
+                /* Create descriptor for the flag. */
+                if (row.get("Col").toString().equalsIgnoreCase("Flag")) {
+                    Map<String, Object> flagCol = new HashMap<>();
+                    flagCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
+                    switch (o.getProcedureParameters().get("lang").toString()) {
+                        case "E":
+                            flagCol.put("label", "Flag");
+                            flagCol.put("key", "Flag");
+                            break;
+                        case "F":
+                            flagCol.put("label", "Symbole");
+                            flagCol.put("key", "Symbole");
+                            break;
+                        case "S":
+                            flagCol.put("label", "Símbolo");
+                            flagCol.put("key", "Símbolo");
+                            break;
+                    }
+                    flagCol.put("type", "flag");
+                    flagCol.put("dimension_id", "flag");
+                    dsd.add(flagCol);
+
+                    Map<String, Object> labelCol = new HashMap<>();
+                    labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    labelCol.put("label", row.get("ColName"));
+                    labelCol.put("type", "label");
+                    labelCol.put("key", row.get("ColName"));
+                    labelCol.put("dimension_id", "flag");
+                    dsd.add(labelCol);
                 }
 
                 /* Create descriptor for the value. */

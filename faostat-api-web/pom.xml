@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.fao.faostat</groupId>
     <artifactId>faostat-api-web</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>FAOSTAT Web</name>
     <properties>
@@ -196,7 +196,7 @@
         <dependency>
             <groupId>org.fao.faostat</groupId>
             <artifactId>faostat-api-core</artifactId>
-            <version>1.4.1-SNAPSHOT</version>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
