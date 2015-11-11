@@ -684,6 +684,68 @@ public class FAOSTATAPICore {
 
     }
 
+    public OutputBean queryGroups(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+            /* Statistics. */
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate output. */
+            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            OutputBean out = new OutputBean();
+
+            /* Add metadata. */
+            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            out.setMetadata(metadataBean);
+
+            /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
+
+            /* Add data to the output. */
+            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            while (i.hasNext()) {
+                switch (metadataBean.getOutputType()) {
+                    case ARRAYS:
+                        out.getData().addList(i.next());
+                        break;
+                    case CSV:
+                        out.getData().addList(i.next());
+                        break;
+                    default:
+                        Map<String, Object> dbRow = i.nextMap();
+                        if (isAdmissibleDBRow(dbRow, out.getMetadata()))
+                            out.getData().add(dbRow);
+                        break;
+                }
+            }
+            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            /* Return output. */
+            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            return out;
+
+        } catch (Exception e) {
+            throw new Exception(log.toString());
+        }
+
+    }
+
     public OutputBean queryCodes(DatasourceBean datasourceBean, MetadataBean metadataBean) {
 
         /* Logs. */

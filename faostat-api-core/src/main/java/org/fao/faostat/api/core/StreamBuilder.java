@@ -730,6 +730,56 @@ public class StreamBuilder {
 
     }
 
+    public StreamingOutput createGroupsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
+
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
+
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+
+        try {
+
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryGroups(queryCode, datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+
+            /* Switch the output format. */
+            switch (out.getMetadata().getOutputType()) {
+
+                /* Create a JSON. */
+                case JSON:
+                    return createOutputStreamJSON(out);
+                case OBJECTS:
+                    return createOutputStreamJSON(out);
+                case ARRAYS:
+                    return createOutputStreamJSON(out);
+                case CSV:
+                    return createOutputStreamCSV(out);
+                default:
+                    throw new WebApplicationException(400);
+
+            }
+
+        } catch (final Exception e) {
+            return new StreamingOutput() {
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                    writer.write(log.toString());
+                    if (e.getMessage() != null)
+                        writer.write(e.getMessage());
+                    writer.flush();
+                    writer.close();
+                }
+            };
+        }
+
+    }
+
     public StreamingOutput createCodesOutputStream(final DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
         /* Log. */

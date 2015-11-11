@@ -901,6 +901,12 @@
           "datasource": {
             "$ref": "#/definitions/datasource"
           },
+          "whitelist": {
+            "$ref": "#/definitions/whitelist"
+          },
+          "blacklist": {
+            "$ref": "#/definitions/blacklist"
+          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
