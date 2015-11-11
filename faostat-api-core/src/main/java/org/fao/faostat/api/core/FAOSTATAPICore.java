@@ -446,7 +446,6 @@ public class FAOSTATAPICore {
             Map<String, Object> group = new HashMap<>();
             group.put("ord", Integer.parseInt(currentList));
             group.put("parameter", "List" + currentList + "Codes");
-            System.out.println("tmp.get(0).get(\"VarType\").toString()? " + tmp.get(0).get("VarType").toString());
             group.put("id", tmp.get(0).get("VarType").toString());
             group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
@@ -989,7 +988,8 @@ public class FAOSTATAPICore {
         List<Map<String, Object>> groups = new ArrayList<>();
         String current = "1";
         for (Map<String, Object> m : l) {
-            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
+//            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
+            m.put("id", m.get("TabID").toString().replaceAll(" ", "").toLowerCase());
             if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
                 groups.add(m);
             } else {
