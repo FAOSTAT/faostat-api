@@ -352,6 +352,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -373,8 +374,8 @@ public class V10Codes extends V10 {
                                   @QueryParam("show_full_metadata") boolean show_full_metadata,
                                   @QueryParam("group_subdimensions") boolean group_subdimensions,
                                   @QueryParam("subdimensions") String subdimensions,
-                                  @QueryParam("whitelist") String whitelist,
-                                  @QueryParam("blacklist") String blacklist) {
+                                  @QueryParam("whitelist") List<String> whitelist,
+                                  @QueryParam("blacklist") List<String> blacklist) {
 
 
         /* Init Core library. */
@@ -394,6 +395,10 @@ public class V10Codes extends V10 {
         metadataBean.addParameter("whitelist", whitelist);
         metadataBean.addParameter("blacklist", blacklist);
         metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
+
+        /* Set white/blacklist. */
+        metadataBean.setBlackList(blacklist);
+        metadataBean.setWhiteList(whitelist);
 
         /* Query the DB and return the results. */
         try {

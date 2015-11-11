@@ -554,8 +554,14 @@ public class FAOSTATAPICore {
 
         try {
 
+            /* Check parameters. */
+            for (String key : metadataBean.getProcedureParameters().keySet())
+                log.append("FAOSTATAPICore\t").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+            for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes"))
+                log.append("FAOSTATAPICore\t").append("\t").append(key).append("\n");
+
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+                log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
@@ -878,6 +884,7 @@ public class FAOSTATAPICore {
         /* Check wheter the code is a list. */
         if (row.get("aggregate_type").equals(">")) {
             return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
+
         } else {
 
             /* Check the blacklist. */
@@ -910,7 +917,6 @@ public class FAOSTATAPICore {
         List<Map<String, Object>> l = new ArrayList<>();
         while (i.hasNext()) {
             Map<String, Object> m = i.nextMap();
-            System.out.println(m);
             l.add(m);
         }
 
