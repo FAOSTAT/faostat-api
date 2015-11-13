@@ -207,6 +207,12 @@
             "description": "FAOSTAT domain code.",
             "$ref": "#/definitions/code"
           },
+          "decimal_places": {
+            "title": "Decimal Places",
+            "description": "Number of decimal places for the values of the output.",
+            "type": "integer",
+            "default": 2
+          },
           "List1Codes": {
             "type": "array",
             "title": "Dimension 1 codes",

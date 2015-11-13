@@ -380,6 +380,7 @@ public class V10Data {
                             @FormParam("order_by") String order_by,
                             @FormParam("operator") String operator,
                             @FormParam("page_size") int page_size,
+                            @FormParam("decimal_places") int decimal_places,
                             @FormParam("page_number") int page_number) {
 
 
@@ -405,6 +406,7 @@ public class V10Data {
         metadataBean.addParameter("order_by", order_by);
         metadataBean.addParameter("operator", operator);
         metadataBean.addParameter("page_size", page_size);
+        metadataBean.addParameter("decimal_places", decimal_places);
         metadataBean.addParameter("page_number", page_number);
 
         /* Query the DB and return the results. */
