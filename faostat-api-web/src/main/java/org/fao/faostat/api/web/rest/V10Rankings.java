@@ -339,489 +339,87 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core;
+package org.fao.faostat.api.web.rest;
 
-
+import org.fao.faostat.api.core.FAOSTATAPICore;
+import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
-import org.fao.faostat.api.core.beans.OutputBean;
-import javax.ws.rs.WebApplicationException;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.*;
-import java.util.*;
+import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class StreamBuilder {
+@Component
+@Path("/v1.0/{lang}/rankings")
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+public class V10Rankings {
 
-    public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
+    @POST
+    public Response getData(@PathParam("lang") String lang,
+                            @FormParam("domain_codes") List<String> domain_codes,
+                            @FormParam("datasource") String datasource,
+                            @FormParam("api_key") String api_key,
+                            @FormParam("client_key") String client_key,
+                            @FormParam("output_type") String output_type,
+                            @FormParam("List1Codes") List<String> list_1_codes,
+                            @FormParam("List2Codes") List<String> list_2_codes,
+                            @FormParam("List3Codes") List<String> list_3_codes,
+                            @FormParam("List4Codes") List<String> list_4_codes,
+                            @FormParam("List5Codes") List<String> list_5_codes,
+                            @FormParam("List6Codes") List<String> list_6_codes,
+                            @FormParam("List7Codes") List<String> list_7_codes,
+                            @FormParam("filter_list") int filter_list,
+                            @FormParam("rank_type") String rank_type,
+                            @FormParam("results") String results) {
 
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
 
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
-        /* Check parameters. */
-        log.append("StreamBuilder\t").append("queryCode: ").append(queryCode).append("\n");
-        for (String key : metadataBean.getProcedureParameters().keySet())
-            log.append("StreamBuilder\t").append("key: ").append(key).append(", value: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_codes", domain_codes);
+        metadataBean.addParameter("List1Codes", list_1_codes);
+        metadataBean.addParameter("List2Codes", list_2_codes);
+        metadataBean.addParameter("List3Codes", list_3_codes);
+        metadataBean.addParameter("List4Codes", list_4_codes);
+        metadataBean.addParameter("List5Codes", list_5_codes);
+        metadataBean.addParameter("List6Codes", list_6_codes);
+        metadataBean.addParameter("List7Codes", list_7_codes);
+        metadataBean.addParameter("filter_list", filter_list);
+        metadataBean.addParameter("rank_type", rank_type);
+        metadataBean.addParameter("results", results);
+
+        /* Query the DB and return the results. */
         try {
 
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.query(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
 
-            /* Switch the output format. */
-            return formatOutput(out);
+            /* Datasource bean. */
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("rankings", datasourceBean, metadataBean);
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (Exception e) {
+            return Response.status(500).entity(e).build();
         }
 
-    }
-
-    private StreamingOutput exceptionHandler(final Exception e, final StringBuilder log) {
-        return new StreamingOutput() {
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-                writer.write(log.toString());
-                if (e.getMessage() != null)
-                    writer.write(e.getMessage());
-                writer.flush();
-                writer.close();
-            }
-        };
-    }
-
-    private StreamingOutput createOutputStreamCSV(final OutputBean out) throws Exception {
-
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                    /* Add column names, from DSD (if any)... */
-                    for (int i = 0; i < out.getColumnNames().size(); i += 1) {
-                        writer.write("\"" + out.getColumnNames().get(i) + "\"");
-                        if (i < out.getColumnNames().size() - 1)
-                            writer.write(",");
-                        else
-                            writer.write("\n");
-                    }
-
-                /* Add data. */
-                while (out.getData().hasNextList()) {
-                    List<String> l = out.getData().nextList();
-                    for (int i = 0; i < l.size(); i += 1) {
-                        System.out.println(l.get(i));
-                        writer.write("\"" + l.get(i) + "\"");
-                        if (i < l.size() - 1)
-                            writer.write(",");
-                        else
-                            writer.write("\n");
-                    }
-                }
-
-                /* Flush the writer. */
-                writer.flush();
-
-                /* Close the writer. */
-                writer.flush();
-
-            }
-
-        };
-
-    }
-
-    private StreamingOutput createOutputStreamJSON(final OutputBean out) throws Exception {
-
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                /* Initiate the output. */
-                writer.write("{");
-
-                /* Add metadata. */
-                writer.write(createMetadata(out.getMetadata()));
-
-                /* Initiate the array. */
-                writer.write("\"data\": [");
-
-                /* Generate an array of objects of arrays. */
-                switch (out.getMetadata().getOutputType()) {
-
-                    case ARRAYS:
-                        while (out.getData().hasNext()) {
-                            writer.write(out.getData().nextJSONList());
-                            if (out.getData().hasNext())
-                                writer.write(",");
-                        }
-                        break;
-                    default:
-                        while (out.getData().hasNext()) {
-                            writer.write(out.getData().nextJSON());
-                            if (out.getData().hasNext())
-                                writer.write(",");
-                        }
-                        break;
-
-                }
-
-                /* Close the array. */
-                writer.write("]");
-
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-                /* Close the writer. */
-                writer.flush();
-
-            }
-
-        };
-
-    }
-
-    public StreamingOutput createDataOutputStream(DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryData(datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            switch (out.getMetadata().getOutputType()) {
-
-                /* Create a JSON. */
-                case JSON:
-                    return createDataOutputStreamJSON(out);
-                case OBJECTS:
-                    return createDataOutputStreamJSON(out);
-                case ARRAYS:
-                    return createDataOutputStreamJSON(out);
-                case CSV:
-                    return createDataOutputStreamCSV(out);
-                default:
-                    throw new WebApplicationException(400);
-
-            }
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
-
-    public StreamingOutput createDataOutputStreamCSV(final OutputBean out) throws Exception {
-
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-
-                /* Add column names from DSD. */
-                int max = 0;
-                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
-                    int idx = (int)(out.getMetadata().getDsd().get(i).get("index"));
-                    if (idx > max)
-                        max = idx;
-                }
-                String[] headers = new String[max];
-                for (int i = 0; i < headers.length; i += 1)
-                    headers[i] = "TODO";
-                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
-                    int idx = (int) (out.getMetadata().getDsd().get(i).get("index"));
-                    try {
-                        headers[idx] = out.getMetadata().getDsd().get(i).get("label").toString();
-                    } catch (Exception e) {
-                        System.out.println("\tskip this...");
-                    }
-                }
-                for (int i = 0; i < headers.length; i += 1) {
-                    writer.write("\"" + headers[i] + "\"");
-                    if (i < headers.length - 1)
-                        writer.write(",");
-                    else
-                        writer.write("\n");
-                }
-
-                /* Add data. */
-                while (out.getData().hasNextList()) {
-                    List<String> l = out.getData().nextList();
-                    for (int i = 0; i < l.size(); i += 1) {
-                        writer.write("\"" + l.get(i) + "\"");
-                        if (i < l.size() - 1)
-                            writer.write(",");
-                        else
-                            writer.write("\n");
-                    }
-                }
-
-                /* Flush the writer. */
-                writer.flush();
-
-                /* Close the writer. */
-                writer.flush();
-
-            }
-
-        };
-
-    }
-
-    public StreamingOutput createDataOutputStreamJSON(final OutputBean out) throws Exception {
-
-        /* Initiate the output stream. */
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                /* Initiate the buffer writer. */
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                /* Initiate the output. */
-                writer.write("{");
-
-                /* Add metadata. */
-                writer.write(createMetadata(out.getMetadata()));
-
-                /* Initiate the array. */
-                writer.write("\"data\": [");
-
-                /* Generate an array of objects of arrays. */
-                switch (out.getMetadata().getOutputType()) {
-
-                    case ARRAYS:
-                        while (out.getData().hasNextList()) {
-                            writer.write(out.getData().nextJSONList());
-                            if (out.getData().hasNextList())
-                                writer.write(",");
-                        }
-                        break;
-                    default:
-                        while (out.getData().hasNext()) {
-                            writer.write(out.getData().nextJSON());
-                            if (out.getData().hasNext())
-                                writer.write(",");
-                        }
-                        break;
-
-                }
-
-                /* Close the array. */
-                writer.write("]");
-
-                /* Close the object. */
-                writer.write("}");
-
-                /* Flush the writer. */
-                writer.flush();
-
-                /* Close the writer. */
-                writer.close();
-
-            }
-
-        };
-
-    }
-
-    public StreamingOutput createDomainsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryDomains(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            return formatOutput(out);
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
-
-    public StreamingOutput createGroupsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryGroups(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            return formatOutput(out);
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
-
-    public StreamingOutput createCodesOutputStream(final DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        try {
-
-            /* Initiate core library. */
-            log.append("StreamBuilder\t").append("initiate api...").append("\n");
-            FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-            log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            return formatOutput(out);
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
-
-    public StreamingOutput createDimensionOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            return formatOutput(out);
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
-
-    private StreamingOutput formatOutput(OutputBean out) throws Exception {
-        switch (out.getMetadata().getOutputType()) {
-            case JSON:
-                return createOutputStreamJSON(out);
-            case OBJECTS:
-                return createOutputStreamJSON(out);
-            case ARRAYS:
-                return createOutputStreamJSON(out);
-            case CSV:
-                return createOutputStreamCSV(out);
-            default:
-                throw new WebApplicationException(400);
-        }
-    }
-
-    private String createMetadata(MetadataBean o) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\"metadata\": {");
-        if (o.getProcessingTime() != null) {
-            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
-        }
-        if (o.getDsd() != null && o.getDsd().size() > 0) {
-            sb.append("\"dsd\": [");
-            for (int a = 0; a < o.getDsd().size(); a += 1) {
-                sb.append("{");
-                HashMap<String, Object> col = (HashMap<String, Object>)o.getDsd().get(a);
-                int counter = 0;
-                for (String key : col.keySet()) {
-                    sb.append("\"").append(key).append("\": \"").append(col.get(key)).append("\"");
-                    if (counter < col.keySet().size() - 1)
-                        sb.append(",");
-                    counter += 1;
-                }
-                sb.append("}");
-                if (a < o.getDsd().size() - 1)
-                    sb.append(",");
-            }
-            sb.append("],");
-        }
-        sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
-        sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
-        sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
-        sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
-        sb.append("\"parameters\": {");
-        int count = 0;
-        for (String key : o.getProcedureParameters().keySet()) {
-            sb.append("\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"");
-            if (count < o.getProcedureParameters().keySet().size() - 1) {
-                sb.append(",");
-                count++;
-            }
-        }
-        sb.append("}");
-        sb.append("},");
-        return sb.toString();
     }
 
 }

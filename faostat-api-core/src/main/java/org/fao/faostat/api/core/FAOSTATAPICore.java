@@ -380,10 +380,15 @@ public class FAOSTATAPICore {
             log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
             out.setMetadata(metadataBean);
 
+            /* Log query. */
+            log.append("FAOSTATAPICore\t").append("query: ").append(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters())).append("\n");
+
             /* Query the DB. */
             log.append("FAOSTATAPICore\t").append("query db...").append("\n");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+            log.append("FAOSTATAPICore\t").append("i not null? ").append(i != null).append("\n");
+            log.append("FAOSTATAPICore\t").append("i.getResultSet() not null? ").append(i.getResultSet() != null).append("\n");
 
             /* Add column names. */
             out.setColumnNames(i.getColumnNames());
@@ -560,7 +565,7 @@ public class FAOSTATAPICore {
                 log.append("FAOSTATAPICore\t").append("\t").append(key).append("\n");
 
             /* Statistics. */
-                log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
