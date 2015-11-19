@@ -377,7 +377,7 @@ public class V10Rankings {
                             @FormParam("List7Codes") List<String> list_7_codes,
                             @FormParam("filter_list") int filter_list,
                             @FormParam("rank_type") String rank_type,
-                            @FormParam("results") String results) {
+                            @FormParam("limit") String results) {
 
 
         /* Init Core library. */

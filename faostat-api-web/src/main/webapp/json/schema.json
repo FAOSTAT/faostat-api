@@ -281,7 +281,7 @@
               "DESC"
             ]
           },
-          "results": {
+          "limit": {
             "type": "string",
             "title": "Results",
             "description": "Number of results.",
