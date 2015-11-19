@@ -920,6 +920,7 @@ public class FAOSTATAPICore {
 
         /* Add metadata. */
         log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+        metadataBean.getProcedureParameters().put("parameter", "List" + dimension.get("ListBoxNo").toString() + "Codes");
         out.setMetadata(metadataBean);
 
         /* Statistics. */
@@ -1063,6 +1064,10 @@ public class FAOSTATAPICore {
         List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
         JDBCIterable i;
 
+        /* Store original result. */
+        Map<String, Object> original = new HashMap<String, Object>();
+        original.put("original", new ArrayList<Map<String, Object>>());
+
         try {
 
             /* Query DB. */
@@ -1072,6 +1077,7 @@ public class FAOSTATAPICore {
             while (i.hasNext()) {
 
                 Map<String, Object> row = i.nextMap();
+                ((ArrayList<Map<String, Object>>)original.get("original")).add(row);
 
                 /* Create descriptors for code and label columns. */
                 if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Flag") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
@@ -1080,6 +1086,7 @@ public class FAOSTATAPICore {
                     codeCol.put("label", row.get("CodeName"));
                     codeCol.put("type", "code");
                     codeCol.put("key", row.get("CodeName"));
+                    codeCol.put("pivot", row.get("Pivot"));
                     if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
                         codeCol.put("dimension_id", row.get("VarType"));
                     dsd.add(codeCol);
@@ -1088,6 +1095,7 @@ public class FAOSTATAPICore {
                     labelCol.put("label", row.get("ColName"));
                     labelCol.put("type", "label");
                     labelCol.put("key", row.get("ColName"));
+                    labelCol.put("pivot", row.get("Pivot"));
                     if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
                         labelCol.put("dimension_id", row.get("VarType"));
                     dsd.add(labelCol);
@@ -1113,6 +1121,7 @@ public class FAOSTATAPICore {
                     }
                     unitCol.put("type", "unit");
                     unitCol.put("dimension_id", "unit");
+                    unitCol.put("pivot", row.get("Pivot"));
                     dsd.add(unitCol);
                 }
 
@@ -1136,6 +1145,7 @@ public class FAOSTATAPICore {
                     }
                     flagCol.put("type", "flag");
                     flagCol.put("dimension_id", "flag");
+                    flagCol.put("pivot", row.get("Pivot"));
                     dsd.add(flagCol);
 
                     Map<String, Object> labelCol = new HashMap<>();
@@ -1144,6 +1154,7 @@ public class FAOSTATAPICore {
                     labelCol.put("type", "flag");
                     labelCol.put("key", row.get("ColName"));
                     labelCol.put("dimension_id", "flag");
+                    labelCol.put("pivot", row.get("Pivot"));
                     dsd.add(labelCol);
                 }
 
@@ -1155,6 +1166,7 @@ public class FAOSTATAPICore {
                     valueCol.put("type", "value");
                     valueCol.put("key", row.get("ColName").toString());
                     valueCol.put("dimension_id", "value");
+                    valueCol.put("pivot", row.get("Pivot"));
                     dsd.add(valueCol);
                 }
 
@@ -1163,6 +1175,9 @@ public class FAOSTATAPICore {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        /* Add original. */
+//        dsd.add(original);
 
         /* Return DSD. */
         return dsd;
