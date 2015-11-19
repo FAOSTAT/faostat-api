@@ -395,7 +395,8 @@ public class V10Groups {
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createGroupsOutputStream("groups", datasourceBean, metadataBean);
+//            StreamingOutput stream = sb.createGroupsOutputStream("groups", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createDomainsOutputStream("groups", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

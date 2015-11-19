@@ -689,31 +689,31 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createGroupsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        /* Log. */
-        final StringBuilder log = new StringBuilder();
-
-        /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        try {
-
-            /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryGroups(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            /* Switch the output format. */
-            return formatOutput(out);
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }
+//    public StreamingOutput createGroupsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
+//
+//        /* Log. */
+//        final StringBuilder log = new StringBuilder();
+//
+//        /* Initiate core library. */
+//        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+//        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+//        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+//
+//        try {
+//
+//            /* Query FAOSTAT. */
+//            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+//            final OutputBean out = faostatapiCore.queryGroups(queryCode, datasourceBean, metadataBean);
+//            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+//
+//            /* Switch the output format. */
+//            return formatOutput(out);
+//
+//        } catch (final Exception e) {
+//            return exceptionHandler(e, log);
+//        }
+//
+//    }
 
     public StreamingOutput createCodesOutputStream(final DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
