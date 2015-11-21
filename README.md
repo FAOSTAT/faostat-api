@@ -18,6 +18,11 @@ Web
 
 This module enables users to access FAOSTAT data through REST web services.
 
+Tests
+=====
+
+Tests are available in continous integration at [Travis CI](https://travis-ci.org/FAOSTAT/faostat-api-client-tests).
+
 Developed with
 ==============
 ![IntelliJ](http://www.jetbrains.com/idea/docs/logo_intellij_idea.png)
