@@ -343,6 +343,7 @@ package org.fao.faostat.api.core.beans;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -354,13 +355,37 @@ public class TestBean {
 
     private int age;
 
+    private List<String> nicknames;
+
+    private Map<String, List<String>> map;
+
     public TestBean() {
 
     }
 
-    public TestBean(String name, int age) {
+    @Override
+    public String toString() {
+        return "TestBean{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", nicknames=" + nicknames +
+                ", map=" + map +
+                '}';
+    }
+
+    public TestBean(String name, int age, List<String> nicknames, Map<String, List<String>> map) {
         this.setName(name);
         this.setAge(age);
+        this.setNicknames(nicknames);
+        this.setMap(map);
+    }
+
+    public Map<String, List<String>> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, List<String>> map) {
+        this.map = map;
     }
 
     public String getName() {
@@ -379,12 +404,12 @@ public class TestBean {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return "TestBean{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+    public List<String> getNicknames() {
+        return nicknames;
+    }
+
+    public void setNicknames(List<String> nicknames) {
+        this.nicknames = nicknames;
     }
 
 }
