@@ -378,4 +378,16 @@ public class Test {
 
     }
 
+    @POST
+    @Path("/{lang}/bean/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response test(@PathParam("lang") String lang, TestBean paperino) {
+        System.out.println(lang);
+        System.out.println(paperino);
+        Gson g = new Gson();
+        return Response.status(200).entity(g.toJson(paperino)).build();
+
+    }
+
 }

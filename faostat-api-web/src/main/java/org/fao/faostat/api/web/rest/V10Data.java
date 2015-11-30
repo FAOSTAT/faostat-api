@@ -362,6 +362,12 @@ import java.util.List;
 public class V10Data {
 
     @POST
+    @Path("/v1.0/{lang}/data/")
+    public Response getDataFromBean() {
+        return null;
+    }
+
+    @POST
     public Response getData(@PathParam("lang") String lang,
                             @FormParam("domain_code") String domain_code,
                             @FormParam("datasource") String datasource,
