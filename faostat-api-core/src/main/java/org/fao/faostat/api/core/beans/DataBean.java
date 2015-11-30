@@ -342,68 +342,170 @@
 package org.fao.faostat.api.core.beans;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
-public class OutputBean {
+public class DataBean {
 
-    private MetadataBean metadata;
+    private String domain_code;
 
-    private FAOSTATIterable data;
+    private String datasource;
 
-    private List<String> columnNames;
+    private String api_key;
 
-    public OutputBean() {
-        this.setMetadata(new MetadataBean());
-        this.setData(new FAOSTATIterable());
+    private String client_key;
+
+    private String output_type;
+
+    private Map<String, List<String>> filters;
+
+    private boolean null_values;
+
+    private String group_by;
+
+    private String order_by;
+
+    private String operator;
+
+    private int page_size;
+
+    private int decimal_places;
+
+    private int page_number;
+
+    private int limit;
+
+    public String getDomain_code() {
+        return domain_code;
     }
 
-    public OutputBean(MetadataBean metadata) {
-        super();
-        this.setMetadata(metadata);
+    public void setDomain_code(String domain_code) {
+        this.domain_code = domain_code;
     }
 
-    public OutputBean(FAOSTATIterable data) {
-        super();
-        this.setData(data);
+    public String getDatasource() {
+        return datasource;
     }
 
-    public OutputBean(MetadataBean metadata, FAOSTATIterable data) {
-        this.setMetadata(metadata);
-        this.setData(data);
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 
-    public MetadataBean getMetadata() {
-        return metadata;
+    public String getApi_key() {
+        return api_key;
     }
 
-    public void setMetadata(MetadataBean metadata) {
-        this.metadata = metadata;
+    public void setApi_key(String api_key) {
+        this.api_key = api_key;
     }
 
-    public FAOSTATIterable getData() {
-        return data;
+    public String getClient_key() {
+        return client_key;
     }
 
-    public List<String> getColumnNames() {
-        return columnNames;
+    public void setClient_key(String client_key) {
+        this.client_key = client_key;
     }
 
-    public void setColumnNames(List<String> columnNames) {
-        this.columnNames = columnNames;
+    public String getOutput_type() {
+        return output_type;
     }
 
-    public void setData(FAOSTATIterable data) {
-        this.data = data;
+    public void setOutput_type(String output_type) {
+        this.output_type = output_type;
+    }
+
+    public Map<String, List<String>> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Map<String, List<String>> filters) {
+        this.filters = filters;
+    }
+
+    public boolean isNull_values() {
+        return null_values;
+    }
+
+    public void setNull_values(boolean null_values) {
+        this.null_values = null_values;
+    }
+
+    public String getGroup_by() {
+        return group_by;
+    }
+
+    public void setGroup_by(String group_by) {
+        this.group_by = group_by;
+    }
+
+    public String getOrder_by() {
+        return order_by;
+    }
+
+    public void setOrder_by(String order_by) {
+        this.order_by = order_by;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public int getPage_size() {
+        return page_size;
+    }
+
+    public void setPage_size(int page_size) {
+        this.page_size = page_size;
+    }
+
+    public int getDecimal_places() {
+        return decimal_places;
+    }
+
+    public void setDecimal_places(int decimal_places) {
+        this.decimal_places = decimal_places;
+    }
+
+    public int getPage_number() {
+        return page_number;
+    }
+
+    public void setPage_number(int page_number) {
+        this.page_number = page_number;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     @Override
     public String toString() {
-        return "OutputBean{" +
-                "metadata=" + metadata +
-                ", data=" + data +
-                ", columnNames=" + columnNames +
+        return "DataBean{" +
+                "domain_code='" + domain_code + '\'' +
+                ", datasource='" + datasource + '\'' +
+                ", api_key='" + api_key + '\'' +
+                ", client_key='" + client_key + '\'' +
+                ", output_type='" + output_type + '\'' +
+                ", filters=" + filters +
+                ", null_values=" + null_values +
+                ", group_by='" + group_by + '\'' +
+                ", order_by='" + order_by + '\'' +
+                ", operator='" + operator + '\'' +
+                ", page_size=" + page_size +
+                ", decimal_places=" + decimal_places +
+                ", page_number=" + page_number +
+                ", limit=" + limit +
                 '}';
     }
 

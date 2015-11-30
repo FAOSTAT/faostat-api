@@ -341,17 +341,23 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.fao.faostat.api.core.beans.DataBean;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
+import org.fao.faostat.api.core.beans.OutputBean;
+import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -362,9 +368,94 @@ import java.util.List;
 public class V10Data {
 
     @POST
-    @Path("/v1.0/{lang}/data/")
-    public Response getDataFromBean() {
-        return null;
+    @Path("/bean/")
+    public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
+
+        /* Logger. */
+        StringBuilder log = new StringBuilder();
+        log.append("getDataFromBean\t").append("DataBean\t").append(b.toString()).append("\n");
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(b.getDatasource().toUpperCase()));
+        log.append("getDataFromBean\t").append("DatasourceBean\t").append(datasourceBean.toString()).append("\n");
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type());
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", b.getDomain_code());
+        log.append("getDataFromBean\t").append("MetadataBean\t").append(metadataBean.toString()).append("\n");
+
+        /* Init filters. */
+        Map<String, List<String>> filters = new HashMap<>();
+        filters.put("List1Codes", new ArrayList<String>());
+        filters.put("List2Codes", new ArrayList<String>());
+        filters.put("List3Codes", new ArrayList<String>());
+        filters.put("List4Codes", new ArrayList<String>());
+        filters.put("List5Codes", new ArrayList<String>());
+        filters.put("List6Codes", new ArrayList<String>());
+        filters.put("List7Codes", new ArrayList<String>());
+
+        /* Get user dimensions. */
+        List<String> dimensions = new ArrayList<>();
+        for (String key : b.getFilters().keySet()) {
+            dimensions.add(key);
+        }
+        log.append("getDataFromBean\t").append("dimensions\t").append(dimensions.toString()).append("\n");
+
+        /* Get dimensions. */
+        try {
+
+            OutputBean ob = faostatapiCore.queryDimensions(null, datasourceBean, metadataBean);
+            log.append("getDataFromBean\t").append("OutputBean\t").append(ob.toString()).append("\n");
+
+            while (ob.getData().hasNext()) {
+                Map<String, Object> m = ob.getData().next();
+                log.append("getDataFromBean\t\t").append("Map\t").append(m.toString()).append("\n");
+                String id = m.get("id").toString();
+                log.append("getDataFromBean\t\t\t").append("ID\t").append(id).append("\n");
+                String parameter = m.get("parameter").toString();
+                log.append("getDataFromBean\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
+                if (b.getFilters().get(id) != null) {
+                    log.append("getDataFromBean\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
+                    filters.put(parameter, b.getFilters().get(id));
+                    continue;
+                }
+                log.append("getDataFromBean\t\t\t").append("subdimensions?\t").append((m.get("subdimensions") != null)).append("\n");
+                if (m.get("subdimensions") != null) {
+                    ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>)m.get("subdimensions");
+                    for (Map<String, Object> m2 : l) {
+                        log.append("getDataFromBean\t\t\t\t").append("m2\t").append(m2).append("\n");
+                        id = m2.get("id").toString();
+                        parameter = m2.get("parameter").toString();
+                        log.append("getDataFromBean\t\t\t\t").append("ID\t").append(id).append("\n");
+                        log.append("getDataFromBean\t\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
+                        if (b.getFilters().get(id) != null) {
+                            log.append("getDataFromBean\t\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
+                            filters.put(parameter, b.getFilters().get(id));
+                            log.append("getDataFromBean\t\t\t\t").append("SIZE\t").append(((List<String>)b.getFilters().get(id)).size()).append("\n");
+                        }
+                    }
+                }
+                log.append("\n");
+            }
+
+            log.append("getDataFromBean\t").append("filters\t").append(filters.toString()).append("\n");
+
+            return getData(lang, b.getDomain_code(), b.getDatasource(), b.getApi_key(), b.getClient_key(),
+                    b.getOutput_type(), filters.get("List1Codes"), filters.get("List2Codes"), filters.get("List3Codes"),
+                    filters.get("List4Codes"), filters.get("List5Codes"), filters.get("List6Codes"),
+                    filters.get("List7Codes"), b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit());
+//            return Response.status(200).entity(log.toString()).build();
+
+        } catch (Exception e) {
+            return Response.status(500).entity(log.toString()).build();
+        }
+
     }
 
     @POST

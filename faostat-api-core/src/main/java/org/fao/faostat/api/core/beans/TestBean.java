@@ -359,9 +359,9 @@ public class TestBean {
 
     private Map<String, List<String>> map;
 
-    public TestBean() {
-
-    }
+//    public TestBean() {
+//
+//    }
 
     @Override
     public String toString() {
@@ -373,12 +373,12 @@ public class TestBean {
                 '}';
     }
 
-    public TestBean(String name, int age, List<String> nicknames, Map<String, List<String>> map) {
-        this.setName(name);
-        this.setAge(age);
-        this.setNicknames(nicknames);
-        this.setMap(map);
-    }
+//    public TestBean(String name, int age, List<String> nicknames, Map<String, List<String>> map) {
+//        this.setName(name);
+//        this.setAge(age);
+//        this.setNicknames(nicknames);
+//        this.setMap(map);
+//    }
 
     public Map<String, List<String>> getMap() {
         return map;

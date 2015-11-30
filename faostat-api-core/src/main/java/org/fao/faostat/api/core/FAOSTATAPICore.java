@@ -592,6 +592,9 @@ public class FAOSTATAPICore {
             log.append("FAOSTATAPICore\t").append("column names? ").append(i.getColumnNames().size()).append("\n");
             out.setColumnNames(i.getColumnNames());
 
+            /* Add query. */
+            out.getMetadata().addParameter("query", this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
+
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
