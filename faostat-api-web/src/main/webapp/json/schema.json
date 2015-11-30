@@ -438,6 +438,12 @@
             "description": "Size of the page.",
             "default": 100
           },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximium number of rows returned by the query.",
+            "default": 1000000000
+          },
           "page_number": {
             "type": "integer",
             "title": "Page Number",

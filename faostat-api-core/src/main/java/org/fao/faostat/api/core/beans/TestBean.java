@@ -339,82 +339,52 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.constants;
+package org.fao.faostat.api.core.beans;
 
-import java.io.IOException;
-import java.util.HashMap;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class QUERIES {
+ */
+@XmlRootElement
+public class TestBean {
 
-    private Map<String, String> queries;
+    private String name;
 
-    public QUERIES() {
-        this.setQueries(new HashMap<String, String>());
-        this.getQueries().put("groups", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label FROM Domain D GROUP BY D.GroupCode, D.GroupName{{lang}}");
-        this.getQueries().put("domains", "SELECT D.DomainCode AS code, D.DomainName{{lang}} AS label, D.Ord AS ord FROM Domain D WHERE D.GroupCode = '{{group_code}}' ORDER BY D.Ord");
-        this.getQueries().put("groupsanddomains", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord");
-        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("methodologies", "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC");
-        this.getQueries().put("methodology", "SELECT M.MethodologyNote{{lang}} AS note, M.MethodologyCoverage{{lang}} AS coverage, M.MethodologyReferences{{lang}} AS reference, M.MethodologyCollection{{lang}} AS collection, M.MethodologyEstimation{{lang}} AS estimation FROM Metadata_Methodology AS M WHERE M.MethodologyCode='{{methodology_code}}'");
-        this.getQueries().put("classifications", "SELECT M.ItemCode AS code, M.ItemName{{lang}} AS label, M.ItemDescription{{lang}} AS description FROM Metadata_Item AS M WHERE M.domaincode = '{{domain_code}}' ORDER BY M.ItemName{{lang}} ASC");
-        this.getQueries().put("units", "SELECT E.UnitAbbreviation{{lang}} AS code, E.UnitTitle{{lang}} AS label FROM Metadata_Unit AS E ORDER BY E.UnitAbbreviation{{lang}} ASC");
-        this.getQueries().put("glossary", "SELECT M.GlossaryName{{lang}} AS code, M.GlossaryDefinition{{lang}} AS label, M.GlossarySource{{lang}} AS source FROM Metadata_Glossary AS M ORDER BY M.GlossaryName{{lang}} ASC");
-        this.getQueries().put("abbreviations", "SELECT M.AbbreviationTitle{{lang}} AS code, AbbreviationDefinition{{lang}} AS label FROM Metadata_Abbreviation AS M ORDER BY AbbreviationTitle{{lang}} ASC");
-        this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
-        this.getQueries().put("bulkdownloads", "SELECT B.Domain AS code, B.Source AS label, B.Filename AS filename, B.FileContent AS content, B.CreatedDate AS date FROM BulkDownloads B WHERE B.LanguageID = '{{lang}}' AND B.Domain = '{{domain_code}}'");
-        this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @Limit={{limit}}, @DecPlaces={{decimal_places}}, @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NullValues = {{null_values}}, @GroupVarType = '{{group_by}}', @Operator = '{{operator}}', @OrderBy = '{{order_by}}', @PageSize = {{page_size}}, @Page = {{page_number}}");
-        this.getQueries().put("data_size", "EXECUTE Warehouse.dbo.usp_GetData @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NoRecords={{no_records}}");
-        this.getQueries().put("rankings", "EXEC Warehouse.dbo.usp_Rank @DomainCode='{{domain_codes}}', @lang='{{lang}}', @List1Codes='{{List1Codes}}', @List2Codes='{{List2Codes}}', @List3Codes='{{List3Codes}}', @List4Codes='{{List4Codes}}', @List5Codes='{{List5Codes}}', @List6Codes='{{List6Codes}}', @List7Codes='{{List7Codes}}', @FilterList={{filter_list}}, @RankType='{{rank_type}}', @NoResults={{results}}");
-        this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
+    private int age;
+
+    public TestBean() {
+
     }
 
-    public String getQuery(String id, Map<String, Object> procedureParameters) {
-        try {
-            String query = this.getQueries().get(id.toLowerCase());
-            for (String key : procedureParameters.keySet()) {
-                String tmp = "\\{\\{" + key + "\\}\\}";
-                if (procedureParameters.get(key) != null) {
-                    if (procedureParameters.get(key) instanceof List) {
-                        List<String> l = (List<String>)procedureParameters.get(key);
-                        String s = "";
-                        if (l != null && l.size() > 0 && l.get(0).length() > 0) {
-                            s = "(";
-                            for (int z = 0; z < l.size(); z += 1) {
-                                s += "''" + l.get(z) + "''";
-                                if (z < l.size() - 1)
-                                    s += ",";
-                            }
-                            s += ")";
-                        } else {
-                            s = "";
-                        }
-                        query = query.replaceAll(tmp, s);
-                    } else {
-                        query = query.replaceAll(tmp, procedureParameters.get(key).toString());
-                    }
-                } else {
-                    query = query.replaceAll(tmp, "null");
-                }
-            }
-            return query;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public TestBean(String name, int age) {
+        this.setName(name);
+        this.setAge(age);
     }
 
-    public Map<String, String> getQueries() {
-        return queries;
+    public String getName() {
+        return name;
     }
 
-    public void setQueries(Map<String, String> queries) {
-        this.queries = queries;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "TestBean{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 
 }

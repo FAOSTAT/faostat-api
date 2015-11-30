@@ -513,6 +513,10 @@ public class StreamBuilder {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
         log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
+        /* Check parameters. */
+        for (String key : metadataBean.getProcedureParameters().keySet())
+            log.append("\tcreateDataOutputStream | ").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+
         try {
 
             /* Query FAOSTAT. */

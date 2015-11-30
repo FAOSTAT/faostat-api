@@ -194,6 +194,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.19</version>
+        </dependency>
+        <dependency>
             <groupId>org.fao.faostat</groupId>
             <artifactId>faostat-api-core</artifactId>
             <version>1.5-SNAPSHOT</version>

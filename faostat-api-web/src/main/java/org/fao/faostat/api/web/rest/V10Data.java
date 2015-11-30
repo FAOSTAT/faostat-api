@@ -381,7 +381,8 @@ public class V10Data {
                             @FormParam("operator") String operator,
                             @FormParam("page_size") int page_size,
                             @FormParam("decimal_places") int decimal_places,
-                            @FormParam("page_number") int page_number) {
+                            @FormParam("page_number") int page_number,
+                            @FormParam("limit") int limit) {
 
 
         /* Init Core library. */
@@ -408,6 +409,7 @@ public class V10Data {
         metadataBean.addParameter("page_size", page_size);
         metadataBean.addParameter("decimal_places", decimal_places);
         metadataBean.addParameter("page_number", page_number);
+        metadataBean.addParameter("limit", limit);
 
         /* Query the DB and return the results. */
         try {
