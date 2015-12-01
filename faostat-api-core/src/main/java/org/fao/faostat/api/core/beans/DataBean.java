@@ -341,6 +341,10 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -351,31 +355,31 @@ public class DataBean {
 
     private String domain_code;
 
-    private String datasource;
+    private String datasource = DATASOURCE.PRODUCTION.name();
 
-    private String api_key;
+    private String api_key = "";
 
-    private String client_key;
+    private String client_key = "";
 
-    private String output_type;
+    private String output_type = OUTPUTTYPE.OBJECTS.name();
 
-    private Map<String, List<String>> filters;
+    private Map<String, List<String>> filters = new HashMap<>();
 
-    private boolean null_values;
+    private boolean null_values = false;
 
-    private String group_by;
+    private String group_by = "";
 
-    private String order_by;
+    private String order_by = "";
 
-    private String operator;
+    private String operator = "";
 
-    private int page_size;
+    private int page_size = 100;
 
-    private int decimal_places;
+    private int decimal_places = 2;
 
-    private int page_number;
+    private int page_number = 1;
 
-    private int limit;
+    private int limit = -1;
 
     public String getDomain_code() {
         return domain_code;
