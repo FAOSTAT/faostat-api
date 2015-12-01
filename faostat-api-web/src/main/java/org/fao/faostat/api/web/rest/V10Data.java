@@ -450,7 +450,6 @@ public class V10Data {
                     filters.get("List4Codes"), filters.get("List5Codes"), filters.get("List6Codes"),
                     filters.get("List7Codes"), b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
                     b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit());
-//            return Response.status(200).entity(log.toString()).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(log.toString()).build();
