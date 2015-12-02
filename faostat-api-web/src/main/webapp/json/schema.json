@@ -341,10 +341,13 @@
               "client_key": {
                 "$ref": "#/definitions/client_key"
               },
-              "domain_code": {
+              "domain_codes": {
                 "title": "Domain code",
                 "description": "FAOSTAT domain code.",
-                "$ref": "#/definitions/code"
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/code"
+                }
               },
               "decimal_places": {
                 "title": "Decimal Places",
@@ -465,10 +468,13 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "domain_code": {
-            "title": "Domain code",
-            "description": "FAOSTAT domain code.",
-            "$ref": "#/definitions/code"
+          "domain_codes": {
+            "title": "Domain codes",
+            "description": "FAOSTAT domain codes.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
           },
           "decimal_places": {
             "title": "Decimal Places",
@@ -628,10 +634,13 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "domain_code": {
+          "domain_codes": {
             "title": "Domain code",
             "description": "FAOSTAT domain code.",
-            "$ref": "#/definitions/code"
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
           },
           "List1Codes": {
             "type": "array",

@@ -363,7 +363,7 @@ public class V10DataSize {
 
     @POST
     public Response getData(@PathParam("lang") String lang,
-                            @FormParam("domain_code") String domain_code,
+                            @FormParam("domain_codes") List<String> domain_codes,
                             @FormParam("datasource") String datasource,
                             @FormParam("api_key") String api_key,
                             @FormParam("client_key") String client_key,
@@ -387,7 +387,7 @@ public class V10DataSize {
 
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("domain_codes", domain_codes);
         metadataBean.addParameter("List1Codes", list_1_codes);
         metadataBean.addParameter("List2Codes", list_2_codes);
         metadataBean.addParameter("List3Codes", list_3_codes);

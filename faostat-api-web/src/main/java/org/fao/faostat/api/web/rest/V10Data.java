@@ -386,7 +386,8 @@ public class V10Data {
         MetadataBean metadataBean = new MetadataBean();
         metadataBean.storeUserOptions(b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type());
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("domain_code", b.getDomain_code());
+        metadataBean.addParameter("domain_codes", b.getDomain_codes());
+        metadataBean.addParameter("domain_code", b.getDomain_codes().get(0)); /* Get the first domain code, to get the dimensions later on. */
         log.append("getDataFromBean\t").append("MetadataBean\t").append(metadataBean.toString()).append("\n");
 
         /* Init filters. */
@@ -445,7 +446,7 @@ public class V10Data {
 
             log.append("getDataFromBean\t").append("filters\t").append(filters.toString()).append("\n");
 
-            return getData(lang, b.getDomain_code(), b.getDatasource(), b.getApi_key(), b.getClient_key(),
+            return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(),
                     b.getOutput_type(), filters.get("List1Codes"), filters.get("List2Codes"), filters.get("List3Codes"),
                     filters.get("List4Codes"), filters.get("List5Codes"), filters.get("List6Codes"),
                     filters.get("List7Codes"), b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
@@ -459,7 +460,7 @@ public class V10Data {
 
     @POST
     public Response getData(@PathParam("lang") String lang,
-                            @FormParam("domain_code") String domain_code,
+                            @FormParam("domain_codes") List<String> domain_codes,
                             @FormParam("datasource") String datasource,
                             @FormParam("api_key") String api_key,
                             @FormParam("client_key") String client_key,
@@ -490,7 +491,7 @@ public class V10Data {
 
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("domain_codes", domain_codes);
         metadataBean.addParameter("List1Codes", list_1_codes);
         metadataBean.addParameter("List2Codes", list_2_codes);
         metadataBean.addParameter("List3Codes", list_3_codes);

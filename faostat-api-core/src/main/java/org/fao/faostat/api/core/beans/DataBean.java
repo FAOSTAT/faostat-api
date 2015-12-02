@@ -353,7 +353,7 @@ import java.util.Map;
  */
 public class DataBean {
 
-    private String domain_code;
+    private List<String> domain_codes;
 
     private String datasource = DATASOURCE.PRODUCTION.name();
 
@@ -381,12 +381,12 @@ public class DataBean {
 
     private int limit = -1;
 
-    public String getDomain_code() {
-        return domain_code;
+    public List<String> getDomain_codes() {
+        return domain_codes;
     }
 
-    public void setDomain_code(String domain_code) {
-        this.domain_code = domain_code;
+    public void setDomain_codes(List<String> domain_codes) {
+        this.domain_codes = domain_codes;
     }
 
     public String getDatasource() {
@@ -496,7 +496,7 @@ public class DataBean {
     @Override
     public String toString() {
         return "DataBean{" +
-                "domain_code='" + domain_code + '\'' +
+                "domain_codes='" + domain_codes + '\'' +
                 ", datasource='" + datasource + '\'' +
                 ", api_key='" + api_key + '\'' +
                 ", client_key='" + client_key + '\'' +

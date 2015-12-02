@@ -5,7 +5,7 @@
 
     <groupId>org.fao.faostat</groupId>
     <artifactId>faostat-api</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>FAOSTAT API</name>

@@ -1093,6 +1093,10 @@ public class FAOSTATAPICore {
         Map<String, Object> original = new HashMap<String, Object>();
         original.put("original", new ArrayList<Map<String, Object>>());
 
+        /* Get the first domain code from the metadata bean. */
+        String domain_code = ((List<String>)o.getProcedureParameters().get("domain_codes")).get(0);
+        o.addParameter("domain_code", domain_code);
+
         try {
 
             /* Query DB. */
