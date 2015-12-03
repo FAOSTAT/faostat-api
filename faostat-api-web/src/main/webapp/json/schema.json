@@ -1478,6 +1478,77 @@
       }
     },
     {
+      "href": "{lang}/documents/{domain_code}/",
+      "method": "GET",
+      "rel": "documents",
+      "description": "List of available documents.",
+      "title": "Documents",
+      "schema": {
+        "type": "object",
+        "name": "Documents Input",
+        "description": "Input of 'documents' service.",
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "title": "Domain code",
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Documents",
+            "description": "List of available documents.",
+            "items": {
+              "type": "object",
+              "title": "Documents",
+              "description": "FAOSTAT document",
+              "properties": {
+                "DomainCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "FileName": {
+                  "type": "string",
+                  "title": "Filename",
+                  "description": "Name of the file."
+                },
+                "CreatedDate": {
+                  "type": "date",
+                  "title": "Creation Date",
+                  "description": "Date of creation."
+                },
+                "FilePath": {
+                  "type": "string",
+                  "title": "Filepath",
+                  "description": "Path to the file."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/groupsanddomains/",
       "method": "GET",
       "rel": "groupsanddomains",
