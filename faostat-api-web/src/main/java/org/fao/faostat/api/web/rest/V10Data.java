@@ -479,7 +479,7 @@ public class V10Data {
                             @FormParam("page_size") int page_size,
                             @FormParam("decimal_places") int decimal_places,
                             @FormParam("page_number") int page_number,
-                            @FormParam("limit") int limit) {
+                            @FormParam("limit") @DefaultValue("-1") int limit) {
 
 
         /* Init Core library. */

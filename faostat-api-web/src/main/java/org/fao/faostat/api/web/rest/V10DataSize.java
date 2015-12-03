@@ -375,7 +375,8 @@ public class V10DataSize {
                             @FormParam("List5Codes") List<String> list_5_codes,
                             @FormParam("List6Codes") List<String> list_6_codes,
                             @FormParam("List7Codes") List<String> list_7_codes,
-                            @FormParam("no_records") int no_records) {
+                            @FormParam("no_records") int no_records,
+                            @FormParam("null_values") @DefaultValue("false") boolean null_values) {
 
 
         /* Init Core library. */
@@ -396,6 +397,7 @@ public class V10DataSize {
         metadataBean.addParameter("List6Codes", list_6_codes);
         metadataBean.addParameter("List7Codes", list_7_codes);
         metadataBean.addParameter("no_records", no_records);
+        metadataBean.addParameter("null_values", null_values);
 
         /* Query the DB and return the results. */
         try {

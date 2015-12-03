@@ -409,7 +409,7 @@
                 "type": "integer",
                 "title": "Limit",
                 "description": "Maximium number of rows returned by the query.",
-                "default": 1000000000
+                "default": -1
               },
               "page_number": {
                 "type": "integer",
@@ -577,7 +577,7 @@
             "type": "integer",
             "title": "Limit",
             "description": "Maximium number of rows returned by the query.",
-            "default": 1000000000
+            "default": -1
           },
           "page_number": {
             "type": "integer",
@@ -703,6 +703,12 @@
             "title": "Number of Records",
             "description": "Flag that determines that only the size of the query must be computed.",
             "default": 1
+          },
+          "null_values": {
+            "type": "boolean",
+            "title": "Null Values",
+            "description": "Flag to determine whether null values will be shown or not.",
+            "default": false
           }
         }
       },
