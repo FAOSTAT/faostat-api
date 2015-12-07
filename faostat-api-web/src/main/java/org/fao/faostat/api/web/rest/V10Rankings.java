@@ -411,7 +411,7 @@ public class V10Rankings {
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("rankings", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createOutputStreamRankings("rankings", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

@@ -386,6 +386,37 @@ public class StreamBuilder {
 
     }
 
+    public StreamingOutput createOutputStreamRankings(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
+
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
+
+        /* Initiate core library. */
+        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+
+        /* Check parameters. */
+        log.append("StreamBuilder\t").append("queryCode: ").append(queryCode).append("\n");
+        for (String key : metadataBean.getProcedureParameters().keySet())
+            log.append("StreamBuilder\t").append("key: ").append(key).append(", value: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+
+        try {
+
+            /* Query FAOSTAT. */
+            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            final OutputBean out = faostatapiCore.queryRankings(queryCode, datasourceBean, metadataBean);
+            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+
+            /* Switch the output format. */
+            return formatOutput(out);
+
+        } catch (final Exception e) {
+            return exceptionHandler(e, log);
+        }
+
+    }
+
     private StreamingOutput exceptionHandler(final Exception e, final StringBuilder log) {
         return new StreamingOutput() {
             @Override
