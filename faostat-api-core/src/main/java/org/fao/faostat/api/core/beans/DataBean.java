@@ -381,6 +381,12 @@ public class DataBean {
 
     private int limit = -1;
 
+    private int show_codes = 1;
+
+    private int show_flags = 1;
+
+    private int show_unit = -1;
+
     public List<String> getDomain_codes() {
         return domain_codes;
     }
@@ -491,6 +497,30 @@ public class DataBean {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public int getShow_codes() {
+        return show_codes;
+    }
+
+    public void setShow_codes(int show_codes) {
+        this.show_codes = show_codes;
+    }
+
+    public int getShow_flags() {
+        return show_flags;
+    }
+
+    public void setShow_flags(int show_flags) {
+        this.show_flags = show_flags;
+    }
+
+    public int getShow_unit() {
+        return show_unit;
+    }
+
+    public void setShow_unit(int show_unit) {
+        this.show_unit = show_unit;
     }
 
     @Override

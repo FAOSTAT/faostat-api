@@ -398,6 +398,9 @@ public class V10DataSize {
         metadataBean.addParameter("List7Codes", list_7_codes);
         metadataBean.addParameter("no_records", no_records);
         metadataBean.addParameter("null_values", null_values);
+        metadataBean.addParameter("show_codes", 0);
+        metadataBean.addParameter("show_flags", 0);
+        metadataBean.addParameter("show_unit", 0);
 
         /* Query the DB and return the results. */
         try {

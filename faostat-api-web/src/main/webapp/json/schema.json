@@ -416,6 +416,24 @@
                 "title": "Page Number",
                 "description": "Number of the page to be retrieved.",
                 "default": 1
+              },
+              "show_codes": {
+                "type": "integer",
+                "title": "Show Codes",
+                "description": "Flag that determines whether codes are shown or not.",
+                "default": 1
+              },
+              "show_flags": {
+                "type": "integer",
+                "title": "Show Flags",
+                "description": "Flag that determines whether flags are shown or not.",
+                "default": 1
+              },
+              "show_unit": {
+                "type": "integer",
+                "title": "Show Units",
+                "description": "Flag that determines whether units are shown or not.",
+                "default": 1
               }
             }
           }
@@ -583,6 +601,24 @@
             "type": "integer",
             "title": "Page Number",
             "description": "Number of the page to be retrieved.",
+            "default": 1
+          },
+          "show_codes": {
+            "type": "integer",
+            "title": "Show Codes",
+            "description": "Flag that determines whether codes are shown or not.",
+            "default": 1
+          },
+          "show_flags": {
+            "type": "integer",
+            "title": "Show Flags",
+            "description": "Flag that determines whether flags are shown or not.",
+            "default": 1
+          },
+          "show_unit": {
+            "type": "integer",
+            "title": "Show Units",
+            "description": "Flag that determines whether units are shown or not.",
             "default": 1
           }
         }

@@ -450,7 +450,8 @@ public class V10Data {
                     b.getOutput_type(), filters.get("List1Codes"), filters.get("List2Codes"), filters.get("List3Codes"),
                     filters.get("List4Codes"), filters.get("List5Codes"), filters.get("List6Codes"),
                     filters.get("List7Codes"), b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
-                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit());
+                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(), b.getShow_codes(),
+                    b.getShow_flags(), b.getShow_unit());
 
         } catch (Exception e) {
             return Response.status(500).entity(log.toString()).build();
@@ -479,7 +480,10 @@ public class V10Data {
                             @FormParam("page_size") int page_size,
                             @FormParam("decimal_places") int decimal_places,
                             @FormParam("page_number") int page_number,
-                            @FormParam("limit") @DefaultValue("-1") int limit) {
+                            @FormParam("limit") @DefaultValue("-1") int limit,
+                            @FormParam("show_codes") @DefaultValue("1") int show_codes,
+                            @FormParam("show_flags") @DefaultValue("1") int show_flags,
+                            @FormParam("show_unit") @DefaultValue("1") int show_unit) {
 
 
         /* Init Core library. */
@@ -507,6 +511,9 @@ public class V10Data {
         metadataBean.addParameter("decimal_places", decimal_places);
         metadataBean.addParameter("page_number", page_number);
         metadataBean.addParameter("limit", limit);
+        metadataBean.addParameter("show_codes", show_codes);
+        metadataBean.addParameter("show_flags", show_flags);
+        metadataBean.addParameter("show_unit", show_unit);
 
         /* Query the DB and return the results. */
         try {
