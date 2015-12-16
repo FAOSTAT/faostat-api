@@ -533,6 +533,14 @@ public class FAOSTATAPICore {
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     m.put("parameter", "List" + currentList + "Codes");
+                    /* Add available coding systems. */
+                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
+                    m.put("coding_systems", new ArrayList<String>());
+                    for (String cs : codingSystems) {
+                        if (cs.length() > 0) {
+                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
+                        }
+                    }
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
                     output.add(group);
@@ -550,6 +558,14 @@ public class FAOSTATAPICore {
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     m.put("parameter", "List" + currentList + "Codes");
+                    /* Add available coding systems. */
+                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
+                    m.put("coding_systems", new ArrayList<String>());
+                    for (String cs : codingSystems) {
+                        if (cs.length() > 0) {
+                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
+                        }
+                    }
                     ((ArrayList<Map<String, Object>>)group.get("subdimensions")).add(m);
                 }
             }
