@@ -1634,6 +1634,35 @@
           }
         }
       }
+    },
+    {
+      "href": "{lang}/suggestions/{query}",
+      "method": "GET",
+      "rel": "suggestions",
+      "title": "Suggestions",
+      "description": "FAOSTAT suggestions.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "query": {
+            "$ref": "#/definitions/label"
+          }
+        }
+      }
     }
   ]
 }

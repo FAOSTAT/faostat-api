@@ -341,52 +341,59 @@
  */
 package org.fao.faostat.api.web.rest;
 
-import com.sun.jersey.api.core.InjectParam;
-/*import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;*/
-import org.fao.faostat.api.core.ExcelExporter;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
+import org.fao.faostat.api.core.FAOSTATAPICore;
+import org.fao.faostat.api.core.StreamBuilder;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- *
- * Jersey configuration overrides any access to static files, so the Excel generation has been divided into two
- * services: csv2excel converts the CSV into Excel, while excels returns an Excel file.
  * */
 @Component
-@Path("/v1.0/csv2excel/")
-public class V10CSV2Excel {
+@Path("/v1.0/{lang}/suggestions/{query}")
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+public class V10Suggestions {
 
-    @InjectParam
-    ExcelExporter excelExporter;
+    @GET
+    public Response getDomains(@PathParam("lang") String lang,
+                               @PathParam("query") String query,
+                               @QueryParam("datasource") String datasource,
+                               @QueryParam("api_key") String api_key,
+                               @QueryParam("client_key") String client_key,
+                               @QueryParam("output_type") String output_type) {
 
-    @POST
-    public Response csv2excel(@FormParam("csv") String csv,
-                              @FormParam("metadata") String metadata,
-                              @FormParam("filename") String filename) {
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
-        /* Create the file and return the results. */
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("query", query);
+
+        /* Query the DB and return the results. */
         try {
 
-            /* Create Excel file. */
-            filename = excelExporter.createExcel(csv, metadata, filename);
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Datasource bean. */
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("suggestions", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(filename).build();
+            return Response.status(200).entity(stream).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
