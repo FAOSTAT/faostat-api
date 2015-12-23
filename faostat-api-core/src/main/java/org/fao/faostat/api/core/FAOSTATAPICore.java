@@ -418,6 +418,8 @@ public class FAOSTATAPICore {
 
             /* Return output. */
             log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+
+            /* System.out.println(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters())); */
             return out;
 
         } catch (Exception e) {
