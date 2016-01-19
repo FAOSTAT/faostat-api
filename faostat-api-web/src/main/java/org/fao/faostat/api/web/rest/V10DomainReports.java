@@ -339,88 +339,68 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.constants;
+package org.fao.faostat.api.web.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.fao.faostat.api.core.FAOSTATAPICore;
+import org.fao.faostat.api.core.StreamBuilder;
+import org.fao.faostat.api.core.beans.DatasourceBean;
+import org.fao.faostat.api.core.beans.MetadataBean;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-public class QUERIES {
+@Component
+@Path("/v1.0/{lang}/domainreports/{domain_code}/")
+@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
+public class V10DomainReports {
 
-    private Map<String, String> queries;
+    @GET
+    public Response getAbbreviations(@PathParam("lang") String lang,
+                                     @PathParam("domain_code") String domain_code,
+                                     @QueryParam("datasource") String datasource,
+                                     @QueryParam("api_key") String api_key,
+                                     @QueryParam("client_key") String client_key,
+                                     @QueryParam("output_type") String output_type) {
 
-    public QUERIES() {
-        this.setQueries(new HashMap<String, String>());
-        this.getQueries().put("groups", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label FROM Domain D GROUP BY D.GroupCode, D.GroupName{{lang}}");
-        this.getQueries().put("domains", "SELECT D.DomainCode AS code, D.DomainName{{lang}} AS label, D.Ord AS ord FROM Domain D WHERE D.GroupCode = '{{group_code}}' ORDER BY D.Ord");
-        this.getQueries().put("groupsanddomains", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord");
-        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("methodologies", "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC");
-        this.getQueries().put("methodology", "SELECT M.MethodologyNote{{lang}} AS note, M.MethodologyCoverage{{lang}} AS coverage, M.MethodologyReferences{{lang}} AS reference, M.MethodologyCollection{{lang}} AS collection, M.MethodologyEstimation{{lang}} AS estimation FROM Metadata_Methodology AS M WHERE M.MethodologyCode='{{methodology_code}}'");
-        this.getQueries().put("classifications", "SELECT M.ItemCode AS code, M.ItemName{{lang}} AS label, M.ItemDescription{{lang}} AS description FROM Metadata_Item AS M WHERE M.domaincode = '{{domain_code}}' ORDER BY M.ItemName{{lang}} ASC");
-        this.getQueries().put("units", "SELECT E.UnitAbbreviation{{lang}} AS code, E.UnitTitle{{lang}} AS label FROM Metadata_Unit AS E ORDER BY E.UnitAbbreviation{{lang}} ASC");
-        this.getQueries().put("glossary", "SELECT M.GlossaryName{{lang}} AS code, M.GlossaryDefinition{{lang}} AS label, M.GlossarySource{{lang}} AS source FROM Metadata_Glossary AS M ORDER BY M.GlossaryName{{lang}} ASC");
-        this.getQueries().put("abbreviations", "SELECT M.AbbreviationTitle{{lang}} AS code, AbbreviationDefinition{{lang}} AS label FROM Metadata_Abbreviation AS M ORDER BY AbbreviationTitle{{lang}} ASC");
-        this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
-        this.getQueries().put("bulkdownloads", "EXEC Warehouse.dbo.usp_GetBulkDownloads @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("documents", "EXEC Warehouse.dbo.usp_GetFAOSTATFiles @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @Limit={{limit}}, @DecPlaces={{decimal_places}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NullValues = {{null_values}}, @GroupVarType = '{{group_by}}', @Operator = '{{operator}}', @OrderBy = '{{order_by}}', @PageSize = {{page_size}}, @Page = {{page_number}}");
-        this.getQueries().put("data_size", "EXECUTE Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NoRecords={{no_records}}, @NullValues = {{null_values}}");
-        this.getQueries().put("rankings", "EXEC Warehouse.dbo.usp_Rank @DomainCode='{{domain_codes}}', @lang='{{lang}}', @List1Codes='{{List1Codes}}', @List2Codes='{{List2Codes}}', @List3Codes='{{List3Codes}}', @List4Codes='{{List4Codes}}', @List5Codes='{{List5Codes}}', @List6Codes='{{List6Codes}}', @List7Codes='{{List7Codes}}', @FilterList={{filter_list}}, @RankType='{{rank_type}}', @NoResults={{results}}");
-        this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
-        this.getQueries().put("suggestions", "SELECT T.VarListName{{lang}} as label, T.VarType as id, KEY_TBL.RANK as rank FROM DomainVarList AS T  INNER JOIN  FREETEXTTABLE(DomainVarList, VarListName{{lang}}, '{{query}}') AS KEY_TBL    ON T.id = KEY_TBL.[KEY] WHERE T.VarType IN ('item', 'element', 'donor', 'survey', 'breakdownlovar', 'breakdownsex', 'indicator', 'measure') GROUP BY  VarListName{{lang}}, T.VarType, KEY_TBL.RANK ORDER BY KEY_TBL.RANK DESC, Len(T.VarListNameE) ASC");
-        this.getQueries().put("search", "SELECT T.DomainCode as domainCode,  T.VarListCode as code, T.VarListNameE as label, T.VarType as id, KEY_TBL.RANK as rank FROM DomainVarList AS T INNER JOIN FREETEXTTABLE(DomainVarList, VarListName{{lang}}, '{{query}}') AS KEY_TBL ON T.id = KEY_TBL.[KEY] WHERE T.VarType IN ('item', 'element', 'donor', 'survey', 'breakdownlovar', 'breakdownsex', 'indicator', 'measure', 'area', 'year') GROUP BY  T.DomainCode,  T.VarListCode, T.VarListName{{lang}}, T.VarType, KEY_TBL.RANK ORDER BY KEY_TBL.RANK DESC");
-        this.getQueries().put("domainstree", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
-        this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
-        this.getQueries().put("domainreports", "EXEC Warehouse.dbo.usp_GetDomainReports @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
-    }
 
-    public String getQuery(String id, Map<String, Object> procedureParameters) {
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
+
+        /* Query the DB and return the results. */
         try {
-            String query = this.getQueries().get(id.toLowerCase());
-            for (String key : procedureParameters.keySet()) {
-                String tmp = "\\{\\{" + key + "\\}\\}";
-                if (procedureParameters.get(key) != null) {
-                    if (procedureParameters.get(key) instanceof List) {
-                        List<String> l = (List<String>)procedureParameters.get(key);
-                        String s = "";
-                        if (l != null && l.size() > 0 && l.get(0).length() > 0) {
-                            s = "(";
-                            for (int z = 0; z < l.size(); z += 1) {
-                                s += "''" + l.get(z) + "''";
-                                if (z < l.size() - 1)
-                                    s += ",";
-                            }
-                            s += ")";
-                        } else {
-                            s = "";
-                        }
-                        query = query.replaceAll(tmp, s);
-                    } else {
-                        query = query.replaceAll(tmp, procedureParameters.get(key).toString());
-                    }
-                } else {
-                    query = query.replaceAll(tmp, "null");
-                }
-            }
-            return query;
+
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("domainreports", datasourceBean, metadataBean);
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return Response.status(500).entity(e.getMessage()).build();
         }
-    }
 
-    public Map<String, String> getQueries() {
-        return queries;
-    }
-
-    public void setQueries(Map<String, String> queries) {
-        this.queries = queries;
     }
 
 }
