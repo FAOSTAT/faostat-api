@@ -890,6 +890,69 @@
       }
     },
     {
+      "href": "{lang}/domaintabs/{domain_code}/",
+      "method": "GET",
+      "rel": "domaintabs",
+      "title": "Domain Tabs",
+      "description": "FAOSTAT domain tabs.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "$ref": "#/definitions/code"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Domain Tabs Output",
+        "description": "Output of 'domaintabs' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Domain Tabs",
+            "description": "FAOSTAT domain tabs.",
+            "items": {
+              "type": "object",
+              "title": "Domain Tab",
+              "description": "Single tab of the domain",
+              "properties": {
+                "DomainCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "TabCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "TabName": {
+                  "$ref": "#/definitions/label"
+                },
+                "Ord": {
+                  "$ref": "#/definitions/ord"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/domainstree/{section}/",
       "method": "GET",
       "rel": "domainstree",
