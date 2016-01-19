@@ -25,6 +25,15 @@
       ],
       "default": "production"
     },
+    "section": {
+      "type": "string",
+      "title": "Section",
+      "description": "Name code of the FAOSTAT website section.",
+      "enum": [
+        "download", "browse", "compare"
+      ],
+      "default": "download"
+    },
     "output_type": {
       "type": "string",
       "title": "Output Type",
@@ -874,6 +883,72 @@
               },
               "label": {
                 "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/domainstree/{section}/",
+      "method": "GET",
+      "rel": "domainstree",
+      "title": "Domains Tree",
+      "description": "FAOSTAT domains tree.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "section": {
+            "$ref": "#/definitions/section"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Domains Tree Output",
+        "description": "Output of 'domainstree' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Domains Tree",
+            "description": "FAOSTAT domains tree.",
+            "items": {
+              "type": "object",
+              "title": "Domain",
+              "description": "Single domain contained in the domains tree.",
+              "properties": {
+                "GroupCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "GroupName": {
+                  "$ref": "#/definitions/code"
+                },
+                "DomainaCode": {
+                  "$ref": "#/definitions/code"
+                },
+                "DomainName": {
+                  "$ref": "#/definitions/code"
+                },
+                "Ord": {
+                  "$ref": "#/definitions/ord"
+                }
               }
             }
           }
