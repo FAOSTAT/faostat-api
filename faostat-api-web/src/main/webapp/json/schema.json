@@ -657,6 +657,179 @@
       }
     },
     {
+      "href": "{lang}/report/headers/",
+      "method": "POST",
+      "rel": "reportheaders",
+      "title": "Report Headers",
+      "description": "FAOSTAT Report Headers.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "domain_code": {
+            "$ref": "#/definitions/code"
+          },
+          "report_code": {
+            "$ref": "#/definitions/code"
+          },
+          "List1Codes": {
+            "type": "array",
+            "title": "Dimension 1 codes",
+            "description": "List of codes for dimension 1.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List2Codes": {
+            "type": "array",
+            "title": "Dimension 2 codes",
+            "description": "List of codes for dimension 2.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List3Codes": {
+            "type": "array",
+            "title": "Dimension 3 codes",
+            "description": "List of codes for dimension 3.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List4Codes": {
+            "type": "array",
+            "title": "Dimension 4 codes",
+            "description": "List of codes for dimension 4.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List5Codes": {
+            "type": "array",
+            "title": "Dimension 5 codes",
+            "description": "List of codes for dimension 5.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List6Codes": {
+            "type": "array",
+            "title": "Dimension 6 codes",
+            "description": "List of codes for dimension 6.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List7Codes": {
+            "type": "array",
+            "title": "Dimension 7 codes",
+            "description": "List of codes for dimension 7.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List1AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 1."
+          },
+          "List2AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 2."
+          },
+          "List3AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 3."
+          },
+          "List4AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 4."
+          },
+          "List5AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 5."
+          },
+          "List6AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 6."
+          },
+          "List7AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 7."
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Report Headers Output",
+        "description": "Output of 'reportheaders' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "array",
+            "title": "Report Headers",
+            "description": "FAOSTAT Report Headers.",
+            "items": {
+              "type": "object",
+              "title": "Report Header",
+              "description": "Single report header",
+              "properties": {
+                "RowNo": {
+                  "type": "integer",
+                  "title": "Row Number",
+                  "description": "Number of the row."
+                },
+                "ColNo": {
+                  "type": "integer",
+                  "title": "Column Number",
+                  "description": "Number of the column."
+                },
+                "RowSpan": {
+                  "type": "integer",
+                  "title": "Row Span",
+                  "description": "Span of the row."
+                },
+                "ColSpan": {
+                  "type": "integer",
+                  "title": "Col Span",
+                  "description": "Span of the column."
+                },
+                "Border": {
+                  "type": "string",
+                  "title": "Border",
+                  "description": "Directives for the cell's border."
+                },
+                "Label": {
+                  "$ref": "#/definitions/label"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/datasize/",
       "method": "POST",
       "rel": "datasize",
