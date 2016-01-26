@@ -54,6 +54,12 @@
       ],
       "default": "en"
     },
+    "report_code": {
+      "type": "string",
+      "title": "Report Code",
+      "description": "Report Code",
+      "default": "download"
+    },
     "faostat_code": {
       "type": "object",
       "title": "FAOSTAT Code",
@@ -683,7 +689,7 @@
             "$ref": "#/definitions/code"
           },
           "report_code": {
-            "$ref": "#/definitions/code"
+            "$ref": "#/definitions/report_code"
           },
           "List1Codes": {
             "type": "array",
@@ -856,7 +862,7 @@
             "$ref": "#/definitions/code"
           },
           "report_code": {
-            "$ref": "#/definitions/code"
+            "$ref": "#/definitions/report_code"
           },
           "List1Codes": {
             "type": "array",
@@ -1741,6 +1747,9 @@
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
+          "report_code": {
+            "$ref": "#/definitions/report_code"
+          },
           "api_key": {
             "$ref": "#/definitions/api_key"
           },
@@ -1801,6 +1810,9 @@
           "domain_code": {
             "title": "Domain code",
             "$ref": "#/definitions/code"
+          },
+          "report_code": {
+            "$ref": "#/definitions/report_code"
           },
           "lang": {
             "$ref": "#/definitions/lang"
