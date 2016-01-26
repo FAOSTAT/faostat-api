@@ -400,6 +400,16 @@ public class V10Data {
         filters.put("List6Codes", new ArrayList<String>());
         filters.put("List7Codes", new ArrayList<String>());
 
+        /* Init filters. Conding Systems */
+        Map<String, String> filtersCS = new HashMap<>();
+        filtersCS.put("List1AltCodes", "");
+        filtersCS.put("List2AltCodes", "");
+        filtersCS.put("List3AltCodes", "");
+        filtersCS.put("List4AltCodes", "");
+        filtersCS.put("List5AltCodes", "");
+        filtersCS.put("List6AltCodes", "");
+        filtersCS.put("List7AltCodes", "");
+
         /* Get user dimensions. */
         List<String> dimensions = new ArrayList<>();
         for (String key : b.getFilters().keySet()) {
@@ -468,8 +478,7 @@ public class V10Data {
 
             System.out.println("getData");
 
-            return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(),
-                    b.getOutput_type(),
+            return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type(),
                     filters.get("List1Codes"),
                     filters.get("List2Codes"),
                     filters.get("List3Codes"),
@@ -477,6 +486,13 @@ public class V10Data {
                     filters.get("List5Codes"),
                     filters.get("List6Codes"),
                     filters.get("List7Codes"),
+                    filtersCS.get("List1AltCodes"),
+                    filtersCS.get("List2AltCodes"),
+                    filtersCS.get("List3AltCodes"),
+                    filtersCS.get("List4AltCodes"),
+                    filtersCS.get("List5AltCodes"),
+                    filtersCS.get("List6AltCodes"),
+                    filtersCS.get("List7AltCodes"),
                     b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
                     b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(), b.getShow_codes(),
                     b.getShow_flags(), b.getShow_unit());
@@ -501,6 +517,13 @@ public class V10Data {
                             @FormParam("List5Codes") List<String> list_5_codes,
                             @FormParam("List6Codes") List<String> list_6_codes,
                             @FormParam("List7Codes") List<String> list_7_codes,
+                            @FormParam("List1AltCodes") String list_1_alt_codes,
+                            @FormParam("List2AltCodes") String list_2_alt_codes,
+                            @FormParam("List3AltCodes") String list_3_alt_codes,
+                            @FormParam("List4AltCodes") String list_4_alt_codes,
+                            @FormParam("List5AltCodes") String list_5_alt_codes,
+                            @FormParam("List6AltCodes") String list_6_alt_codes,
+                            @FormParam("List7AltCodes") String list_7_alt_codes,
                             @FormParam("null_values") boolean null_values,
                             @FormParam("group_by") String group_by,
                             @FormParam("order_by") String order_by,
@@ -531,6 +554,15 @@ public class V10Data {
         metadataBean.addParameter("List5Codes", list_5_codes);
         metadataBean.addParameter("List6Codes", list_6_codes);
         metadataBean.addParameter("List7Codes", list_7_codes);
+
+        metadataBean.addParameter("List1AltCodes", list_1_alt_codes);
+        metadataBean.addParameter("List2AltCodes", list_2_alt_codes);
+        metadataBean.addParameter("List3AltCodes", list_3_alt_codes);
+        metadataBean.addParameter("List4AltCodes", list_4_alt_codes);
+        metadataBean.addParameter("List5AltCodes", list_5_alt_codes);
+        metadataBean.addParameter("List6AltCodes", list_6_alt_codes);
+        metadataBean.addParameter("List7AltCodes", list_7_alt_codes);
+
         metadataBean.addParameter("null_values", null_values);
         metadataBean.addParameter("group_by", group_by);
         metadataBean.addParameter("order_by", order_by);

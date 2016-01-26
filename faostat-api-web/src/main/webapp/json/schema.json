@@ -191,6 +191,12 @@
         "$ref": "#/definitions/code"
       },
       "default": "[]"
+    },
+    "coding_system": {
+      "type": "string",
+      "title": "Coding System",
+      "description": "Alternate coding system applied to a dimension",
+      "default": ""
     }
   },
   "links": [
@@ -570,6 +576,48 @@
             "items": {
               "$ref": "#/definitions/code"
             }
+          },
+          "List1AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 1.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List2AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 2.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List3AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 3.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List4AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 4.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List5AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 5.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List6AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 6.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List7AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 7.",
+            "$ref": "#/definitions/coding_system"
           },
           "null_values": {
             "type": "boolean",
