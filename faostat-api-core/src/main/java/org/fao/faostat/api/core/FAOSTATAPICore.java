@@ -505,17 +505,22 @@ public class FAOSTATAPICore {
 
         try {
 
+//            System.out.println("FAOSTATAPICore.queryDimensions; queryCode: " + queryCode);
+
             /* Statistics. */
             log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
 
             /* Initiate variables. */
-            List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
+            List<List<Map<String, Object>>> dimensions = getDomainDimensions(queryCode, datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("dimensions? ").append(dimensions.size()).append("\n");
             List<Map<String, Object>> tmp = new ArrayList<>();
-            for (List<Map<String, Object>> l : dimensions)
+            for (List<Map<String, Object>> l : dimensions) {
                 tmp.addAll(l);
+            }
             log.append("FAOSTATAPICore\t").append("tmp? ").append(tmp.size()).append("\n");
+
+            //System.out.println("TMP: " + tmp);
 
             /* Group Dimensions. */
             List<Map<String, Object>> output = new ArrayList<>();
@@ -528,6 +533,9 @@ public class FAOSTATAPICore {
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (int i = 0; i < tmp.size(); i += 1) {
                 if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
+
+                    //System.out.println("TMP: " + tmp.get(i).get("ListBoxNo"));
+
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
                     m.put("label", tmp.get(i).get("TabName").toString());
@@ -535,6 +543,12 @@ public class FAOSTATAPICore {
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     m.put("parameter", "List" + currentList + "Codes");
+
+                    // options
+                    Map<String, Object> o = new HashMap<>();
+                    o.put("type", tmp.get(i).get("ListBoxSelectType").toString());
+                    m.put("options", o);
+
                     /* Add available coding systems. */
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
                     m.put("coding_systems", new ArrayList<String>());
@@ -560,6 +574,12 @@ public class FAOSTATAPICore {
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     m.put("parameter", "List" + currentList + "Codes");
+
+                    // options
+                    Map<String, Object> o = new HashMap<>();
+                    o.put("type", tmp.get(i).get("ListBoxSelectType").toString());
+                    m.put("options", o);
+
                     /* Add available coding systems. */
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
                     m.put("coding_systems", new ArrayList<String>());
@@ -890,6 +910,7 @@ public class FAOSTATAPICore {
                     /* Define options to fetch codes. */
                     MetadataBean subDimensionOptions = new MetadataBean();
                     subDimensionOptions.addParameter("domain_code", metadataBean.getProcedureParameters().get("domain_code"));
+                    subDimensionOptions.addParameter("report_code", metadataBean.getProcedureParameters().get("report_code"));
                     subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
                     subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
                     subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
@@ -913,6 +934,7 @@ public class FAOSTATAPICore {
                 /* Fetch codes. */
                 MetadataBean subDimensionOptions = new MetadataBean();
                 subDimensionOptions.addParameter("domain_code", metadataBean.getProcedureParameters().get("domain_code"));
+                subDimensionOptions.addParameter("report_code", metadataBean.getProcedureParameters().get("report_code"));
                 subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
                 subDimensionOptions.addParameter("dimension", dimension.get("ListBoxNo").toString());
                 subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
@@ -1089,6 +1111,8 @@ public class FAOSTATAPICore {
     }
 
     private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) {
+
+        //System.out.println("getDomainDimensions: " + queryCode + " " + o);
 
         /* Query the DB. */
         JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
@@ -1305,6 +1329,9 @@ public class FAOSTATAPICore {
 
     private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) {
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
+//        System.out.println("queryCode: " + queryCode);
+//        System.out.println("QUERY: " + query);
+//        System.out.println("MetadataBean: " + o);
         JDBCIterable i = new JDBCIterable();
         i.query(datasourceBean, query);
         return i;
