@@ -363,10 +363,12 @@ public class V10Dimensions {
     @GET
     public Response getDimensions(@PathParam("lang") String lang,
                                   @PathParam("domain_code") String domain_code,
+                                  @QueryParam("report_code") String report_code,
                                   @QueryParam("datasource") String datasource,
                                   @QueryParam("api_key") String api_key,
                                   @QueryParam("client_key") String client_key,
-                                  @QueryParam("output_type") String output_type) {
+                                  @QueryParam("output_type") String output_type
+    ) {
 
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
@@ -378,6 +380,14 @@ public class V10Dimensions {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
+
+        //Report Code
+        // Workaround for the dimension request
+        // this is the default value accepted by the Store Procedure
+        if ( report_code == null || report_code.equals("null") || report_code.equals("")) {
+            report_code = "download";
+        }
+        metadataBean.addParameter("report_code", report_code);
 
         /* Query the DB and return the results. */
         try {

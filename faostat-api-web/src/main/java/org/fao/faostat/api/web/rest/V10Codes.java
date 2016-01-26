@@ -363,19 +363,20 @@ import java.util.List;
 public class V10Codes extends V10 {
 
     @GET
-    public Response getDimensions(@PathParam("lang") String lang,
-                                  @PathParam("id") String id,
-                                  @PathParam("domain_code") String domain_code,
-                                  @QueryParam("datasource") String datasource,
-                                  @QueryParam("api_key") String api_key,
-                                  @QueryParam("client_key") String client_key,
-                                  @QueryParam("output_type") String output_type,
-                                  @QueryParam("show_lists") boolean show_lists,
-                                  @QueryParam("show_full_metadata") boolean show_full_metadata,
-                                  @QueryParam("group_subdimensions") boolean group_subdimensions,
-                                  @QueryParam("subdimensions") String subdimensions,
-                                  @QueryParam("whitelist") List<String> whitelist,
-                                  @QueryParam("blacklist") List<String> blacklist) {
+    public Response getCodes(@PathParam("lang") String lang,
+                             @PathParam("id") String id,
+                             @PathParam("domain_code") String domain_code,
+                             @QueryParam("report_code") String report_code,
+                             @QueryParam("datasource") String datasource,
+                             @QueryParam("api_key") String api_key,
+                             @QueryParam("client_key") String client_key,
+                             @QueryParam("output_type") String output_type,
+                             @QueryParam("show_lists") boolean show_lists,
+                             @QueryParam("show_full_metadata") boolean show_full_metadata,
+                             @QueryParam("group_subdimensions") boolean group_subdimensions,
+                             @QueryParam("subdimensions") String subdimensions,
+                             @QueryParam("whitelist") List<String> whitelist,
+                             @QueryParam("blacklist") List<String> blacklist) {
 
 
         /* Init Core library. */
@@ -395,6 +396,14 @@ public class V10Codes extends V10 {
         metadataBean.addParameter("whitelist", whitelist);
         metadataBean.addParameter("blacklist", blacklist);
         metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
+
+        //Report Code
+        // Workaround for the dimension request
+        // this is the default value accepted by the Store Procedure
+        if ( report_code == null || report_code.equals("null") || report_code.equals("")) {
+            report_code = "download";
+        }
+        metadataBean.addParameter("report_code", report_code);
 
         /* Set white/blacklist. */
         metadataBean.setBlackList(blacklist);
