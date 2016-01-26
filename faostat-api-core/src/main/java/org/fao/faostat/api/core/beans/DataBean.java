@@ -373,7 +373,7 @@ public class DataBean {
 
     private String operator = "";
 
-    private int page_size = 100;
+    private int page_size = 10000000;
 
     private int decimal_places = 2;
 
