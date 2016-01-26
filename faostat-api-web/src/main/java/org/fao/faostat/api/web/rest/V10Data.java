@@ -403,6 +403,7 @@ public class V10Data {
         /* Get user dimensions. */
         List<String> dimensions = new ArrayList<>();
         for (String key : b.getFilters().keySet()) {
+            System.out.println(key);
             dimensions.add(key);
         }
         log.append("getDataFromBean\t").append("dimensions\t").append(dimensions.toString()).append("\n");
@@ -410,21 +411,40 @@ public class V10Data {
         /* Get dimensions. */
         try {
 
-            OutputBean ob = faostatapiCore.queryDimensions(null, datasourceBean, metadataBean);
+            // add report_code dimension (this is used for the query)
+            metadataBean.addParameter("report_code", "download");
+
+            // TODO: this should be checked with performance
+            // if a dimension is not passed, all the other codes are taken
+            List<String> defaultCodes = new ArrayList<String>();
+            defaultCodes.add("_1");
+
+            OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
             log.append("getDataFromBean\t").append("OutputBean\t").append(ob.toString()).append("\n");
 
+            System.out.println("getData");
+
             while (ob.getData().hasNext()) {
+
                 Map<String, Object> m = ob.getData().next();
                 log.append("getDataFromBean\t\t").append("Map\t").append(m.toString()).append("\n");
                 String id = m.get("id").toString();
                 log.append("getDataFromBean\t\t\t").append("ID\t").append(id).append("\n");
                 String parameter = m.get("parameter").toString();
                 log.append("getDataFromBean\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
+
+                System.out.println(id + " " + parameter);
+
                 if (b.getFilters().get(id) != null) {
                     log.append("getDataFromBean\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                     filters.put(parameter, b.getFilters().get(id));
                     continue;
+                }else {
+                    filters.put(parameter, defaultCodes);
                 }
+
+                System.out.println(filters);
+
                 log.append("getDataFromBean\t\t\t").append("subdimensions?\t").append((m.get("subdimensions") != null)).append("\n");
                 if (m.get("subdimensions") != null) {
                     ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>)m.get("subdimensions");
@@ -446,10 +466,18 @@ public class V10Data {
 
             log.append("getDataFromBean\t").append("filters\t").append(filters.toString()).append("\n");
 
+            System.out.println("getData");
+
             return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(),
-                    b.getOutput_type(), filters.get("List1Codes"), filters.get("List2Codes"), filters.get("List3Codes"),
-                    filters.get("List4Codes"), filters.get("List5Codes"), filters.get("List6Codes"),
-                    filters.get("List7Codes"), b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getOutput_type(),
+                    filters.get("List1Codes"),
+                    filters.get("List2Codes"),
+                    filters.get("List3Codes"),
+                    filters.get("List4Codes"),
+                    filters.get("List5Codes"),
+                    filters.get("List6Codes"),
+                    filters.get("List7Codes"),
+                    b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
                     b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(), b.getShow_codes(),
                     b.getShow_flags(), b.getShow_unit());
 
