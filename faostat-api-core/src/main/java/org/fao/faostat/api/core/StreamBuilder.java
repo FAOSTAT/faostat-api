@@ -455,7 +455,7 @@ public class StreamBuilder {
                 while (out.getData().hasNextList()) {
                     List<String> l = out.getData().nextList();
                     for (int i = 0; i < l.size(); i += 1) {
-                        System.out.println(l.get(i));
+//                        System.out.println(l.get(i));
                         writer.write("\"" + l.get(i) + "\"");
                         if (i < l.size() - 1)
                             writer.write(",");
@@ -605,7 +605,7 @@ public class StreamBuilder {
                     try {
                         headers[idx] = out.getMetadata().getDsd().get(i).get("label").toString();
                     } catch (Exception e) {
-                        System.out.println("\tskip this...");
+//                        System.out.println("\tskip this...");
                     }
                 }
                 for (int i = 0; i < headers.length; i += 1) {
@@ -789,6 +789,7 @@ public class StreamBuilder {
         try {
 
             /* Query FAOSTAT. */
+            //System.out.println(metadataBean);
             log.append("StreamBuilder\t").append("initiate output...").append("\n");
             final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
             log.append("StreamBuilder\t").append("initiate output: done").append("\n");
@@ -870,8 +871,6 @@ public class StreamBuilder {
         log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
         try {
-
-            System.out.println(queryCode);
 
             /* Query FAOSTAT. */
             log.append("StreamBuilder\t").append("initiate output...").append("\n");

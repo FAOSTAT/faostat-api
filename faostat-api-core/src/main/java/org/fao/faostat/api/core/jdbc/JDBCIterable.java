@@ -385,6 +385,8 @@ public class JDBCIterable implements Iterator<List<String>> {
         this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
         this.setStatement(this.getConnection().createStatement());
 
+        //System.out.println("querySQLServer SQL: " +sql);
+
         this.getStatement().executeQuery(sql);
         this.setResultSet(this.getStatement().getResultSet());
 
