@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.fao.faostat.api.core.beans.DataBean;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
@@ -348,12 +349,17 @@ import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.fao.faostat.api.core.constants.QUERIES;
+import org.fao.faostat.api.core.jdbc.JDBCIterable;
 import org.springframework.stereotype.Component;
+import org.apache.log4j.Logger;
+
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -366,6 +372,10 @@ import java.util.Map;
 @Path("/v1.0/{lang}/data")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Data {
+
+    private static final Logger LOGGER = Logger.getLogger(V10Data.class);
+
+    //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
     @POST
     @Path("/bean/")
@@ -493,9 +503,9 @@ public class V10Data {
                     filtersCS.get("List5AltCodes"),
                     filtersCS.get("List6AltCodes"),
                     filtersCS.get("List7AltCodes"),
-                    b.isNull_values(), b.getGroup_by(), b.getOrder_by(), b.getOperator(),
-                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(), b.getShow_codes(),
-                    b.getShow_flags(), b.getShow_unit());
+                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(),
+                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit());
 
         } catch (Exception e) {
             return Response.status(500).entity(log.toString()).build();
@@ -506,7 +516,7 @@ public class V10Data {
     @POST
     public Response getData(@PathParam("lang") String lang,
                             @FormParam("domain_codes") List<String> domain_codes,
-                            @FormParam("datasource") String datasource,
+                            @FormParam("datasource") final String datasource,
                             @FormParam("api_key") String api_key,
                             @FormParam("client_key") String client_key,
                             @FormParam("output_type") String output_type,
@@ -524,7 +534,6 @@ public class V10Data {
                             @FormParam("List5AltCodes") String list_5_alt_codes,
                             @FormParam("List6AltCodes") String list_6_alt_codes,
                             @FormParam("List7AltCodes") String list_7_alt_codes,
-                            @FormParam("null_values") boolean null_values,
                             @FormParam("group_by") String group_by,
                             @FormParam("order_by") String order_by,
                             @FormParam("operator") String operator,
@@ -532,6 +541,9 @@ public class V10Data {
                             @FormParam("decimal_places") int decimal_places,
                             @FormParam("page_number") int page_number,
                             @FormParam("limit") @DefaultValue("-1") int limit,
+
+                            // TODO: convert it all to boolean and convert it into string?
+                            @FormParam("null_values") boolean null_values,
                             @FormParam("show_codes") @DefaultValue("1") int show_codes,
                             @FormParam("show_flags") @DefaultValue("1") int show_flags,
                             @FormParam("show_unit") @DefaultValue("1") int show_unit) {
@@ -541,7 +553,7 @@ public class V10Data {
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Store user preferences. */
-        MetadataBean metadataBean = new MetadataBean();
+        final MetadataBean metadataBean = new MetadataBean();
         metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
         /* Store procedure parameters. */
@@ -579,13 +591,135 @@ public class V10Data {
         try {
 
             /* Stream builder. */
-            StreamBuilder sb = new StreamBuilder();
+            final StreamBuilder sb = new StreamBuilder();
 
             /* Datasource bean. */
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
+            final List<Map<String, Object>> dsd = faostatapiCore.createDSD(datasourceBean, metadataBean);
+
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createDataOutputStream(datasourceBean, metadataBean);
+//            StreamingOutput stream = sb.createDataOutputStream(datasourceBean, metadataBean);
+
+            String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
+
+            LOGGER.info(query);
+
+            System.out.println("----------------------------------");
+            System.out.println(query);
+
+            final JDBCIterable i = new JDBCIterable();
+            i.query(datasourceBean, query);
+
+            StreamingOutput stream =  new StreamingOutput() {
+
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Generate an array of objects of arrays. */
+                    switch (metadataBean.getOutputType()) {
+                        case CSV:
+                            /* Add column names from DSD. */
+                            int max = 0;
+                            for (int i = 0; i < dsd.size(); i += 1) {
+                                int idx = (int)(dsd.get(i).get("index"));
+                                System.out.println("idx: " + idx);
+                                if (idx > max) {
+                                    max = idx;
+                                }
+                            }
+                            // TODO: check with Amanda the size of the headers
+                            max += 1;
+                            //System.out.println("MAX: " + max);
+                            String[] headersTmp = new String[max];
+                            boolean[] headersToRemove = new boolean[max];
+                            for (int i = 0; i < headersTmp.length; i += 1) {
+                                headersTmp[i] = "TODO";
+                                headersToRemove[i] = false;
+                            }
+                            for (int i = 0; i < dsd.size(); i += 1) {
+                                int idx = (int) (dsd.get(i).get("index"));
+                                try {
+                                    //System.out.println(dsd.get(i).get("label"));
+                                    System.out.println("Show Codes: "  + metadataBean.getProcedureParameters().get("show_codes"));
+                                    if ( metadataBean.getProcedureParameters().get("show_codes").equals(true)) {
+                                        headersTmp[idx] = dsd.get(i).get("label").toString();
+                                    }else{
+                                        if (!dsd.get(i).get("type").equals("code")) {
+                                            headersTmp[idx] = dsd.get(i).get("label").toString();
+                                        }else {
+                                            // skip code
+                                            headersToRemove[idx] = true;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    // System.out.println("\tskip this...");
+                                }
+                            }
+                            /* append right headers */
+                            List<String> headers = new ArrayList<String>();
+                            for (int i = 0; i < headersTmp.length; i += 1) {
+                                if (!headersToRemove[i]) {
+                                    headers.add(headersTmp[i]);
+                                }
+                            }
+
+                            /* write headers */
+                            for (int i = 0; i < headers.size(); i += 1) {
+                                writer.write("\"" + headers.get(i) + "\"");
+                                if (i < headers.size() - 1)
+                                    writer.write(",");
+                                else
+                                    writer.write("\n");
+                            }
+
+                            /* Add CSV rows. */
+                            while (i.hasNext()) {
+                                writer.write(i.nextCSV());
+                            }
+                            break;
+                        default:
+                            /* Initiate the output. */
+                            writer.write("{");
+
+                            /* Add metadata. */
+                            metadataBean.setDsd(dsd);
+                            writer.write(sb.createMetadata(metadataBean));
+
+                            /* Initiate Data the array. */
+                            writer.write("\"data\": [");
+
+                            while (i.hasNext()) {
+                                writer.write(i.nextJSON());
+                                if (i.hasNext()) {
+                                    writer.write(",");
+                                }
+                            }
+
+                            /* Close the array. */
+                            writer.write("]");
+
+                            /* Close the object. */
+                            writer.write("}");
+                            break;
+
+                    }
+
+
+
+                /* Flush the writer. */
+                    writer.flush();
+
+                /* Close the writer. */
+                    writer.close();
+
+                }
+
+            };
+
 
             /* Stream result */
             return Response.status(200).entity(stream).build();
