@@ -367,7 +367,7 @@ import java.util.Map;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
+ */
 @Component
 @Path("/v1.0/{lang}/data")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -459,7 +459,7 @@ public class V10Data {
                     log.append("getDataFromBean\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                     filters.put(parameter, b.getFilters().get(id));
                     continue;
-                }else {
+                } else {
                     filters.put(parameter, defaultCodes);
                 }
 
@@ -467,7 +467,7 @@ public class V10Data {
 
                 log.append("getDataFromBean\t\t\t").append("subdimensions?\t").append((m.get("subdimensions") != null)).append("\n");
                 if (m.get("subdimensions") != null) {
-                    ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>)m.get("subdimensions");
+                    ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>) m.get("subdimensions");
                     for (Map<String, Object> m2 : l) {
                         log.append("getDataFromBean\t\t\t\t").append("m2\t").append(m2).append("\n");
                         id = m2.get("id").toString();
@@ -477,7 +477,7 @@ public class V10Data {
                         if (b.getFilters().get(id) != null) {
                             log.append("getDataFromBean\t\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                             filters.put(parameter, b.getFilters().get(id));
-                            log.append("getDataFromBean\t\t\t\t").append("SIZE\t").append(((List<String>)b.getFilters().get(id)).size()).append("\n");
+                            log.append("getDataFromBean\t\t\t\t").append("SIZE\t").append(((List<String>) b.getFilters().get(id)).size()).append("\n");
                         }
                     }
                 }
@@ -611,7 +611,7 @@ public class V10Data {
             final JDBCIterable i = new JDBCIterable();
             i.query(datasourceBean, query);
 
-            StreamingOutput stream =  new StreamingOutput() {
+            StreamingOutput stream = new StreamingOutput() {
 
                 @Override
                 public void write(OutputStream os) throws IOException, WebApplicationException {
@@ -625,7 +625,7 @@ public class V10Data {
                             /* Add column names from DSD. */
                             int max = 0;
                             for (int i = 0; i < dsd.size(); i += 1) {
-                                int idx = (int)(dsd.get(i).get("index"));
+                                int idx = (int) (dsd.get(i).get("index"));
 //                                System.out.println("idx: " + idx);
                                 if (idx > max) {
                                     max = idx;
@@ -653,14 +653,14 @@ public class V10Data {
 
                                     headersTmp[idx] = dsd.get(i).get("label").toString();
                                     // CODES
-                                    if ( metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(i).get("type").equals("code")) {
+                                    if (metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(i).get("type").equals("code")) {
                                         headersToKeep[idx] = false;
                                     }
                                     // FLAGS
-                                    if ( metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(i).get("type").equals("flag") || dsd.get(i).get("type").equals("flag_label")))) {
+                                    if (metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(i).get("type").equals("flag") || dsd.get(i).get("type").equals("flag_label")))) {
                                         headersToKeep[idx] = false;
                                     }
-                                    if ( metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(i).get("type").equals("unit")) {
+                                    if (metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(i).get("type").equals("unit")) {
                                         headersToKeep[idx] = false;
                                     }
 
