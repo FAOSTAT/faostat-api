@@ -626,7 +626,7 @@ public class V10Data {
                             int max = 0;
                             for (int i = 0; i < dsd.size(); i += 1) {
                                 int idx = (int)(dsd.get(i).get("index"));
-                                System.out.println("idx: " + idx);
+//                                System.out.println("idx: " + idx);
                                 if (idx > max) {
                                     max = idx;
                                 }
@@ -635,26 +635,35 @@ public class V10Data {
                             max += 1;
                             //System.out.println("MAX: " + max);
                             String[] headersTmp = new String[max];
-                            boolean[] headersToRemove = new boolean[max];
+                            boolean[] headersToKeep = new boolean[max];
                             for (int i = 0; i < headersTmp.length; i += 1) {
                                 headersTmp[i] = "TODO";
-                                headersToRemove[i] = false;
+                                headersToKeep[i] = true;
                             }
+
+//                            System.out.println("Show Codes: "  + metadataBean.getProcedureParameters().get("show_codes"));
+//                            System.out.println("show_flags: "  + metadataBean.getProcedureParameters().get("show_flags"));
+//                            System.out.println("Show show_unit: "  + metadataBean.getProcedureParameters().get("show_unit"));
+
                             for (int i = 0; i < dsd.size(); i += 1) {
                                 int idx = (int) (dsd.get(i).get("index"));
                                 try {
                                     //System.out.println(dsd.get(i).get("label"));
-                                    System.out.println("Show Codes: "  + metadataBean.getProcedureParameters().get("show_codes"));
-                                    if ( metadataBean.getProcedureParameters().get("show_codes").equals(true)) {
-                                        headersTmp[idx] = dsd.get(i).get("label").toString();
-                                    }else{
-                                        if (!dsd.get(i).get("type").equals("code")) {
-                                            headersTmp[idx] = dsd.get(i).get("label").toString();
-                                        }else {
-                                            // skip code
-                                            headersToRemove[idx] = true;
-                                        }
+                                    //System.out.println(metadataBean.getProcedureParameters().get("show_codes"));
+
+                                    headersTmp[idx] = dsd.get(i).get("label").toString();
+                                    // CODES
+                                    if ( metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(i).get("type").equals("code")) {
+                                        headersToKeep[idx] = false;
                                     }
+                                    // FLAGS
+                                    if ( metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(i).get("type").equals("flag") || dsd.get(i).get("type").equals("flag_label")))) {
+                                        headersToKeep[idx] = false;
+                                    }
+                                    if ( metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(i).get("type").equals("unit")) {
+                                        headersToKeep[idx] = false;
+                                    }
+
                                 } catch (Exception e) {
                                     // System.out.println("\tskip this...");
                                 }
@@ -662,7 +671,7 @@ public class V10Data {
                             /* append right headers */
                             List<String> headers = new ArrayList<String>();
                             for (int i = 0; i < headersTmp.length; i += 1) {
-                                if (!headersToRemove[i]) {
+                                if (headersToKeep[i]) {
                                     headers.add(headersTmp[i]);
                                 }
                             }
