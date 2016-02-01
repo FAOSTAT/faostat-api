@@ -581,6 +581,7 @@ public class FAOSTATAPICore {
                     m.put("options", o);
 
                     /* Add available coding systems. */
+                    System.out.println(tmp.get(i));
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
                     m.put("coding_systems", new ArrayList<String>());
                     for (String cs : codingSystems) {
@@ -661,51 +662,99 @@ public class FAOSTATAPICore {
 
     public OutputBean queryData(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
+        long start = System.currentTimeMillis();
+
         /* Logs. */
         StringBuilder log = new StringBuilder();
 
         try {
 
             /* Check parameters. */
-            for (String key : metadataBean.getProcedureParameters().keySet())
+            for (String key : metadataBean.getProcedureParameters().keySet()) {
                 log.append("FAOSTATAPICore\t").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
-            for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes"))
+            }
+
+            long end = System.currentTimeMillis();
+            long duration = (end - start);
+            System.out.println("QueryData Check parameters: " + (duration));
+
+            /* TODO: why get("List4Codes") */
+            for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes")) {
                 log.append("FAOSTATAPICore\t").append("\t").append(key).append("\n");
+            }
+
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData getProcedureParameters: " + (duration));
 
             /* Statistics. */
             log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
 
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData statistics: " + (duration));
+
             /* Initiate output. */
             log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
             OutputBean out = new OutputBean();
 
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData initiate: " + (duration));
+
             /* Add metadata. */
             log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
             out.setMetadata(metadataBean);
+
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData metadataBean: " + (duration));
 
             /* Add DSD. */
             log.append("FAOSTATAPICore\t").append("add DSD...").append("\n");
             out.getMetadata().setDsd(createDSD(datasourceBean, metadataBean));
             log.append("FAOSTATAPICore\t").append("add DSD: done").append("\n");
 
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData createDSD: " + (duration));
+
             /* Query the DB. */
             log.append("FAOSTATAPICore\t").append("query? ").append(this.getQueries().getQuery("data", metadataBean.getProcedureParameters())).append("\n");
+
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData Query the DB: " + (duration));
+
             log.append("FAOSTATAPICore\t").append("query db...").append("\n");
             JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
             log.append("FAOSTATAPICore\t").append("JDBCIterable? ").append(i != null).append("\n");
 
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData JDBCIterable: " + (duration));
+
             /* Add column names. */
             log.append("FAOSTATAPICore\t").append("column names? ").append(i.getColumnNames().size()).append("\n");
             out.setColumnNames(i.getColumnNames());
 
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData getColumnNames timing: " + (duration));
+
             /* Add query. */
             out.getMetadata().addParameter("query", this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
+
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("QueryData getQueries timing: " + (duration));
 
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            System.out.println("QueryData getFetchSize timing: " + (duration));
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
                     case ARRAYS:
@@ -728,6 +777,12 @@ public class FAOSTATAPICore {
 
             /* Return output. */
             log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+
+            end = System.currentTimeMillis();
+            duration = (end - start);
+            System.out.println("queryData timing: " + (duration ));
+
+
             return out;
 
         } catch (Exception e) {
@@ -1195,7 +1250,7 @@ public class FAOSTATAPICore {
 
     }
 
-    private List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, MetadataBean o) {
+    public List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, MetadataBean o) {
 
         /* Initiate DSD. */
         List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
@@ -1328,12 +1383,20 @@ public class FAOSTATAPICore {
     }
 
     private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) {
+
+        long t0 = System.currentTimeMillis();
+
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
-//        System.out.println("queryCode: " + queryCode);
-//        System.out.println("QUERY: " + query);
-//        System.out.println("MetadataBean: " + o);
+        System.out.println("queryCode: " + queryCode);
+        System.out.println("QUERY: " + query);
+        System.out.println("MetadataBean: " + o);
         JDBCIterable i = new JDBCIterable();
         i.query(datasourceBean, query);
+
+        long tf = System.currentTimeMillis();
+        System.out.println("JDBCIterable.getJDBCIterable (stand alone timing): " + (tf - t0));
+
+
         return i;
     }
 

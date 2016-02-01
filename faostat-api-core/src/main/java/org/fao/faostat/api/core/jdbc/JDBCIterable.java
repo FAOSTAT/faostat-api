@@ -563,6 +563,65 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     }
 
+    public String nextCSV() {
+
+        StringBuilder sb= new StringBuilder();
+        String columnType;
+        String value;
+
+        if (this.isHasNext()) {
+            try {
+                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
+                    try {
+                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
+                        value = this.getResultSet().getString(i).trim();
+                        if (columnType.endsWith("Double")) {
+                            sb.append(Double.parseDouble(value));
+                        } else if (columnType.endsWith("Integer")) {
+                            sb.append(Integer.parseInt(value));
+                        } else if (columnType.endsWith("Date")) {
+                            sb.append("\"").append(new Date(value).toString()).append("\"");
+                        } else {
+                            // TODO: check if there are "" in the string
+                            sb.append("\"").append(value).append("\"");
+                        }
+                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
+                            sb.append(",");
+                        }else{
+                            sb.append("\n");
+                        }
+                    } catch (NullPointerException ignored) {
+                        if (i > 0) {
+                            sb.append("");
+                        }
+                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
+                            sb.append(",");
+                        }else{
+                            sb.append("\n");
+                        }
+                    }
+                }
+                this.setHasNext(this.getResultSet().next());
+            } catch(SQLException ignored) {
+
+            }
+        }
+
+        if (!this.isHasNext()) {
+            try {
+                this.getResultSet().close();
+                this.getStatement().close();
+                this.getConnection().close();
+            } catch (SQLException ignored) {
+
+            }
+        } else {
+            //sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
     public String nextArray() {
 
         String s = "[";

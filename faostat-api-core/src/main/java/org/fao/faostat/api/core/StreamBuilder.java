@@ -367,8 +367,9 @@ public class StreamBuilder {
 
         /* Check parameters. */
         log.append("StreamBuilder\t").append("queryCode: ").append(queryCode).append("\n");
-        for (String key : metadataBean.getProcedureParameters().keySet())
+        for (String key : metadataBean.getProcedureParameters().keySet()) {
             log.append("StreamBuilder\t").append("key: ").append(key).append(", value: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+        }
 
         try {
 
@@ -398,8 +399,9 @@ public class StreamBuilder {
 
         /* Check parameters. */
         log.append("StreamBuilder\t").append("queryCode: ").append(queryCode).append("\n");
-        for (String key : metadataBean.getProcedureParameters().keySet())
+        for (String key : metadataBean.getProcedureParameters().keySet()) {
             log.append("StreamBuilder\t").append("key: ").append(key).append(", value: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+        }
 
         try {
 
@@ -423,8 +425,9 @@ public class StreamBuilder {
             public void write(OutputStream os) throws IOException, WebApplicationException {
                 Writer writer = new BufferedWriter(new OutputStreamWriter(os));
                 writer.write(log.toString());
-                if (e.getMessage() != null)
+                if (e.getMessage() != null) {
                     writer.write(e.getMessage());
+                }
                 writer.flush();
                 writer.close();
             }
@@ -445,10 +448,12 @@ public class StreamBuilder {
                     /* Add column names, from DSD (if any)... */
                     for (int i = 0; i < out.getColumnNames().size(); i += 1) {
                         writer.write("\"" + out.getColumnNames().get(i) + "\"");
-                        if (i < out.getColumnNames().size() - 1)
+                        if (i < out.getColumnNames().size() - 1) {
                             writer.write(",");
-                        else
+                        }
+                        else {
                             writer.write("\n");
+                        }
                     }
 
                 /* Add data. */
@@ -457,10 +462,12 @@ public class StreamBuilder {
                     for (int i = 0; i < l.size(); i += 1) {
 //                        System.out.println(l.get(i));
                         writer.write("\"" + l.get(i) + "\"");
-                        if (i < l.size() - 1)
+                        if (i < l.size() - 1) {
                             writer.write(",");
-                        else
+                        }
+                        else {
                             writer.write("\n");
+                        }
                     }
                 }
 
@@ -502,15 +509,17 @@ public class StreamBuilder {
                     case ARRAYS:
                         while (out.getData().hasNext()) {
                             writer.write(out.getData().nextJSONList());
-                            if (out.getData().hasNext())
+                            if (out.getData().hasNext()) {
                                 writer.write(",");
+                            }
                         }
                         break;
                     default:
                         while (out.getData().hasNext()) {
                             writer.write(out.getData().nextJSON());
-                            if (out.getData().hasNext())
+                            if (out.getData().hasNext()) {
                                 writer.write(",");
+                            }
                         }
                         break;
 
@@ -545,8 +554,9 @@ public class StreamBuilder {
         log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
         /* Check parameters. */
-        for (String key : metadataBean.getProcedureParameters().keySet())
+        for (String key : metadataBean.getProcedureParameters().keySet()) {
             log.append("\tcreateDataOutputStream | ").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+        }
 
         try {
 
@@ -594,12 +604,14 @@ public class StreamBuilder {
                 int max = 0;
                 for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
                     int idx = (int)(out.getMetadata().getDsd().get(i).get("index"));
-                    if (idx > max)
+                    if (idx > max) {
                         max = idx;
+                    }
                 }
                 String[] headers = new String[max];
-                for (int i = 0; i < headers.length; i += 1)
+                for (int i = 0; i < headers.length; i += 1) {
                     headers[i] = "TODO";
+                }
                 for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
                     int idx = (int) (out.getMetadata().getDsd().get(i).get("index"));
                     try {
@@ -621,10 +633,12 @@ public class StreamBuilder {
                     List<String> l = out.getData().nextList();
                     for (int i = 0; i < l.size(); i += 1) {
                         writer.write("\"" + l.get(i) + "\"");
-                        if (i < l.size() - 1)
+                        if (i < l.size() - 1) {
                             writer.write(",");
-                        else
+                        }
+                        else {
                             writer.write("\n");
+                        }
                     }
                 }
 
@@ -666,15 +680,17 @@ public class StreamBuilder {
                     case ARRAYS:
                         while (out.getData().hasNextList()) {
                             writer.write(out.getData().nextJSONList());
-                            if (out.getData().hasNextList())
+                            if (out.getData().hasNextList()) {
                                 writer.write(",");
+                            }
                         }
                         break;
                     default:
                         while (out.getData().hasNext()) {
                             writer.write(out.getData().nextJSON());
-                            if (out.getData().hasNext())
+                            if (out.getData().hasNext()) {
                                 writer.write(",");
+                            }
                         }
                         break;
 
@@ -818,7 +834,7 @@ public class StreamBuilder {
         }
     }
 
-    private String createMetadata(MetadataBean o) {
+    public String createMetadata(MetadataBean o) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"metadata\": {");
         if (o.getProcessingTime() != null) {
@@ -832,8 +848,9 @@ public class StreamBuilder {
                 int counter = 0;
                 for (String key : col.keySet()) {
                     sb.append("\"").append(key).append("\": \"").append(col.get(key)).append("\"");
-                    if (counter < col.keySet().size() - 1)
+                    if (counter < col.keySet().size() - 1) {
                         sb.append(",");
+                    }
                     counter += 1;
                 }
                 sb.append("}");
