@@ -359,10 +359,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -621,57 +618,55 @@ public class V10Data {
                     /* Generate an array of objects of arrays. */
                     switch (metadataBean.getOutputType()) {
                         case CSV:
-                            /* Add column names from DSD. */
-                            int max = 0;
+
+                            // get all indexes
+                            List<Integer> indexes = new ArrayList<Integer>();
                             for (int i = 0; i < dsd.size(); i += 1) {
-                                int idx = (int) (dsd.get(i).get("index"));
-                                LOGGER.info("idx: " + idx);
-                                if (idx > max) {
-                                    max = idx;
-                                }
-                            }
-                            // TODO: check with Amanda the size of the headers
-                            //max += 1;
-                            LOGGER.info("MAX: " + max);
-                            String[] headersTmp = new String[max];
-                            boolean[] headersToKeep = new boolean[max];
-                            for (int i = 0; i < headersTmp.length; i += 1) {
-                                headersTmp[i] = "TODO";
-                                headersToKeep[i] = true;
+                                LOGGER.info(dsd.get(i));
+                                indexes.add((int) (dsd.get(i).get("index")));
                             }
 
-//                            System.out.println("Show Codes: "  + metadataBean.getProcedureParameters().get("show_codes"));
-//                            System.out.println("show_flags: "  + metadataBean.getProcedureParameters().get("show_flags"));
-//                            System.out.println("Show show_unit: "  + metadataBean.getProcedureParameters().get("show_unit"));
+                            Collections.sort(indexes);
 
-                            for (int i = 0; i < dsd.size(); i += 1) {
-                                int idx = (int) (dsd.get(i).get("index"));
-                                try {
-                                    LOGGER.info(dsd.get(i).get("label"));
-                                    //System.out.println(metadataBean.getProcedureParameters().get("show_codes"));
-
-                                    headersTmp[idx] = dsd.get(i).get("label").toString();
-                                    // CODES
-                                    if (metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(i).get("type").equals("code")) {
-                                        headersToKeep[idx] = false;
-                                    }
-                                    // FLAGS
-                                    if (metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(i).get("type").equals("flag") || dsd.get(i).get("type").equals("flag_label")))) {
-                                        headersToKeep[idx] = false;
-                                    }
-                                    if (metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(i).get("type").equals("unit")) {
-                                        headersToKeep[idx] = false;
-                                    }
-
-                                } catch (Exception e) {
-                                    // System.out.println("\tskip this...");
-                                }
-                            }
-                            /* append right headers */
+                            // TODO: do it better
                             List<String> headers = new ArrayList<String>();
-                            for (int i = 0; i < headersTmp.length; i += 1) {
-                                if (headersToKeep[i]) {
-                                    headers.add(headersTmp[i]);
+                            for (int i = 0; i < indexes.size(); i++) {
+
+                                int index = indexes.get(i);
+
+                                for (int j = 0; j < dsd.size(); j++) {
+
+                                    int dsdIndex = (int) (dsd.get(j).get("index"));
+
+                                    if (index == dsdIndex) {
+                                        boolean headerToKeep = true;
+
+                                        LOGGER.info(index);
+                                        LOGGER.info(dsd.get(j));
+
+                                        String header = dsd.get(j).get("label").toString();
+
+                                        LOGGER.info(header);
+
+                                        // CODES
+                                        if (metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(j).get("type").equals("code")) {
+                                            headerToKeep = false;
+                                        }
+                                        // FLAGS
+                                        if (metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(j).get("type").equals("flag") || dsd.get(j).get("type").equals("flag_label")))) {
+                                            headerToKeep = false;
+                                        }
+                                        if (metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(j).get("type").equals("unit")) {
+                                            headerToKeep = false;
+                                        }
+
+                                        LOGGER.info(headerToKeep);
+
+                                        if (headerToKeep) {
+                                            headers.add(header);
+                                        }
+                                    }
+
                                 }
                             }
 
