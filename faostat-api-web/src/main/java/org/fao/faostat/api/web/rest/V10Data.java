@@ -341,7 +341,6 @@
  */
 package org.fao.faostat.api.web.rest;
 
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.fao.faostat.api.core.beans.DataBean;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
@@ -605,8 +604,8 @@ public class V10Data {
 
             LOGGER.info(query);
 
-            System.out.println("----------------------------------");
-            System.out.println(query);
+            LOGGER.info("----------------------------------");
+            LOGGER.info(query);
 
             final JDBCIterable i = new JDBCIterable();
             i.query(datasourceBean, query);
@@ -626,14 +625,14 @@ public class V10Data {
                             int max = 0;
                             for (int i = 0; i < dsd.size(); i += 1) {
                                 int idx = (int) (dsd.get(i).get("index"));
-//                                System.out.println("idx: " + idx);
+                                LOGGER.info("idx: " + idx);
                                 if (idx > max) {
                                     max = idx;
                                 }
                             }
                             // TODO: check with Amanda the size of the headers
-                            max += 1;
-                            //System.out.println("MAX: " + max);
+                            //max += 1;
+                            LOGGER.info("MAX: " + max);
                             String[] headersTmp = new String[max];
                             boolean[] headersToKeep = new boolean[max];
                             for (int i = 0; i < headersTmp.length; i += 1) {
@@ -648,7 +647,7 @@ public class V10Data {
                             for (int i = 0; i < dsd.size(); i += 1) {
                                 int idx = (int) (dsd.get(i).get("index"));
                                 try {
-                                    //System.out.println(dsd.get(i).get("label"));
+                                    LOGGER.info(dsd.get(i).get("label"));
                                     //System.out.println(metadataBean.getProcedureParameters().get("show_codes"));
 
                                     headersTmp[idx] = dsd.get(i).get("label").toString();
