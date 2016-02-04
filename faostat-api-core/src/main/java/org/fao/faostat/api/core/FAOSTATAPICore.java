@@ -347,6 +347,7 @@ import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.QUERIES;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -354,6 +355,8 @@ import java.util.*;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 public class FAOSTATAPICore {
+
+    private static final Logger LOGGER = Logger.getLogger(FAOSTATAPICore.class);
 
     private QUERIES queries;
 
@@ -581,7 +584,7 @@ public class FAOSTATAPICore {
                     m.put("options", o);
 
                     /* Add available coding systems. */
-                    System.out.println(tmp.get(i));
+                    LOGGER.info(i);
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
                     m.put("coding_systems", new ArrayList<String>());
                     for (String cs : codingSystems) {
@@ -676,7 +679,7 @@ public class FAOSTATAPICore {
 
             long end = System.currentTimeMillis();
             long duration = (end - start);
-            System.out.println("QueryData Check parameters: " + (duration));
+            LOGGER.info("QueryData Check parameters: " + (duration));
 
             /* TODO: why get("List4Codes") */
             for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes")) {
@@ -685,7 +688,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData getProcedureParameters: " + (duration));
+            LOGGER.info("QueryData getProcedureParameters: " + (duration));
 
             /* Statistics. */
             log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
@@ -693,7 +696,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData statistics: " + (duration));
+            LOGGER.info("QueryData statistics: " + (duration));
 
             /* Initiate output. */
             log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
@@ -701,7 +704,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData initiate: " + (duration));
+            LOGGER.info("QueryData initiate: " + (duration));
 
             /* Add metadata. */
             log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
@@ -709,7 +712,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData metadataBean: " + (duration));
+            LOGGER.info("QueryData metadataBean: " + (duration));
 
             /* Add DSD. */
             log.append("FAOSTATAPICore\t").append("add DSD...").append("\n");
@@ -718,14 +721,14 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData createDSD: " + (duration));
+            LOGGER.info("QueryData createDSD: " + (duration));
 
             /* Query the DB. */
             log.append("FAOSTATAPICore\t").append("query? ").append(this.getQueries().getQuery("data", metadataBean.getProcedureParameters())).append("\n");
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData Query the DB: " + (duration));
+            LOGGER.info("QueryData Query the DB: " + (duration));
 
             log.append("FAOSTATAPICore\t").append("query db...").append("\n");
             JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
@@ -734,7 +737,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData JDBCIterable: " + (duration));
+            LOGGER.info("QueryData JDBCIterable: " + (duration));
 
             /* Add column names. */
             log.append("FAOSTATAPICore\t").append("column names? ").append(i.getColumnNames().size()).append("\n");
@@ -742,19 +745,19 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData getColumnNames timing: " + (duration));
+            LOGGER.info("QueryData getColumnNames timing: " + (duration));
 
             /* Add query. */
             out.getMetadata().addParameter("query", this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("QueryData getQueries timing: " + (duration));
+            LOGGER.info("QueryData getQueries timing: " + (duration));
 
             /* Add data to the output. */
             log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
-            System.out.println("QueryData getFetchSize timing: " + (duration));
+            LOGGER.info("QueryData getFetchSize timing: " + (duration));
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
                     case ARRAYS:
@@ -780,7 +783,7 @@ public class FAOSTATAPICore {
 
             end = System.currentTimeMillis();
             duration = (end - start);
-            System.out.println("queryData timing: " + (duration ));
+            LOGGER.info("queryData timing: " + (duration));
 
 
             return out;
@@ -1283,8 +1286,9 @@ public class FAOSTATAPICore {
                     codeCol.put("type", "code");
                     codeCol.put("key", row.get("CodeName"));
                     codeCol.put("pivot", row.get("Pivot"));
-                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
+                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0) {
                         codeCol.put("dimension_id", row.get("VarType"));
+                    }
                     dsd.add(codeCol);
                     Map<String, Object> labelCol = new HashMap<>();
                     labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
@@ -1292,9 +1296,12 @@ public class FAOSTATAPICore {
                     labelCol.put("type", "label");
                     labelCol.put("key", row.get("ColName"));
                     labelCol.put("pivot", row.get("Pivot"));
-                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0)
+                    if (row.get("VarType") != null && row.get("VarType").toString().length() > 0) {
                         labelCol.put("dimension_id", row.get("VarType"));
+                    }
                     dsd.add(labelCol);
+
+//                    System.out.println(row.get("ColName") + " " + row.get("CodeIndex") + " "  +row.get("NameIndex"));
                 }
 
                 /* Create descriptor for the unit. */
@@ -1386,16 +1393,17 @@ public class FAOSTATAPICore {
 
         long t0 = System.currentTimeMillis();
 
+        // TODO: remove system out
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
-        System.out.println("queryCode: " + queryCode);
-        System.out.println("QUERY: " + query);
-        System.out.println("MetadataBean: " + o);
+
+        LOGGER.info("queryCode: " + queryCode);
+        LOGGER.info("QUERY: " + query);
+        LOGGER.info("MetadataBean: " + o);
         JDBCIterable i = new JDBCIterable();
         i.query(datasourceBean, query);
 
         long tf = System.currentTimeMillis();
-        System.out.println("JDBCIterable.getJDBCIterable (stand alone timing): " + (tf - t0));
-
+        LOGGER.info("JDBCIterable.getJDBCIterable (stand alone timing): " + (tf - t0));
 
         return i;
     }
