@@ -599,10 +599,8 @@ public class V10Data {
 
             String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
 
-            LOGGER.info(query);
-
-            LOGGER.info("----------------------------------");
-            LOGGER.info(query);
+            //LOGGER.info("----------------------------------");
+            //LOGGER.info(query);
 
             final JDBCIterable i = new JDBCIterable();
             i.query(datasourceBean, query);
@@ -620,9 +618,9 @@ public class V10Data {
                         case CSV:
 
                             // get all indexes
-                            List<Integer> indexes = new ArrayList<Integer>();
+                           /* List<Integer> indexes = new ArrayList<Integer>();
                             for (int i = 0; i < dsd.size(); i += 1) {
-                                LOGGER.info(dsd.get(i));
+                               // LOGGER.info(dsd.get(i));
                                 indexes.add((int) (dsd.get(i).get("index")));
                             }
 
@@ -641,12 +639,9 @@ public class V10Data {
                                     if (index == dsdIndex) {
                                         boolean headerToKeep = true;
 
-                                        LOGGER.info(index);
-                                        LOGGER.info(dsd.get(j));
-
                                         String header = dsd.get(j).get("label").toString();
 
-                                        LOGGER.info(header);
+                                        //LOGGER.info(header);
 
                                         // CODES
                                         if (metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(j).get("type").equals("code")) {
@@ -660,7 +655,7 @@ public class V10Data {
                                             headerToKeep = false;
                                         }
 
-                                        LOGGER.info(headerToKeep);
+                                        //LOGGER.info(headerToKeep);
 
                                         if (headerToKeep) {
                                             headers.add(header);
@@ -668,7 +663,12 @@ public class V10Data {
                                     }
 
                                 }
-                            }
+                            }*/
+
+                            /* Get Headers from Metadata */
+                            List<String> headers = i.getColumnNames();
+
+
 
                             /* write headers */
                             for (int i = 0; i < headers.size(); i += 1) {

@@ -342,6 +342,7 @@
 package org.fao.faostat.api.core.jdbc;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.constants.DRIVER;
 
@@ -354,6 +355,8 @@ import java.util.Date;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
 public class JDBCIterable implements Iterator<List<String>> {
+
+    private static final Logger LOGGER = Logger.getLogger(JDBCIterable.class);
 
     private Connection connection;
 
@@ -471,6 +474,9 @@ public class JDBCIterable implements Iterator<List<String>> {
                     try {
                         columnType = this.getResultSet().getMetaData().getColumnClassName(i);
                         value = this.getResultSet().getString(i).trim();
+
+//                        LOGGER.info(this.getResultSet().getMetaData().getColumnLabel(i));
+
                         s += "\"" + this.getResultSet().getMetaData().getColumnLabel(i) + "\": ";
                         if (columnType.endsWith("Double")) {
                             s += Double.parseDouble(value);
