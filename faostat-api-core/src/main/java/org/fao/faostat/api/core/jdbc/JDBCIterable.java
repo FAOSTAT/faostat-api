@@ -342,6 +342,7 @@
 package org.fao.faostat.api.core.jdbc;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.constants.DRIVER;
@@ -475,7 +476,7 @@ public class JDBCIterable implements Iterator<List<String>> {
                         columnType = this.getResultSet().getMetaData().getColumnClassName(i);
                         value = this.getResultSet().getString(i).trim();
 
-//                        LOGGER.info(this.getResultSet().getMetaData().getColumnLabel(i));
+                       LOGGER.info(this.getResultSet().getMetaData().getColumnLabel(i));
 
                         s += "\"" + this.getResultSet().getMetaData().getColumnLabel(i) + "\": ";
                         if (columnType.endsWith("Double")) {
@@ -485,17 +486,21 @@ public class JDBCIterable implements Iterator<List<String>> {
                         } else if (columnType.endsWith("Date")) {
                             s += new Date(value).toString();
                         } else {
+                            // escape csv
+                            //value = StringEscapeUtils.escapeCsv(value);
                             s += "\"" + value + "\"";
                         }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
+                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
                             s += ",";
+                        }
                     } catch (NullPointerException ignored) {
                         if (i > 0) {
                             s += "\"" + this.getResultSet().getMetaData().getColumnLabel(i) + "\": ";
                             s += null;
                         }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
+                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
                             s += ",";
+                        }
                     }
                 }
                 this.setHasNext(this.getResultSet().next());

@@ -1408,7 +1408,7 @@ public class FAOSTATAPICore {
 
                 /* Create descriptor for the value. */
                 if (row.get("Col").toString().equalsIgnoreCase("Value")) {
-                    LOGGER.info(row);
+//                    LOGGER.info(row);
                     Map<String, Object> valueCol = new HashMap<>();
                     valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     valueCol.put("label", row.get("ColName").toString());
@@ -1440,7 +1440,7 @@ public class FAOSTATAPICore {
         // TODO: remove system out
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
 
-        LOGGER.info("queryCode: " + queryCode);
+//        LOGGER.info("queryCode: " + queryCode);
         LOGGER.info("QUERY: " + query);
         LOGGER.info("MetadataBean: " + o);
         JDBCIterable i = new JDBCIterable();
