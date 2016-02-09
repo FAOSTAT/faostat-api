@@ -668,8 +668,6 @@ public class V10Data {
                             /* Get Headers from Metadata */
                             List<String> headers = i.getColumnNames();
 
-
-
                             /* write headers */
                             for (int i = 0; i < headers.size(); i += 1) {
                                 writer.write("\"" + headers.get(i) + "\"");

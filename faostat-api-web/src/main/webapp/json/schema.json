@@ -2289,6 +2289,35 @@
           }
         }
       }
+    },
+    {
+      "href": "{lang}/search/{query}",
+      "method": "GET",
+      "rel": "search",
+      "title": "Search",
+      "description": "FAOSTAT search.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "query": {
+            "$ref": "#/definitions/label"
+          }
+        }
+      }
     }
   ]
 }
