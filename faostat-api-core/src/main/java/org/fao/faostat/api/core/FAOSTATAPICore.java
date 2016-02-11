@@ -402,7 +402,7 @@ public class FAOSTATAPICore {
 //            LOGGER.info(out.getColumnNames());
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
@@ -473,7 +473,7 @@ public class FAOSTATAPICore {
             }*/
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
@@ -517,8 +517,6 @@ public class FAOSTATAPICore {
 
         try {
 
-//            System.out.println("FAOSTATAPICore.queryDimensions; queryCode: " + queryCode);
-
             /* Statistics. */
             log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
@@ -531,6 +529,8 @@ public class FAOSTATAPICore {
                 tmp.addAll(l);
             }
             log.append("FAOSTATAPICore\t").append("tmp? ").append(tmp.size()).append("\n");
+
+            LOGGER.info(dimensions);
 
             //System.out.println("TMP: " + tmp);
 
@@ -569,22 +569,35 @@ public class FAOSTATAPICore {
                             ((ArrayList<String>) m.get("coding_systems")).add(cs);
                         }
                     }
+
+                    LOGGER.info(m);
+
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
                     output.add(group);
                     currentList = tmp.get(i).get("ListBoxNo").toString();
                     group = new HashMap<>();
                     group.put("ord", Integer.parseInt(currentList));
+
+                    // TODO: the parameter should come from a constant or better from the DB!
                     group.put("parameter", "List" + currentList + "Codes");
+
                     group.put("id", tmp.get(i).get("VarType").toString());
                     group.put("href", "/codes/" + tmp.get(i).get("VarType").toString() + "/");
                     group.put("subdimensions", new ArrayList<Map<String, Object>>());
+
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
+
+                    LOGGER.info(tmp.get(i).get("id").toString());
+                    LOGGER.info(tmp.get(i).get("VarType").toString());
+
                     m.put("label", tmp.get(i).get("TabName").toString());
                     m.put("description", tmp.get(i).get("TabName").toString());
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
                     m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+
+                    // TODO: the parameter should come from a constant or better from the DB!
                     m.put("parameter", "List" + currentList + "Codes");
 
                     // options
@@ -593,7 +606,6 @@ public class FAOSTATAPICore {
                     m.put("options", o);
 
                     /* Add available coding systems. */
-                    LOGGER.info(i);
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
                     m.put("coding_systems", new ArrayList<String>());
                     for (String cs : codingSystems) {
@@ -605,6 +617,8 @@ public class FAOSTATAPICore {
                 }
             }
             output.add(group);
+
+            LOGGER.info(group);
 
             /* Initiate output. */
             log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
@@ -664,6 +678,9 @@ public class FAOSTATAPICore {
 
             /* Return output. */
             log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+
+            LOGGER.info(": " + (out));
+            LOGGER.info(": " + (out.getData()));
             return out;
 
         } catch (Exception e) {
@@ -764,7 +781,7 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData getQueries timing: " + (duration));
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
             LOGGER.info("QueryData getFetchSize timing: " + (duration));
             while (i.hasNext()) {
@@ -832,7 +849,7 @@ public class FAOSTATAPICore {
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
@@ -942,25 +959,36 @@ public class FAOSTATAPICore {
             /* Get domain's dimensions. */
             List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
 
+            LOGGER.info(dimensions);
+
             /* Organize data in an object. */
             final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
+
+            LOGGER.info(structuredDimensions);
 
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
             String dimensionCode = metadataBean.getProcedureParameters().get("id").toString();
-            for (Map<String, Object> m : structuredDimensions) {
-                if (m.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                    dimension = m;
+            for (Map<String, Object> d : structuredDimensions) {
+                /* checking if is at dimension level */
+                if (d.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+                    LOGGER.info(d.get("id").toString());
+                    dimension = d;
                     break;
                 }
-                ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) m.get("subdimensions");
-                for (Map<String, Object> subm : subdimensions) {
-                    if (subm.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                        dimension = subm;
+                /* checking if is at subdimension level */
+                ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) d.get("subdimensions");
+                for (Map<String, Object> subd : subdimensions) {
+                    if (subd.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+                        LOGGER.info(subd.get("id").toString());
+                        dimension = subd;
                         break;
                     }
                 }
             }
+
+            LOGGER.info(dimensionCode);
+            LOGGER.info(dimension);
 
             /* Prepare output. */
             List<Map<String, Object>> codes = new ArrayList<>();
@@ -981,6 +1009,8 @@ public class FAOSTATAPICore {
                     subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
                     subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
                     subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
+
+                    /* Query codes */
                     JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
 
                     /* Iterate over codes. */
@@ -990,8 +1020,9 @@ public class FAOSTATAPICore {
                         row.put("subdimension_ord", m.get("TabOrder").toString());
                         row.put("subdimension_label", m.get("TabName").toString());
 //                        log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(metadataBean.getBlackList()).contains(row.get("code").toString().toUpperCase())).append("\n");
-                        if (isAdmissibleCode(row, metadataBean))
+                        if (isAdmissibleCode(row, metadataBean)) {
                             codes.add(row);
+                        }
                     }
 
                 }
@@ -1005,16 +1036,22 @@ public class FAOSTATAPICore {
                 subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
                 subDimensionOptions.addParameter("dimension", dimension.get("ListBoxNo").toString());
                 subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
+
+                 /* Query codes. */
                 JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
+
                 while (subDimensionIterable.hasNext()) {
+                    /* Create code. */
                     row = createCode(subDimensionIterable.nextMap());
-                    if (isAdmissibleCode(row, metadataBean))
+                    if (isAdmissibleCode(row, metadataBean)) {
                         codes.add(row);
+                    }
                 }
 
             }
 
             /* Add children. */
+            // TODO: verify is this condition is right. should work on EA/ODA
             for (Map<String, Object> c1 : codes) {
                 if (c1.get("parent") != null) {
                     for (Map<String, Object> c2 : codes) {
@@ -1025,9 +1062,9 @@ public class FAOSTATAPICore {
                 }
             }
 
-            /* Group subdimensions, if required. */
+            /* Group subdimensions, if required and if subdimensions exists. */
             final List<Map<String, Object>> output = new ArrayList<>();
-            if (Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
+            if (subDimensions != null && Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
 
                 /* Prepare output. */
                 for (Map<String, Object> m : subDimensions) {
@@ -1071,7 +1108,9 @@ public class FAOSTATAPICore {
                 ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("ord", current_ord);
                 ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("label", current_label);
 
-            } else {
+            }
+            /* Add all codes if no grouping required */
+            else {
                 output.addAll(codes);
             }
 
@@ -1080,24 +1119,28 @@ public class FAOSTATAPICore {
             OutputBean out = new OutputBean(new FAOSTATIterable(output));
             log.append("FAOSTATAPICore\t").append("initiate out: done").append("\n");
 
-            switch (metadataBean.getOutputType()) {
-                case CSV:
-                    for (int i = 0; i < output.size(); i += 1) {
-                        List<String> l = new ArrayList<>();
-                        l.add(output.get(i).get("code").toString());
-                        l.add(output.get(i).get("label").toString());
-                        l.add(output.get(i).get("ord").toString());
-                        l.add(output.get(i).get("description").toString());
-                        l.add(output.get(i).get("aggregate_type").toString());
-                        out.getData().addList(l);
-                    }
-                    out.setColumnNames(new ArrayList<String>());
-                    out.getColumnNames().add("Code");
-                    out.getColumnNames().add("Label");
-                    out.getColumnNames().add("Order");
-                    out.getColumnNames().add("Description");
-                    out.getColumnNames().add("Aggregate Type");
-                    break;
+            /* TODO: If CSV works only without grouping at the moment */
+            if (!Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
+                switch (metadataBean.getOutputType()) {
+                    case CSV:
+                        for (int i = 0; i < output.size(); i += 1) {
+                            List<String> l = new ArrayList<>();
+                            l.add(output.get(i).get("code").toString());
+                            l.add(output.get(i).get("label").toString());
+                            l.add(output.get(i).get("ord").toString());
+                            l.add(output.get(i).get("description").toString());
+                            l.add(output.get(i).get("aggregate_type").toString());
+                            out.getData().addList(l);
+                        }
+                        out.setColumnNames(new ArrayList<String>());
+                        /* TODO: Why hardcoded column names? */
+                        out.getColumnNames().add("Code");
+                        out.getColumnNames().add("Label");
+                        out.getColumnNames().add("Order");
+                        out.getColumnNames().add("Description");
+                        out.getColumnNames().add("Aggregate Type");
+                        break;
+                }
             }
 
             /* Add metadata. */
@@ -1109,14 +1152,12 @@ public class FAOSTATAPICore {
             }
             log.append("FAOSTATAPICore\t").append("\tparameter: ").append(dimension.get("ListBoxNo")).append("\n");
 
-
+            /* TODO: the 'parameter' for data procedure is fundamental */
             if (dimension.get("ListBoxNo") != null) {
                 metadataBean.getProcedureParameters().put("parameter", "List" + dimension.get("ListBoxNo").toString() + "Codes");
             } else {
                 metadataBean.getProcedureParameters().put("parameter", dimension.get("parameter"));
             }
-
-
 
             out.setMetadata(metadataBean);
             log.append("FAOSTATAPICore\t").append("add metadata... DONE").append("\n");
@@ -1136,6 +1177,9 @@ public class FAOSTATAPICore {
 
     }
 
+    /**
+     * Creates a code Object
+     */
     private Map<String, Object> createCode(Map<String, Object> dbRow) {
         Map<String, Object> code = new HashMap<>();
         code.put("code", dbRow.get("Code"));
@@ -1199,6 +1243,8 @@ public class FAOSTATAPICore {
         String current = "1";
         for (Map<String, Object> m : l) {
 //            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
+
+            // TODO: based on the TabID and ListBoxNo?
             m.put("id", m.get("TabID").toString().replaceAll(" ", "").toLowerCase());
             if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
                 groups.add(m);
@@ -1211,6 +1257,9 @@ public class FAOSTATAPICore {
         }
         dimensions.add(groups);
 
+        LOGGER.info("DIMENSIONS:");
+        LOGGER.info(dimensions);
+
         /* Return output. */
         return dimensions;
 
@@ -1218,15 +1267,18 @@ public class FAOSTATAPICore {
 
     private List<Map<String, Object>> organizeDomainDimensions(List<List<Map<String, Object>>> dimensions) {
         List<Map<String, Object>> out = new ArrayList<>();
-        List<String> idsBuffer = new ArrayList<>();
+//        List<String> idsBuffer = new ArrayList<>();
         for (List<Map<String, Object>> dimension : dimensions) {
             Map<String, Object> tmp = new HashMap<>();
-            if (!idsBuffer.contains(dimension.get(0).get("VarType"))) {
+/*            if (!idsBuffer.contains(dimension.get(0).get("VarType"))) {
                 idsBuffer.add(dimension.get(0).get("VarType").toString());
                 tmp.put("id", dimension.get(0).get("VarType"));
             } else {
                 tmp.put("id", dimension.get(0).get("VarType"));
-            }
+            }*/
+
+            tmp.put("id", dimension.get(0).get("VarType"));
+
             tmp.put("ord", dimension.get(0).get("ListBoxNo"));
             tmp.put("label", "TODO");
             tmp.put("description", "TODO");
@@ -1234,10 +1286,12 @@ public class FAOSTATAPICore {
             tmp.put("href", "/codes/" + dimension.get(0).get("VarType") + "/");
             tmp.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (Map<String, Object> subdimension : dimension) {
+                LOGGER.info(subdimension);
                 ((ArrayList)tmp.get("subdimensions")).add(subdimension);
             }
             out.add(tmp);
         }
+        LOGGER.info(out);
         return out;
     }
 

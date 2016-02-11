@@ -346,6 +346,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.constants.DRIVER;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.sql.*;
@@ -465,42 +466,20 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     public String nextJSON() {
 
-        String s = "{";
-        String columnType;
-        String value;
+        JSONObject obj = new JSONObject();
 
         if (this.isHasNext()) {
             try {
                 for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
+
                     try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
 
-                       LOGGER.info(this.getResultSet().getMetaData().getColumnLabel(i));
+                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), this.getResultSet().getObject(i));
 
-                        s += "\"" + this.getResultSet().getMetaData().getColumnLabel(i) + "\": ";
-                        if (columnType.endsWith("Double")) {
-                            s += Double.parseDouble(value);
-                        } else if (columnType.endsWith("Integer")) {
-                            s += Integer.parseInt(value);
-                        } else if (columnType.endsWith("Date")) {
-                            s += new Date(value).toString();
-                        } else {
-                            // escape csv
-                            //value = StringEscapeUtils.escapeCsv(value);
-                            s += "\"" + value + "\"";
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            s += ",";
-                        }
                     } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            s += "\"" + this.getResultSet().getMetaData().getColumnLabel(i) + "\": ";
-                            s += null;
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            s += ",";
-                        }
+
+                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), null);
+
                     }
                 }
                 this.setHasNext(this.getResultSet().next());
@@ -508,8 +487,6 @@ public class JDBCIterable implements Iterator<List<String>> {
 
             }
         }
-
-        s += "}";
 
         if (!this.isHasNext()) {
             try {
@@ -521,7 +498,7 @@ public class JDBCIterable implements Iterator<List<String>> {
             }
         }
 
-        return s;
+        return obj.toString();
 
     }
 

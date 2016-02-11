@@ -348,6 +348,7 @@ import java.util.List;
  */
 public class OutputBean {
 
+    //
     private MetadataBean metadata;
 
     private FAOSTATIterable data;

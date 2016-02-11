@@ -420,38 +420,28 @@ public class FAOSTATIterable implements Iterator<Map<String, Object>> {
     public String nextJSON() {
         Map<String, Object> out = this.getDatastoreMap().get(this.getCurrentIndexMap());
         this.setCurrentIndexMap(1 + this.getCurrentIndexMap());
-        if (this.getCurrentIndexMap() == this.getDatastoreMap().size())
+        if (this.getCurrentIndexMap() == this.getDatastoreMap().size()) {
             this.setHasNext(false);
-//        for (int i = 0; i < valueHeaders.size(); i += 1) {
-//            try {
-//                String tmp = out.get(valueHeaders.get(i)).toString();
-//                System.out.println(tmp);
-//                NumberFormat nf = NumberFormat.getInstance(Locale.US);
-//                double myNumber = nf.parse(tmp).doubleValue();
-//                System.out.println(myNumber);
-//                out.put(valueHeaders.get(i), myNumber);
-//                break;
-//            } catch (Exception e) {
-//                System.out.println("cast exception!");
-//            }
-//        }
-//        System.out.println(this.getG().toJson(out));
+        }
         return this.getG().toJson(out);
     }
 
+    /* json array output */
     public String nextJSONList() {
         List<String> out = this.getDatastoreList().get(this.getCurrentIndexList());
         this.setCurrentIndexList(1 + this.getCurrentIndexList());
-        if (this.getCurrentIndexList() == this.getDatastoreList().size())
+        if (this.getCurrentIndexList() == this.getDatastoreList().size()) {
             this.setHasNextList(false);
+        }
         return g.toJson(out);
     }
 
     public List<String> nextList() {
         List<String> out = this.getDatastoreList().get(this.getCurrentIndexList());
         this.setCurrentIndexList(1 + this.getCurrentIndexList());
-        if (this.getCurrentIndexList() == this.getDatastoreList().size())
+        if (this.getCurrentIndexList() == this.getDatastoreList().size()) {
             this.setHasNextList(false);
+        }
         return out;
     }
 
