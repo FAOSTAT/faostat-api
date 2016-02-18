@@ -335,10 +335,10 @@
       }
     },
     {
-      "href": "{lang}/data/bean/",
+      "href": "{lang}/data/",
       "method": "POST",
-      "rel": "databean",
-      "title": "Data From Bean",
+      "rel": "data",
+      "title": "Data",
       "description": "Alternative service to fetch FAOSTAT data through the use of a configuration bean.",
       "schema": {
         "properties": {
@@ -485,10 +485,10 @@
       }
     },
     {
-      "href": "{lang}/data/",
+      "href": "{lang}/data/bean/",
       "method": "POST",
-      "rel": "data",
-      "title": "Data",
+      "rel": "databean",
+      "title": "Data direct",
       "description": "FAOSTAT Data.",
       "schema": {
         "properties": {

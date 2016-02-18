@@ -349,6 +349,7 @@ import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.fao.faostat.api.core.constants.QUERIES;
+//import org.fao.faostat.api.core.constants.ERROR;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
@@ -374,7 +375,7 @@ public class V10Data {
     //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
     @POST
-    @Path("/bean/")
+//    @Path("/bean/")
     public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
 
         /* Logger. */
@@ -407,6 +408,7 @@ public class V10Data {
         filters.put("List7Codes", new ArrayList<String>());
 
         /* Init filters. Conding Systems */
+        /* TODO: to be implemented with the mapping */
         Map<String, String> filtersCS = new HashMap<>();
         filtersCS.put("List1AltCodes", "");
         filtersCS.put("List2AltCodes", "");
@@ -419,7 +421,7 @@ public class V10Data {
         /* Get user dimensions. */
         List<String> dimensions = new ArrayList<>();
         for (String key : b.getFilters().keySet()) {
-            System.out.println(key);
+            LOGGER.info("Filter:" + key);
             dimensions.add(key);
         }
         log.append("getDataFromBean\t").append("dimensions\t").append(dimensions.toString()).append("\n");
@@ -427,19 +429,19 @@ public class V10Data {
         /* Get dimensions. */
         try {
 
-            // add report_code dimension (this is used for the query)
+            /* add report_code dimension (this is used for the query) */
             metadataBean.addParameter("report_code", "download");
 
             // TODO: this should be checked with performance
-            // if a dimension is not passed, all the other codes are taken
+            /* if a dimension is not passed, all the other codes are taken */
             List<String> defaultCodes = new ArrayList<String>();
             defaultCodes.add("_1");
 
+            /* getting domain dimensions */
             OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
             log.append("getDataFromBean\t").append("OutputBean\t").append(ob.toString()).append("\n");
 
-            System.out.println("getData");
-
+            /* for each dimension tries to map to a filter */
             while (ob.getData().hasNext()) {
 
                 Map<String, Object> m = ob.getData().next();
@@ -449,40 +451,52 @@ public class V10Data {
                 String parameter = m.get("parameter").toString();
                 log.append("getDataFromBean\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
 
-                System.out.println(id + " " + parameter);
+                LOGGER.info("ID: " + id + " - Parameter: " + parameter);
 
+                /* check mapping filter on dimension id */
                 if (b.getFilters().get(id) != null) {
                     log.append("getDataFromBean\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                     filters.put(parameter, b.getFilters().get(id));
                     continue;
                 } else {
+                    // TODO: this should be checked with performance
+                    /* adding the default codes */
                     filters.put(parameter, defaultCodes);
                 }
 
-                System.out.println(filters);
+                LOGGER.info("Filters: " + filters);
 
+                /* check mapping filter on subdimension id */
                 log.append("getDataFromBean\t\t\t").append("subdimensions?\t").append((m.get("subdimensions") != null)).append("\n");
                 if (m.get("subdimensions") != null) {
+
                     ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>) m.get("subdimensions");
                     for (Map<String, Object> m2 : l) {
+
                         log.append("getDataFromBean\t\t\t\t").append("m2\t").append(m2).append("\n");
+
                         id = m2.get("id").toString();
                         parameter = m2.get("parameter").toString();
+
                         log.append("getDataFromBean\t\t\t\t").append("ID\t").append(id).append("\n");
                         log.append("getDataFromBean\t\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
+
+                        /* append filters */
                         if (b.getFilters().get(id) != null) {
                             log.append("getDataFromBean\t\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                             filters.put(parameter, b.getFilters().get(id));
                             log.append("getDataFromBean\t\t\t\t").append("SIZE\t").append(((List<String>) b.getFilters().get(id)).size()).append("\n");
                         }
+
                     }
+
                 }
                 log.append("\n");
             }
 
             log.append("getDataFromBean\t").append("filters\t").append(filters.toString()).append("\n");
 
-            System.out.println("getData");
+            LOGGER.info("Calling getData function");
 
             return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type(),
                     filters.get("List1Codes"),
@@ -504,12 +518,15 @@ public class V10Data {
                     b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit());
 
         } catch (Exception e) {
+            /* TODO: instead of the log should be used an error response status different from each request error.
+            /* TODO: i.e. 400 for a Bad Request. https://it.wikipedia.org/wiki/Codici_di_stato_HTTP */
             return Response.status(500).entity(log.toString()).build();
         }
 
     }
 
     @POST
+    @Path("/bean/")
     public Response getData(@PathParam("lang") String lang,
                             @FormParam("domain_codes") List<String> domain_codes,
                             @FormParam("datasource") final String datasource,
