@@ -382,8 +382,8 @@ public class QUERIES {
 
         this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
 
-        this.getQueries().put("suggestions", "SELECT T.VarListName{{lang}} as label, T.VarType as id, KEY_TBL.RANK as rank FROM DomainVarList AS T  INNER JOIN  FREETEXTTABLE(DomainVarList, VarListName{{lang}}, '{{query}}') AS KEY_TBL    ON T.id = KEY_TBL.[KEY] WHERE T.VarType IN ('item', 'element', 'donor', 'survey', 'breakdownlovar', 'breakdownsex', 'indicator', 'measure') AND T.AggregateType IN ('0', '+') GROUP BY  VarListName{{lang}}, T.VarType, KEY_TBL.RANK ORDER BY KEY_TBL.RANK DESC, Len(T.VarListName{{lang}}) ASC");
-        this.getQueries().put("search", "SELECT T.DomainCode as domainCode,  T.VarListCode as code, T.VarListName{{lang}} as label, T.VarType as id, KEY_TBL.RANK as rank FROM DomainVarList AS T INNER JOIN FREETEXTTABLE(DomainVarList, VarListName{{lang}}, '{{query}}') AS KEY_TBL ON T.id = KEY_TBL.[KEY] WHERE T.VarType IN ('item', 'element', 'donor', 'survey', 'breakdownlovar', 'breakdownsex', 'indicator', 'measure', 'area', 'year') AND T.AggregateType IN ('0', '+') GROUP BY  T.DomainCode,  T.VarListCode, T.VarListName{{lang}}, T.VarType, KEY_TBL.RANK ORDER BY KEY_TBL.RANK DESC");
+        this.getQueries().put("suggestions", "EXEC Warehouse.dbo.usp_SearchSuggestions @query = '{{query}}', @lang = '{{lang}}'");
+        this.getQueries().put("search", "EXEC Warehouse.dbo.usp_SearchResults @query = '{{query}}', @lang = '{{lang}}'");
 
         this.getQueries().put("domainstree", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
         this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
