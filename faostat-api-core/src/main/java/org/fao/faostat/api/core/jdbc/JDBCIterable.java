@@ -407,8 +407,9 @@ public class JDBCIterable implements Iterator<List<String>> {
     public List<String> getColumnNames() {
         List<String> l = new ArrayList<String>();
         try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++)
+            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
                 l.add(this.getResultSet().getMetaData().getColumnLabel(i));
+            }
         } catch (NullPointerException ignored) {
 
         } catch (SQLException ignored) {
@@ -420,8 +421,9 @@ public class JDBCIterable implements Iterator<List<String>> {
     public List<String> getColumnTypes() {
         List<String> l = new ArrayList<String>();
         try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++)
+            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
                 l.add(this.getResultSet().getMetaData().getColumnClassName(i));
+            }
         } catch (NullPointerException ignored) {
 
         } catch (SQLException ignored) {
