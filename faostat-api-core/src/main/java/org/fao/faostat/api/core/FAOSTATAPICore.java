@@ -558,7 +558,8 @@ public class FAOSTATAPICore {
 
                     // options
                     Map<String, Object> o = new HashMap<>();
-                    o.put("type", tmp.get(i).get("ListBoxSelectType").toString());
+                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
+                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
                     m.put("options", o);
 
                     /* Add available coding systems. */
@@ -602,7 +603,8 @@ public class FAOSTATAPICore {
 
                     // options
                     Map<String, Object> o = new HashMap<>();
-                    o.put("type", tmp.get(i).get("ListBoxSelectType").toString());
+                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
+                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
                     m.put("options", o);
 
                     /* Add available coding systems. */
@@ -626,6 +628,8 @@ public class FAOSTATAPICore {
             ArrayList<Map<String, Object>> sl;
 
             switch (metadataBean.getOutputType()) {
+                // TODO: is it needed the CSV?
+                // Should be removed
                 case CSV:
                     for (int i = 0; i < output.size(); i += 1) {
                         List<String> l = new ArrayList<>();
@@ -846,6 +850,7 @@ public class FAOSTATAPICore {
             log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
 
             /* Add column names. */
+            LOGGER.info(i.getColumnNames());
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
@@ -861,8 +866,9 @@ public class FAOSTATAPICore {
                         break;
                     default:
                         Map<String, Object> dbRow = i.nextMap();
-                        if (isAdmissibleDBRow(dbRow, out.getMetadata()))
+                        if (isAdmissibleDBRow(dbRow, out.getMetadata())) {
                             out.getData().add(dbRow);
+                        }
                         break;
                 }
             }
@@ -1053,7 +1059,7 @@ public class FAOSTATAPICore {
             /* Add children. */
             // TODO: verify is this condition is right. should work on EA/ODA
             for (Map<String, Object> c1 : codes) {
-                if (c1.get("parent") != null) {
+                if (c1.get("parent") != null && c1.get("parent") != "0") {
                     for (Map<String, Object> c2 : codes) {
                         if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
                             ((ArrayList<Map<String, Object>>) c2.get("children")).add(c1);
