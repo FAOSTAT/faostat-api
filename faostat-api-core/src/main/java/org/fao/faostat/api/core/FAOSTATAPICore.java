@@ -854,23 +854,39 @@ public class FAOSTATAPICore {
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
-//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
             log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+
             while (i.hasNext()) {
-                switch (metadataBean.getOutputType()) {
-                    case ARRAYS:
-                        out.getData().addList(i.next());
-                        break;
-                    case CSV:
-                        out.getData().addList(i.next());
-                        break;
-                    default:
-                        Map<String, Object> dbRow = i.nextMap();
-                        if (isAdmissibleDBRow(dbRow, out.getMetadata())) {
-                            out.getData().add(dbRow);
+
+                Map<String, Object> dbRow = i.nextMap();
+
+                Map<String, Object> o = new HashMap<String, Object>();
+                o.put("code", dbRow.get("domain_code"));
+                o.put("label", dbRow.get("domain_name"));
+                o.put("ord", dbRow.get("ord"));
+                o.put("date_update", dbRow.get("date_update"));
+
+                /* No Group (filter) selected */
+                if ( metadataBean.getProcedureParameters().get("group_code") == null) {
+
+                    // TODO: in theory should not be needed
+                    if (isAdmissibleDBRow(o, out.getMetadata())) {
+                        out.getData().add(o);
+                    }
+
+                }else {
+
+                    /* Filter by a Group codes */
+                    if (metadataBean.getProcedureParameters().get("group_code").equals((String) dbRow.get("group_code"))) {
+
+                        // TODO: in theory should not be needed
+                        if (isAdmissibleDBRow(o, out.getMetadata())) {
+                            out.getData().add(o);
                         }
-                        break;
+                    }
+
                 }
+
             }
             log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
 
@@ -889,67 +905,76 @@ public class FAOSTATAPICore {
 
     }
 
-//    public OutputBean queryGroups(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
-//
-//        /* Logs. */
-//        StringBuilder log = new StringBuilder();
-//
-//        try {
-//
-//            /* Statistics. */
-//            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
-//            long t0 = System.currentTimeMillis();
-//
-//            /* Initiate output. */
-//            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
-//            OutputBean out = new OutputBean();
-//
-//            /* Add metadata. */
-//            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
-//            out.setMetadata(metadataBean);
-//
-//            /* Query the DB. */
-//            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
-//            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
-//            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
-//
-//            /* Add column names. */
-//            out.setColumnNames(i.getColumnNames());
-//
-//            /* Add data to the output. */
-//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
-//            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
-//            while (i.hasNext()) {
-//                switch (metadataBean.getOutputType()) {
-//                    case ARRAYS:
-//                        out.getData().addList(i.next());
-//                        break;
-//                    case CSV:
-//                        out.getData().addList(i.next());
-//                        break;
-//                    default:
-//                        Map<String, Object> dbRow = i.nextMap();
-//                        if (isAdmissibleDBRow(dbRow, out.getMetadata()))
-//                            out.getData().add(dbRow);
-//                        break;
-//                }
-//            }
-//            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
-//
-//            /* Statistics. */
-//            long tf = System.currentTimeMillis();
-//            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
-//            out.getMetadata().setProcessingTime(tf - t0);
-//
-//            /* Return output. */
-//            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
-//            return out;
-//
-//        } catch (Exception e) {
-//            throw new Exception(log.toString());
-//        }
-//
-//    }
+    public OutputBean queryGroups(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+            /* Statistics. */
+            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate output. */
+            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            OutputBean out = new OutputBean();
+
+            /* Add metadata. */
+            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            out.setMetadata(metadataBean);
+
+            /* Query the DB. */
+            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
+            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
+
+            /* Add data to the output. */
+            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
+            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+
+            Set<Object> tmp = new HashSet<>();
+
+            while (i.hasNext()) {
+                Map<String, Object> dbRow = i.nextMap();
+
+                if (!tmp.contains(dbRow.get("group_code"))) {
+
+                    tmp.add(dbRow.get("group_code"));
+
+                    Map<String, Object> o = new HashMap<String, Object>();
+                    o.put("code", dbRow.get("group_code"));
+                    o.put("label", dbRow.get("group_name"));
+                    o.put("ord", dbRow.get("ord"));
+
+                    // TODO: in theory should not be needed
+                    if (isAdmissibleDBRow(o, out.getMetadata())) {
+                        out.getData().add(o);
+                    }
+
+                }
+
+            }
+
+            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            /* Return output. */
+            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            return out;
+
+        } catch (Exception e) {
+            throw new Exception(log.toString());
+        }
+
+    }
 
     public OutputBean queryCodes(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
@@ -993,8 +1018,8 @@ public class FAOSTATAPICore {
                 }
             }
 
-            LOGGER.info(dimensionCode);
-            LOGGER.info(dimension);
+            LOGGER.info("DimensionCode: " + dimensionCode);
+            LOGGER.info("Dimension: " + dimension);
 
             /* Prepare output. */
             List<Map<String, Object>> codes = new ArrayList<>();
@@ -1003,10 +1028,14 @@ public class FAOSTATAPICore {
             /* Get subdimensions. */
             ArrayList<Map<String, Object>> subDimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
 
+            LOGGER.info("subDimensions: " + subDimensions);
+
             if (subDimensions != null) {
 
                 /* Fetch codes for each sub-dimension. */
                 for (Map<String, Object> m : subDimensions) {
+
+                    LOGGER.info("subDimension: " + m);
 
                     /* Define options to fetch codes. */
                     MetadataBean subDimensionOptions = new MetadataBean();
@@ -1022,6 +1051,9 @@ public class FAOSTATAPICore {
                     /* Iterate over codes. */
                     while (subDimensionIterable.hasNext()) {
                         row = createCode(subDimensionIterable.nextMap());
+
+                        LOGGER.info("row: " + row);
+
                         row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
                         row.put("subdimension_ord", m.get("TabOrder").toString());
                         row.put("subdimension_label", m.get("TabName").toString());
@@ -1046,6 +1078,9 @@ public class FAOSTATAPICore {
                  /* Query codes. */
                 JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
 
+
+                LOGGER.info("subDimensionIterable: " + subDimensionIterable);
+
                 while (subDimensionIterable.hasNext()) {
                     /* Create code. */
                     row = createCode(subDimensionIterable.nextMap());
@@ -1055,6 +1090,9 @@ public class FAOSTATAPICore {
                 }
 
             }
+
+            LOGGER.info("codes");
+            LOGGER.info(codes);
 
             /* Add children. */
             // TODO: verify is this condition is right. should work on EA/ODA
@@ -1200,8 +1238,14 @@ public class FAOSTATAPICore {
 
     private boolean isAdmissibleCode(Map<String, Object> row, MetadataBean o) {
 
-        /* Check wheter the code is a list. */
+        /* Check wheater the code is a list. */
         if (row.get("aggregate_type").equals(">")) {
+
+            /* Overwrite of the code if is an aggregate_type ">". */
+            // TODO: the code should be already formatted from the DB. In theory should be consistent with the check on the code.
+            if (!row.get("code").toString().contains(">")) {
+                row.put("code", row.get("code").toString() + row.get("aggregate_type").toString());
+            }
             return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
 
         } else {
@@ -1303,6 +1347,8 @@ public class FAOSTATAPICore {
 
     private boolean isAdmissibleDBRow(Map<String, Object> row, MetadataBean o) {
 
+//        LOGGER.info(row);
+//        LOGGER.info(o);
         /* Check the blacklist. */
         if (o.getBlackList() != null && o.getBlackList().size() > 0) {
             if (o.getBlackList().contains(row.get("code").toString().toUpperCase())) {
@@ -1498,6 +1544,8 @@ public class FAOSTATAPICore {
         long t0 = System.currentTimeMillis();
 
         // TODO: remove system out
+        LOGGER.info("queryCode: " + queryCode);
+        LOGGER.info("o.getProcedureParameters(): " + o.getProcedureParameters());
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
 
 //        LOGGER.info("queryCode: " + queryCode);

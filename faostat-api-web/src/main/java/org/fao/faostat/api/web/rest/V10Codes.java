@@ -353,6 +353,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -360,7 +361,9 @@ import java.util.List;
 @Component
 @Path("/v1.0/{lang}/codes/{id}/{domain_code}")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Codes extends V10 {
+public class V10Codes {
+
+    private static final Logger LOGGER = Logger.getLogger(V10Codes.class);
 
     @GET
     public Response getCodes(@PathParam("lang") String lang,
@@ -371,7 +374,7 @@ public class V10Codes extends V10 {
                              @QueryParam("api_key") String api_key,
                              @QueryParam("client_key") String client_key,
                              @QueryParam("output_type") String output_type,
-                             @QueryParam("show_lists") boolean show_lists,
+                             @QueryParam("show_lists") String show_lists,
                              @QueryParam("show_full_metadata") boolean show_full_metadata,
                              @QueryParam("group_subdimensions") boolean group_subdimensions,
                              @QueryParam("subdimensions") String subdimensions,
@@ -390,12 +393,13 @@ public class V10Codes extends V10 {
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
         metadataBean.addParameter("id", id);
-        metadataBean.addParameter("show_lists", String.valueOf(show_lists));
+        metadataBean.addParameter("show_lists", (show_lists == null)? true : show_lists);
         metadataBean.addParameter("show_full_metadata", String.valueOf(show_full_metadata));
         metadataBean.addParameter("subdimensions", subdimensions);
         metadataBean.addParameter("whitelist", whitelist);
         metadataBean.addParameter("blacklist", blacklist);
         metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
+
 
         //Report Code
         // Workaround for the dimension request

@@ -382,8 +382,12 @@ public class V10Groups {
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
 
         /* Store white/blacklists. */
+        // TODO: is it needed here?
         metadataBean.setBlackList(blacklist);
         metadataBean.setWhiteList(whitelist);
+
+        // TODO: move to an ENUM (if really needed to set a default. This should be hold in the DB)
+        metadataBean.addParameter("section", "download");
 
         /* Query the DB and return the results. */
         try {
@@ -395,8 +399,8 @@ public class V10Groups {
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-//            StreamingOutput stream = sb.createGroupsOutputStream("groups", datasourceBean, metadataBean);
-            StreamingOutput stream = sb.createDomainsOutputStream("groups", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createGroupsOutputStream("groupsdomains", datasourceBean, metadataBean);
+          //  StreamingOutput stream = sb.createDomainsOutputStream("groups", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

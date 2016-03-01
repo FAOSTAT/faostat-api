@@ -341,6 +341,8 @@
  */
 package org.fao.faostat.api.core.constants;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -351,15 +353,20 @@ import java.util.Map;
  * */
 public class QUERIES {
 
+    private static final Logger LOGGER = Logger.getLogger(QUERIES.class);
+
     private Map<String, String> queries;
 
     public QUERIES() {
         this.setQueries(new HashMap<String, String>());
 
 //        this.getQueries().put("groups", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label FROM Domain D GROUP BY D.GroupCode, D.GroupName{{lang}}");
-        this.getQueries().put("groups", "EXEC Warehouse.dbo.usp_GetGroups @lang = N'{{lang}}'");
-        this.getQueries().put("domains", "SELECT D.DomainCode AS code, D.DomainName{{lang}} AS label, D.Ord AS ord FROM Domain D WHERE D.GroupCode = '{{group_code}}' ORDER BY D.Ord");
-        this.getQueries().put("groupsanddomains", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord");
+//        this.getQueries().put("groups", "EXEC Warehouse.dbo.usp_GetGroups @lang = N'{{lang}}'");
+//        this.getQueries().put("domains", "SELECT D.DomainCode AS code, D.DomainName{{lang}} AS label, D.Ord AS ord FROM Domain D WHERE D.GroupCode = '{{group_code}}' ORDER BY D.Ord");
+//        this.getQueries().put("domainstree", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
+        this.getQueries().put("groupsdomains", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
+
+//        this.getQueries().put("groupsanddomains", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord");
 
 //        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
         this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @ReportCode = N'{{report_code}}', @Lang = N'{{lang}}'");
@@ -386,7 +393,6 @@ public class QUERIES {
         this.getQueries().put("suggestions", "EXEC Warehouse.dbo.usp_SearchSuggestions @query = '{{query}}', @lang = '{{lang}}'");
         this.getQueries().put("search", "EXEC Warehouse.dbo.usp_SearchResults @query = '{{query}}', @lang = '{{lang}}'");
 
-        this.getQueries().put("domainstree", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
         this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
         this.getQueries().put("domainreports", "EXEC Warehouse.dbo.usp_GetDomainReports @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
 
@@ -415,6 +421,10 @@ public class QUERIES {
                         } else {
                             s = "";
                         }
+                        LOGGER.info("-----------");
+                        LOGGER.info(tmp);
+                        LOGGER.info(s);
+                        LOGGER.info(key);
                         query = query.replaceAll(tmp, s);
                     } else {
                         query = query.replaceAll(tmp, procedureParameters.get(key).toString());

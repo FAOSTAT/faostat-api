@@ -352,18 +352,45 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/domains/{group_code}")
+@Path("/v1.0/{lang}/domains/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Domains {
 
+    private static final Logger LOGGER = Logger.getLogger(V10Data.class);
+
+    //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
+
+    @GET
+    @Path("/{group_code}/")
+    public Response getDomainsByGroup(@PathParam("lang") String lang,
+                                      @PathParam("group_code") String group_code,
+                                      @QueryParam("blacklist") List<String> blacklist,
+                                      @QueryParam("whitelist") List<String> whitelist,
+                                      @QueryParam("datasource") String datasource,
+                                      @QueryParam("api_key") String api_key,
+                                      @QueryParam("client_key") String client_key,
+                                      @QueryParam("output_type") String output_type) {
+
+
+        try {
+
+            return getDomains(lang, group_code, blacklist, whitelist, datasource, api_key, client_key, output_type);
+
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
     @GET
     public Response getDomains(@PathParam("lang") String lang,
-                               @PathParam("group_code") String group_code,
+                               @QueryParam("group_code") String group_code,
                                @QueryParam("blacklist") List<String> blacklist,
                                @QueryParam("whitelist") List<String> whitelist,
                                @QueryParam("datasource") String datasource,
@@ -384,6 +411,11 @@ public class V10Domains {
         metadataBean.setBlackList(blacklist);
         metadataBean.setWhiteList(whitelist);
 
+        // TODO: move to an ENUM (if really needed to set a default. This should be hold in the DB)
+        metadataBean.addParameter("section", "download");
+
+        LOGGER.info(metadataBean);
+
         /* Query the DB and return the results. */
         try {
 
@@ -394,7 +426,7 @@ public class V10Domains {
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createDomainsOutputStream("domains", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createDomainsOutputStream("groupsdomains", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

@@ -1435,11 +1435,11 @@
       }
     },
     {
-      "href": "{lang}/domainstree/{section}/",
+      "href": "{lang}/groupsanddomains",
       "method": "GET",
-      "rel": "domainstree",
-      "title": "Domains Tree",
-      "description": "FAOSTAT domains tree.",
+      "rel": "groupsanddomains",
+      "title": "Groups and domains",
+      "description": "FAOSTAT groups and domains tree.",
       "schema": {
         "properties": {
           "datasource": {
@@ -1917,13 +1917,14 @@
               "itemsaggregated",
               "elements",
               "years"
-            ]
+            ],
+            "default": null
           },
           "show_lists": {
             "type": "boolean",
             "title": "Show Lists",
             "description": "Determines whether codes representing lists must be included in the output.",
-            "default": false
+            "default": true
           },
           "show_full_metadata": {
             "type": "boolean",
@@ -1932,7 +1933,8 @@
             "default": true
           },
           "ord": {
-            "$ref": "#/definitions/ord"
+            "$ref": "#/definitions/ord",
+            "default": null
           }
         }
       },
@@ -2064,6 +2066,9 @@
                 },
                 "label": {
                   "$ref": "#/definitions/label"
+                },
+                "ord": {
+                  "$ref": "#/definitions/ord"
                 }
               }
             }
@@ -2211,51 +2216,6 @@
                   "description": "Path to the file."
                 }
               }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/groupsanddomains/",
-      "method": "GET",
-      "rel": "groupsanddomains",
-      "description": "List of available FAOSTAT groups and domains.",
-      "title": "Groups and Domains",
-      "schema": {
-        "type": "object",
-        "name": "Groups and Domains Input",
-        "description": "Input of 'groupsanddomains' service.",
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "array",
-            "title": "Groups and Domains",
-            "description": "List of available groups and domains.",
-            "items": {
-              "$ref": "#/definitions/faostat_code"
             }
           }
         }
