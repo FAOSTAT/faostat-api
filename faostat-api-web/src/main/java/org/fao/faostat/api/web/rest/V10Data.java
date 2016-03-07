@@ -348,6 +348,7 @@ import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.DATASOURCE;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.fao.faostat.api.core.constants.QUERIES;
 //import org.fao.faostat.api.core.constants.ERROR;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
@@ -367,12 +368,13 @@ import java.util.*;
  */
 @Component
 @Path("/v1.0/{lang}/data")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Data {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
     //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
+
 
     @POST
 //    @Path("/bean/")
@@ -565,6 +567,10 @@ public class V10Data {
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
+        /* Type */
+        // TODO: switch properly to CSV Produce Type;
+        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+
         /* Store user preferences. */
         final MetadataBean metadataBean = new MetadataBean();
         metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
@@ -599,6 +605,16 @@ public class V10Data {
         metadataBean.addParameter("show_codes", show_codes);
         metadataBean.addParameter("show_flags", show_flags);
         metadataBean.addParameter("show_unit", show_unit);
+
+        /* Type */
+        // TODO: switch properly to CSV Produce Type;
+        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
+            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        }else{
+            /* Type */
+            produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+        }
+
 
         /* Query the DB and return the results. */
         try {
@@ -700,6 +716,7 @@ public class V10Data {
                             }
                             break;
                         default:
+
                             /* Initiate the output. */
                             writer.write("{");
 
@@ -740,7 +757,7 @@ public class V10Data {
 
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e).build();

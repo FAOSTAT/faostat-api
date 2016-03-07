@@ -345,6 +345,7 @@ import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -358,7 +359,7 @@ import java.util.List;
  * */
 @Component
 @Path("/v1.0/{lang}/rankings")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Rankings {
 
     @POST
@@ -401,6 +402,17 @@ public class V10Rankings {
         metadataBean.addParameter("rank_type", rank_type);
         metadataBean.addParameter("results", results);
 
+
+        /* Type */
+        String produceType = null;
+        // TODO: switch properly to CSV Produce Type;
+        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
+            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        }else{
+            /* Type */
+            produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+        }
+
         /* Query the DB and return the results. */
         try {
 
@@ -414,7 +426,7 @@ public class V10Rankings {
             StreamingOutput stream = sb.createOutputStreamRankings("rankings", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e).build();
