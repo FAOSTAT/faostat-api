@@ -351,19 +351,20 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/search/{query}")
+@Path("/v1.0/{lang}/search")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Search {
 
     @GET
     public Response getDomains(@PathParam("lang") String lang,
-                               @PathParam("query") String query,
+                               @QueryParam("q") String query,
                                @QueryParam("datasource") String datasource,
                                @QueryParam("api_key") String api_key,
                                @QueryParam("client_key") String client_key,
@@ -378,10 +379,11 @@ public class V10Search {
 
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("query", query);
 
         /* Query the DB and return the results. */
         try {
+
+            metadataBean.addParameter("query", URLDecoder.decode(query, "utf-8"));
 
             /* Stream builder. */
             StreamBuilder sb = new StreamBuilder();
@@ -398,7 +400,6 @@ public class V10Search {
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
-
     }
 
 }

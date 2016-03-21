@@ -490,6 +490,7 @@
       "rel": "databean",
       "title": "Data direct",
       "description": "FAOSTAT Data.",
+      "cache": false,
       "schema": {
         "properties": {
           "datasource": {
@@ -2222,7 +2223,7 @@
       }
     },
     {
-      "href": "{lang}/suggestions/{query}",
+      "href": "{lang}/suggestions",
       "method": "GET",
       "rel": "suggestions",
       "title": "Suggestions",
@@ -2244,14 +2245,14 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "query": {
+          "q": {
             "$ref": "#/definitions/label"
           }
         }
       }
     },
     {
-      "href": "{lang}/search/{query}",
+      "href": "{lang}/search",
       "method": "GET",
       "rel": "search",
       "title": "Search",
@@ -2273,7 +2274,7 @@
           "lang": {
             "$ref": "#/definitions/lang"
           },
-          "query": {
+          "q": {
             "$ref": "#/definitions/label"
           }
         }
