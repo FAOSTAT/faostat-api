@@ -343,6 +343,11 @@ package org.fao.faostat.api.core.beans;
 
 import org.fao.faostat.api.core.constants.DATASOURCE;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
@@ -359,21 +364,50 @@ public class DatasourceBean {
     private String password;
 
     public DatasourceBean(DATASOURCE datasource) {
-        switch (datasource) {
-            case TEST:
-                this.setDbName("Warehouse");
-                this.setDriver("SQLServer2000");
-                this.setPassword("w@reh0use");
-                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
-                this.setUsername("Warehouse");
-                break;
-            default:
-                this.setDbName("Warehouse");
-                this.setDriver("SQLServer2000");
-                this.setPassword("w@reh0use");
-                this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
-                this.setUsername("Warehouse");
-                break;
+
+        Properties prop = new Properties();
+        InputStream input = null;
+
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
+        try {
+
+            input = classloader.getResourceAsStream("datasources.properties");
+            prop.load(input);
+
+            this.setDbName(prop.getProperty(datasource + ".dbname"));
+            this.setDriver(prop.getProperty(datasource + ".driver"));
+            this.setPassword(prop.getProperty(datasource + ".pwd"));
+            this.setUrl(prop.getProperty(datasource + ".url"));
+            this.setUsername(prop.getProperty(datasource + ".user"));
+
+            /*switch (datasource) {
+                case TEST:
+                    this.setDbName("Warehouse");
+                    this.setDriver("SQLServer2000");
+                    this.setPassword("w@reh0use");
+                    this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
+                    this.setUsername("Warehouse");
+                    break;
+                default:
+                    this.setDbName("Warehouse");
+                    this.setDriver("SQLServer2000");
+                    this.setPassword("w@reh0use");
+                    this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
+                    this.setUsername("Warehouse");
+                    break;
+            }*/
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
