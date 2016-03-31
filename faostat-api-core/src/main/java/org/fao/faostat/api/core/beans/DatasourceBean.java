@@ -341,9 +341,11 @@
  */
 package org.fao.faostat.api.core.beans;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.constants.DATASOURCE;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -363,23 +365,36 @@ public class DatasourceBean {
 
     private String password;
 
+    private static final Logger LOGGER = Logger.getLogger(DatasourceBean.class);
+
+    private static Properties properties = null;
+
     public DatasourceBean(DATASOURCE datasource) {
-
-        Properties prop = new Properties();
-        InputStream input = null;
-
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
         try {
 
-            input = classloader.getResourceAsStream("datasources.properties");
-            prop.load(input);
+            if (properties == null) {
+                LOGGER.info("properties are null! " +  properties);
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                properties = new Properties();
+                InputStream input = classloader.getResourceAsStream("datasources.properties");
+                properties.load(input);
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                LOGGER.info("properties already set " +  properties);
+            }
 
-            this.setDbName(prop.getProperty(datasource + ".dbname"));
-            this.setDriver(prop.getProperty(datasource + ".driver"));
-            this.setPassword(prop.getProperty(datasource + ".pwd"));
-            this.setUrl(prop.getProperty(datasource + ".url"));
-            this.setUsername(prop.getProperty(datasource + ".user"));
+            this.setDbName(properties.getProperty(datasource + ".dbname"));
+            this.setDriver(properties.getProperty(datasource + ".driver"));
+            this.setPassword(properties.getProperty(datasource + ".pwd"));
+            this.setUrl(properties.getProperty(datasource + ".url"));
+            this.setUsername(properties.getProperty(datasource + ".user"));
 
             /*switch (datasource) {
                 case TEST:
@@ -401,13 +416,13 @@ public class DatasourceBean {
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-            if (input != null) {
+           /* if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
         }
     }
 
