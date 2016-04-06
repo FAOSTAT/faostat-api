@@ -375,7 +375,7 @@ public class V10DataSize {
                             @FormParam("List5Codes") List<String> list_5_codes,
                             @FormParam("List6Codes") List<String> list_6_codes,
                             @FormParam("List7Codes") List<String> list_7_codes,
-                            @FormParam("no_records") int no_records,
+                            @FormParam("no_records") @DefaultValue("1") int no_records,
                             @FormParam("null_values") @DefaultValue("false") boolean null_values) {
 
 

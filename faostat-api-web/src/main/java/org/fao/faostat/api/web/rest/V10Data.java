@@ -354,6 +354,7 @@ import org.fao.faostat.api.core.constants.QUERIES;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
+import org.fao.faostat.api.web.rest.V10DataSize;
 
 
 import javax.ws.rs.*;
@@ -377,7 +378,7 @@ public class V10Data {
 
 
     @POST
-//    @Path("/bean/")
+    //    @Path("/bean/")
     public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
 
         /* Logger. */

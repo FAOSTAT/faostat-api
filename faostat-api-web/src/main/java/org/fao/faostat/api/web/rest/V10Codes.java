@@ -374,7 +374,9 @@ public class V10Codes {
                              @QueryParam("api_key") String api_key,
                              @QueryParam("client_key") String client_key,
                              @QueryParam("output_type") String output_type,
-                             @QueryParam("show_lists") String show_lists,
+//                             @QueryParam("show_lists") String show_lists,
+                             // TODO: the defaultvalue should be in the bean?
+                             @QueryParam("show_lists") @DefaultValue("true") String show_lists,
                              @QueryParam("show_full_metadata") boolean show_full_metadata,
                              @QueryParam("group_subdimensions") boolean group_subdimensions,
                              @QueryParam("subdimensions") String subdimensions,
@@ -393,13 +395,14 @@ public class V10Codes {
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
         metadataBean.addParameter("id", id);
-        metadataBean.addParameter("show_lists", (show_lists == null)? true : show_lists);
+        metadataBean.addParameter("show_lists", (show_lists == null || show_lists.isEmpty())? true : show_lists);
         metadataBean.addParameter("show_full_metadata", String.valueOf(show_full_metadata));
         metadataBean.addParameter("subdimensions", subdimensions);
         metadataBean.addParameter("whitelist", whitelist);
         metadataBean.addParameter("blacklist", blacklist);
         metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
 
+//        LOGGER.info("metadataBean: -" + metadataBean + "-");
 
         //Report Code
         // Workaround for the dimension request

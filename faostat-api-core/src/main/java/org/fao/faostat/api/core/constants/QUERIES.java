@@ -410,13 +410,20 @@ public class QUERIES {
             for (String key : procedureParameters.keySet()) {
                 String tmp = "\\{\\{" + key + "\\}\\}";
                 if (procedureParameters.get(key) != null) {
+
+                    LOGGER.info("-----------");
+                    LOGGER.info(query);
+                    LOGGER.info(tmp);
+                    LOGGER.info(key);
+                    LOGGER.info(procedureParameters.get(key));
+
                     if (procedureParameters.get(key) instanceof List) {
                         List<String> l = (List<String>)procedureParameters.get(key);
                         String s = "";
                         if (l != null && l.size() > 0 && l.get(0).length() > 0) {
                             s = "(";
                             for (int z = 0; z < l.size(); z += 1) {
-                                s += "''" + l.get(z) + "''";
+                                s += "''" + this.escapeSpecialCharacters(l.get(z)) + "''";
                                 if (z < l.size() - 1)
                                     s += ",";
                             }
@@ -424,13 +431,13 @@ public class QUERIES {
                         } else {
                             s = "";
                         }
-                        /*LOGGER.info("-----------");
-                        LOGGER.info(tmp);
+
                         LOGGER.info(s);
-                        LOGGER.info(key);*/
+
                         query = query.replaceAll(tmp, s);
                     } else {
-                        query = query.replaceAll(tmp, procedureParameters.get(key).toString());
+                        String v = this.escapeSpecialCharacters(procedureParameters.get(key).toString());
+                        query = query.replaceAll(tmp, v);
                     }
                 } else {
                     query = query.replaceAll(tmp, "null");
@@ -441,6 +448,10 @@ public class QUERIES {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String escapeSpecialCharacters(String s) {
+       return s.replaceAll("(?=[]\\[+$&|!(){}^\"~*?:\\\\-])", "\\\\");
     }
 
     public Map<String, String> getQueries() {
