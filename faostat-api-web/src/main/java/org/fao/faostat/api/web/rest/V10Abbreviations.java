@@ -345,6 +345,7 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -357,7 +358,7 @@ import javax.ws.rs.core.StreamingOutput;
  * */
 @Component
 @Path("/v1.0/{lang}/abbreviations/")
-@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
+//@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8"})
 public class V10Abbreviations {
 
     @GET
@@ -366,7 +367,6 @@ public class V10Abbreviations {
                                      @QueryParam("api_key") String api_key,
                                      @QueryParam("client_key") String client_key,
                                      @QueryParam("output_type") String output_type) {
-
 
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
@@ -381,6 +381,11 @@ public class V10Abbreviations {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
 
+        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
+            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        }
+
         /* Query the DB and return the results. */
         try {
 
@@ -391,7 +396,7 @@ public class V10Abbreviations {
             StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();

@@ -345,6 +345,7 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
+import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -357,7 +358,7 @@ import javax.ws.rs.core.StreamingOutput;
  * */
 @Component
 @Path("/v1.0/{lang}/methodologies/{methodology_code}/")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+//@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Methodology {
 
     @GET
@@ -380,6 +381,11 @@ public class V10Methodology {
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("methodology_code", methodology_code.toUpperCase());
 
+        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
+            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        }
+
         /* Query the DB and return the results. */
         try {
 
@@ -393,7 +399,7 @@ public class V10Methodology {
             StreamingOutput stream = sb.createOutputStream("methodology", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
