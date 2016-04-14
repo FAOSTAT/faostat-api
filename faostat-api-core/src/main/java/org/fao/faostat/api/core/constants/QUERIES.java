@@ -411,11 +411,13 @@ public class QUERIES {
                 String tmp = "\\{\\{" + key + "\\}\\}";
                 if (procedureParameters.get(key) != null) {
 
+/*
                     LOGGER.info("-----------");
                     LOGGER.info(query);
                     LOGGER.info(tmp);
                     LOGGER.info(key);
                     LOGGER.info(procedureParameters.get(key));
+*/
 
                     if (procedureParameters.get(key) instanceof List) {
                         List<String> l = (List<String>)procedureParameters.get(key);
@@ -432,7 +434,7 @@ public class QUERIES {
                             s = "";
                         }
 
-                        LOGGER.info(s);
+//                        LOGGER.info(s);
 
                         query = query.replaceAll(tmp, s);
                     } else {

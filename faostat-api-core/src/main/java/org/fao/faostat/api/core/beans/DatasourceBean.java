@@ -395,34 +395,9 @@ public class DatasourceBean {
             this.setPassword(properties.getProperty(datasource + ".pwd"));
             this.setUrl(properties.getProperty(datasource + ".url"));
             this.setUsername(properties.getProperty(datasource + ".user"));
-
-            /*switch (datasource) {
-                case TEST:
-                    this.setDbName("Warehouse");
-                    this.setDriver("SQLServer2000");
-                    this.setPassword("w@reh0use");
-                    this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
-                    this.setUsername("Warehouse");
-                    break;
-                default:
-                    this.setDbName("Warehouse");
-                    this.setDriver("SQLServer2000");
-                    this.setPassword("w@reh0use");
-                    this.setUrl("jdbc:sqlserver://HQWPRFAOSTATDB2\\Internal;databaseName=Warehouse;");
-                    this.setUsername("Warehouse");
-                    break;
-            }*/
-
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
-           /* if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }*/
         }
     }
 
