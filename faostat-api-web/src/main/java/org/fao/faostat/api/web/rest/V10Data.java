@@ -374,9 +374,6 @@ public class V10Data {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
-    //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
-
-
     @POST
     //    @Path("/bean/")
     public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
