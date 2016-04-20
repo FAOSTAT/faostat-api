@@ -1564,6 +1564,9 @@ public class FAOSTATAPICore {
         switch (lang.toLowerCase()) {
             case "fr": return "F";
             case "es": return "S";
+            case "ar": return "A";
+            case "zh": return "C";
+            case "ru": return "R";
             default: return "E";
         }
     }
