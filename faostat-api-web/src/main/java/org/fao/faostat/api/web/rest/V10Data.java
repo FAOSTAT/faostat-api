@@ -368,7 +368,7 @@ import java.util.*;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  */
 @Component
-@Path("/v1.0/{lang}/data")
+@Path("/{lang}/data")
 //@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Data {
 

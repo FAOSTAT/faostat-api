@@ -368,7 +368,7 @@ import java.io.OutputStream;
  * services: csv2excel converts the CSV into Excel, while excels returns an Excel file.
  * */
 @Component
-@Path("/v1.0/csv2excel/")
+@Path("/csv2excel/")
 public class V10CSV2Excel {
 
     @InjectParam

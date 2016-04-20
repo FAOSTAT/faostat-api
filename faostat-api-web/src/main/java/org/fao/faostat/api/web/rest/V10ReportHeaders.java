@@ -363,7 +363,7 @@ import java.util.Map;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/report/headers/")
+@Path("/{lang}/report/headers/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10ReportHeaders {
 

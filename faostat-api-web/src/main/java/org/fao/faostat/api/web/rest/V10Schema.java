@@ -355,7 +355,7 @@ import javax.ws.rs.core.Response;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Schema {
 

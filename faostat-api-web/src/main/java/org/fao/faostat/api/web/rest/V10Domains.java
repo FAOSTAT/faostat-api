@@ -358,7 +358,7 @@ import org.apache.log4j.Logger;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/domains/")
+@Path("/{lang}/domains/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Domains {
 

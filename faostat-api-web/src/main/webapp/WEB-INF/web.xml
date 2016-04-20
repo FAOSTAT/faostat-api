@@ -13,7 +13,7 @@
     </filter>
     <filter-mapping>
         <filter-name>tracingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/v1/*</url-pattern>
     </filter-mapping>
 
     <context-param>
@@ -41,7 +41,7 @@
 
     <servlet-mapping>
         <servlet-name>jersey-servlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

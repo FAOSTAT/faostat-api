@@ -358,7 +358,7 @@ import java.util.List;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/v1.0/{lang}/rankings")
+@Path("/{lang}/rankings")
 //@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Rankings {
 
