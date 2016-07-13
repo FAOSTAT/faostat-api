@@ -352,15 +352,15 @@ import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.fao.faostat.api.core.constants.QUERIES;
 //import org.fao.faostat.api.core.constants.ERROR;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
 import org.fao.faostat.api.web.rest.V10DataSize;
 
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.io.*;
 import java.util.*;
 
@@ -373,6 +373,8 @@ import java.util.*;
 public class V10Data {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
+
+
 
     @POST
     //    @Path("/bean/")
@@ -630,9 +632,6 @@ public class V10Data {
 
             String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
 
-            //LOGGER.info("----------------------------------");
-            //LOGGER.info(query);
-
             final JDBCIterable i = new JDBCIterable();
             i.query(datasourceBean, query);
 
@@ -647,54 +646,6 @@ public class V10Data {
                     /* Generate an array of objects of arrays. */
                     switch (metadataBean.getOutputType()) {
                         case CSV:
-
-                            // get all indexes
-                           /* List<Integer> indexes = new ArrayList<Integer>();
-                            for (int i = 0; i < dsd.size(); i += 1) {
-                               // LOGGER.info(dsd.get(i));
-                                indexes.add((int) (dsd.get(i).get("index")));
-                            }
-
-                            Collections.sort(indexes);
-
-                            // TODO: do it better
-                            List<String> headers = new ArrayList<String>();
-                            for (int i = 0; i < indexes.size(); i++) {
-
-                                int index = indexes.get(i);
-
-                                for (int j = 0; j < dsd.size(); j++) {
-
-                                    int dsdIndex = (int) (dsd.get(j).get("index"));
-
-                                    if (index == dsdIndex) {
-                                        boolean headerToKeep = true;
-
-                                        String header = dsd.get(j).get("label").toString();
-
-                                        //LOGGER.info(header);
-
-                                        // CODES
-                                        if (metadataBean.getProcedureParameters().get("show_codes").equals(0) && dsd.get(j).get("type").equals("code")) {
-                                            headerToKeep = false;
-                                        }
-                                        // FLAGS
-                                        if (metadataBean.getProcedureParameters().get("show_flags").equals(0) && ((dsd.get(j).get("type").equals("flag") || dsd.get(j).get("type").equals("flag_label")))) {
-                                            headerToKeep = false;
-                                        }
-                                        if (metadataBean.getProcedureParameters().get("show_unit").equals(0) && dsd.get(j).get("type").equals("unit")) {
-                                            headerToKeep = false;
-                                        }
-
-                                        //LOGGER.info(headerToKeep);
-
-                                        if (headerToKeep) {
-                                            headers.add(header);
-                                        }
-                                    }
-
-                                }
-                            }*/
 
                             /* Get Headers from Metadata */
                             List<String> headers = i.getColumnNames();
@@ -741,8 +692,6 @@ public class V10Data {
 
                     }
 
-
-
                 /* Flush the writer. */
                     writer.flush();
 
@@ -760,6 +709,135 @@ public class V10Data {
         } catch (Exception e) {
             return Response.status(500).entity(e).build();
         }
+
+    }
+
+
+    @GET
+    @Path("/{domain}")
+    public Response getDataAlternative(@PathParam("lang") String lang,
+                                       @PathParam("domain") final String domainCode,
+                                       @QueryParam("datasource") @DefaultValue("production") String datasource,
+                                       @QueryParam("api_key") String api_key,
+                                       @QueryParam("client_key") String client_key,
+                                       @QueryParam("output_type") String output_type,
+                                       @QueryParam("query") String query,
+                                       @Context UriInfo uriInfo) {
+
+        /* Logger. */
+        StringBuilder log = new StringBuilder();
+        log.append("getDataAlternative\t").append("DataBean\t").append("").append("\n");
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_codes", new ArrayList<String>(){{add(domainCode);}});
+        metadataBean.addParameter("domain_code", domainCode); /* Get the first domain code, to get the dimensions later on. */
+        metadataBean.addParameter("report_code", "download"); // TODO: this should be removed.
+
+        /* Init filters. */
+        Map<String, List<String>> filters = new HashMap<>();
+        filters.put("List1Codes", new ArrayList<String>() {{add("_1");}});
+        filters.put("List2Codes", new ArrayList<String>() {{add("_1");}});
+        filters.put("List3Codes", new ArrayList<String>() {{add("_1");}});
+        filters.put("List4Codes", new ArrayList<String>() {{add("_1");}});
+        /*filters.put("List1Codes", new ArrayList<String>());
+        filters.put("List2Codes", new ArrayList<String>());
+        filters.put("List3Codes", new ArrayList<String>());
+        filters.put("List4Codes", new ArrayList<String>());*/
+        filters.put("List5Codes", new ArrayList<String>());
+        filters.put("List6Codes", new ArrayList<String>());
+        filters.put("List7Codes", new ArrayList<String>());
+
+        /* Init filters. Conding Systems */
+        /* TODO: to be implemented with the mapping */
+        Map<String, String> filtersCS = new HashMap<>();
+        filtersCS.put("List1AltCodes", "");
+        filtersCS.put("List2AltCodes", "");
+        filtersCS.put("List3AltCodes", "");
+        filtersCS.put("List4AltCodes", "");
+        filtersCS.put("List5AltCodes", "");
+        filtersCS.put("List6AltCodes", "");
+        filtersCS.put("List7AltCodes", "");
+
+        LOGGER.info("domain:" + domainCode);
+        String queryURI = uriInfo.getRequestUri().getQuery();
+        LOGGER.info("query: " + query);
+        LOGGER.info("metadataBean: " + metadataBean);
+        LOGGER.info("queryURI: " + queryURI);
+        MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+        LOGGER.info("params: " + params);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        try {
+
+             /* getting domain dimensions */
+            OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
+
+            /* for each dimension tries to map to a filter */
+            while (ob.getData().hasNext()) {
+
+                Map<String, Object> m = ob.getData().next();
+                String id = m.get("id").toString();
+                String parameter = m.get("parameter").toString();
+
+                LOGGER.info("-----------------------------");
+                LOGGER.info("id:" + id);
+                LOGGER.info("parameter:" + parameter);
+                LOGGER.info("params:" + params.get(id));
+
+                if (params.get(id) != null) {
+                    filters.get(parameter).clear();
+                    for(String v : params.get(id)) {
+                        List<String> items = Arrays.asList(v.split(","));
+                        LOGGER.info("----addings:" + items);
+                        filters.get(parameter).addAll(items);
+                    }
+
+                }
+
+
+            }
+
+            LOGGER.info("filters: " + filters);
+
+            DataBean b = new DataBean();
+
+            return getData(lang, new ArrayList<String>(){{add(domainCode);}}, datasource, api_key, client_key, output_type,
+                    filters.get("List1Codes"),
+                    filters.get("List2Codes"),
+                    filters.get("List3Codes"),
+                    filters.get("List4Codes"),
+                    filters.get("List5Codes"),
+                    filters.get("List6Codes"),
+                    filters.get("List7Codes"),
+                    filtersCS.get("List1AltCodes"),
+                    filtersCS.get("List2AltCodes"),
+                    filtersCS.get("List3AltCodes"),
+                    filtersCS.get("List4AltCodes"),
+                    filtersCS.get("List5AltCodes"),
+                    filtersCS.get("List6AltCodes"),
+                    filtersCS.get("List7AltCodes"),
+                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(),
+                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit());
+
+
+            } catch (Exception e) {
+            /* TODO: instead of the log should be used an error response status different from each request error.
+            /* TODO: i.e. 400 for a Bad Request. https://it.wikipedia.org/wiki/Codici_di_stato_HTTP */
+            return Response.status(500).entity(e.toString()).build();
+        }
+
+        /* Stream result */
+        //return Response.status(200).entity(log.toString()).build();
 
     }
 

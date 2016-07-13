@@ -2305,6 +2305,58 @@
           }
         }
       }
+    },
+    {
+      "href": "{lang}/definitions/{domain_code}",
+      "method": "GET",
+      "rel": "definitions",
+      "title": "definitions",
+      "description": "FAOSTAT definitions.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/definitions/{domain_code}/{type}",
+      "method": "GET",
+      "rel": "definitions_by_type",
+      "title": "definitions by type",
+      "description": "FAOSTAT definitions by type.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      }
     }
   ]
 }

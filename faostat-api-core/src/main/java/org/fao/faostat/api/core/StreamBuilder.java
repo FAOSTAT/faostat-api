@@ -838,7 +838,8 @@ public class StreamBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append("\"metadata\": {");
         if (o.getProcessingTime() != null) {
-            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
+//            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
+            sb.append("\"processing_time\": ").append(o.getProcessingTime());
         }
         if (o.getDsd() != null && o.getDsd().size() > 0) {
             sb.append("\"dsd\": [");
@@ -857,13 +858,16 @@ public class StreamBuilder {
                 if (a < o.getDsd().size() - 1)
                     sb.append(",");
             }
-            sb.append("],");
+           // sb.append("],");
+            sb.append("]");
         }
-        sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
-        sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
-        sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
-        sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
-        sb.append("\"parameters\": {");
+        //sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
+        //sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
+        //sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
+        //sb.append("\"client_key\": \"").append(o.getClientKey());
+        /*
+         sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
+         sb.append("\"parameters\": {");
         int count = 0;
         for (String key : o.getProcedureParameters().keySet()) {
             sb.append("\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"");
@@ -872,7 +876,7 @@ public class StreamBuilder {
                 count++;
             }
         }
-        sb.append("}");
+        sb.append("}");*/
         sb.append("},");
         return sb.toString();
     }
