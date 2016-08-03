@@ -712,12 +712,12 @@ public class V10Data {
 
             };
 
-
             /* Stream result */
             return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (Exception e) {
-            return Response.status(500).entity(e).build();
+            LOGGER.error("Error " + e.getMessage());
+            return Response.status(500).entity(e.getMessage()).build();
         }
 
     }
@@ -731,19 +731,19 @@ public class V10Data {
                                        @QueryParam("api_key") String api_key,
                                        @QueryParam("client_key") String client_key,
                                        @QueryParam("output_type") String output_type,
-                                       /*@QueryParam("group_by") String group_by,
+                                       @QueryParam("group_by") String group_by,
                                        @QueryParam("order_by") String order_by,
                                        @QueryParam("operator") String operator,
-                                       @QueryParam("page_size") int page_size,
-                                       @QueryParam("decimal_places") int decimal_places,
-                                       @QueryParam("page_number") int page_number,
-                                       @QueryParam("limit") @DefaultValue("-1") int limit,
+                                       @QueryParam("page_size") Integer page_size,
+                                       @QueryParam("decimal_places") Integer decimal_places,
+                                       @QueryParam("page_number") Integer page_number,
+                                       @QueryParam("limit") Integer limit,
                                        // TODO: convert it all to boolean and convert it into string?
-                                       @QueryParam("null_values") boolean null_values,
-                                       @QueryParam("show_codes") @DefaultValue("1") int show_codes,
-                                       @QueryParam("show_flags") @DefaultValue("1") int show_flags,
-                                       @QueryParam("show_unit") @DefaultValue("1") int show_unit,*/
-                                       @QueryParam("pivot") @DefaultValue("false") boolean pivot,
+                                       @QueryParam("null_values") Boolean null_values,
+                                       @QueryParam("show_codes") Integer show_codes,
+                                       @QueryParam("show_flags") Integer show_flags,
+                                       @QueryParam("show_unit") Integer show_unit,
+                                       @QueryParam("pivot") Boolean pivot,
                                        @Context UriInfo uriInfo) {
 
         /* Logger. */
@@ -839,6 +839,42 @@ public class V10Data {
 
             // TODO: set the bean with values from query parameters. At the moment the defaults are passed to the Data method.
             DataBean b = new DataBean();
+            if (group_by != null) {
+                b.setGroup_by(group_by);
+            }
+            if (order_by != null) {
+                b.setOrder_by(order_by);
+            }
+            if (operator != null) {
+                b.setOperator(operator);
+            }
+            if (page_size != null) {
+                b.setPage_size(page_size);
+            }
+            if (decimal_places != null) {
+                b.setDecimal_places(decimal_places);
+            }
+            if (page_number != null) {
+                b.setPage_number(page_number);
+            }
+            if (limit != null) {
+                b.setLimit(limit);
+            }
+            if (null_values != null) {
+                b.setNull_values(null_values);
+            }
+            if (show_codes != null) {
+                b.setShow_codes(show_codes);
+            }
+            if (show_flags != null) {
+                b.setShow_flags(show_flags);
+            }
+            if (show_unit != null) {
+                b.setShow_unit(show_unit);
+            }
+            if (pivot != null) {
+                b.setPivot(pivot);
+            }
 
             return getData(lang, new ArrayList<String>(){{add(domainCode);}},
                     datasource,
@@ -866,7 +902,7 @@ public class V10Data {
                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
                    b.getPage_size(),  b.getDecimal_places(), b.getPage_number(), b.getLimit(),
                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
-                   pivot
+                   b.isPivot()
             );
 
 
@@ -874,7 +910,7 @@ public class V10Data {
             LOGGER.error("Exception:" + e.getMessage());
             /* TODO: instead of the log should be used an error response status different from each request error.
             /* TODO: i.e. 400 for a Bad Request. https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
-            return Response.status(400).entity(e.getMessage()).build();
+            return Response.status(500).entity(e.getMessage()).build();
         }
 
         /* Stream result */

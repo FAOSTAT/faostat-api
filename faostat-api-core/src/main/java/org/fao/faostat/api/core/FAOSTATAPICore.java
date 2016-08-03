@@ -1585,47 +1585,52 @@ public class FAOSTATAPICore {
 
     }
 
-    private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) {
+    private List<List<Map<String, Object>>> getDomainDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
 
         //System.out.println("getDomainDimensions: " + queryCode + " " + o);
 
         /* Query the DB. */
-        JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
+        try {
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, o);
 
-        /* Store the original result. */
-        List<Map<String, Object>> l = new ArrayList<>();
-        while (i.hasNext()) {
-            Map<String, Object> m = i.nextMap();
-            l.add(m);
-        }
-
-        /* Initiate variables. */
-        List<List<Map<String, Object>>> dimensions = new ArrayList<>();
-
-        /* Create groups. */
-        List<Map<String, Object>> groups = new ArrayList<>();
-        String current = "1";
-        for (Map<String, Object> m : l) {
-//            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
-
-            // TODO: based on the TabID and ListBoxNo?
-            m.put("id", m.get("TabID").toString().replaceAll(" ", "").toLowerCase());
-            if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
-                groups.add(m);
-            } else {
-                dimensions.add(groups);
-                current = m.get("ListBoxNo").toString();
-                groups = new ArrayList<>();
-                groups.add(m);
+            /* Store the original result. */
+            List<Map<String, Object>> l = new ArrayList<>();
+            while (i.hasNext()) {
+                Map<String, Object> m = i.nextMap();
+                l.add(m);
             }
+
+            /* Initiate variables. */
+            List<List<Map<String, Object>>> dimensions = new ArrayList<>();
+
+            /* Create groups. */
+            List<Map<String, Object>> groups = new ArrayList<>();
+            String current = "1";
+            for (Map<String, Object> m : l) {
+                //            m.put("id", m.get("TabName").toString().replaceAll(" ", "").toLowerCase());
+
+                // TODO: based on the TabID and ListBoxNo?
+                m.put("id", m.get("TabID").toString().replaceAll(" ", "").toLowerCase());
+                if (m.get("ListBoxNo").toString().equalsIgnoreCase(current)) {
+                    groups.add(m);
+                } else {
+                    dimensions.add(groups);
+                    current = m.get("ListBoxNo").toString();
+                    groups = new ArrayList<>();
+                    groups.add(m);
+                }
+            }
+            dimensions.add(groups);
+
+            LOGGER.info("DIMENSIONS:");
+            LOGGER.info(dimensions);
+
+            /* Return output. */
+            return dimensions;
+
+        }catch (Exception e) {
+            throw new Exception(e);
         }
-        dimensions.add(groups);
-
-        LOGGER.info("DIMENSIONS:");
-        LOGGER.info(dimensions);
-
-        /* Return output. */
-        return dimensions;
 
     }
 
@@ -1866,23 +1871,27 @@ public class FAOSTATAPICore {
 
     }
 
-    private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) {
+    private JDBCIterable getJDBCIterable(String queryCode, DatasourceBean datasourceBean, MetadataBean o) throws Exception {
+
 
         long t0 = System.currentTimeMillis();
 
-        // TODO: remove system out
         LOGGER.info("queryCode: " + queryCode);
         LOGGER.info("o.getProcedureParameters(): " + o.getProcedureParameters());
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
 
-//        LOGGER.info("queryCode: " + queryCode);
         LOGGER.info("QUERY: " + query);
         LOGGER.info("MetadataBean: " + o);
         JDBCIterable i = new JDBCIterable();
-        i.query(datasourceBean, query);
+        try {
+            i.query(datasourceBean, query);
+        }catch (Exception e) {
+            throw new Exception(e);
+        }
 
         long tf = System.currentTimeMillis();
         LOGGER.info("JDBCIterable.getJDBCIterable (stand alone timing): " + (tf - t0));
+
 
         return i;
     }

@@ -370,7 +370,7 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     private int columns;
 
-    public void query(DatasourceBean db, String sql) {
+    public void query(DatasourceBean db, String sql) throws Exception {
         DRIVER d = DRIVER.valueOf(db.getDriver().toUpperCase());
         switch (d) {
             case SQLSERVER2000:
@@ -378,24 +378,32 @@ public class JDBCIterable implements Iterator<List<String>> {
                     querySQLServer(db, sql);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    throw new Exception(e.getMessage());
                 }
                 break;
         }
     }
 
-    public void querySQLServer(DatasourceBean db, String sql) throws IllegalAccessException, InstantiationException, SQLException {
+    public void querySQLServer(DatasourceBean db, String sql) throws Exception {
 
-        /* Open connections. */
-        SQLServerDriver.class.newInstance();
-        this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
-        this.setStatement(this.getConnection().createStatement());
+        try {
 
-        //System.out.println("querySQLServer SQL: " +sql);
+            /* Open connections. */
+            SQLServerDriver.class.newInstance();
+            this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
+            this.setStatement(this.getConnection().createStatement());
 
-        this.getStatement().executeQuery(sql);
-        this.setResultSet(this.getStatement().getResultSet());
+            //System.out.println("querySQLServer SQL: " +sql);
 
-        this.setColumns(this.getResultSet().getMetaData().getColumnCount());
+            this.getStatement().executeQuery(sql);
+            this.setResultSet(this.getStatement().getResultSet());
+
+            this.setColumns(this.getResultSet().getMetaData().getColumnCount());
+
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
 
     }
 
