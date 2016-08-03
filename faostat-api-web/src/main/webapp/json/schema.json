@@ -197,6 +197,12 @@
       "title": "Coding System",
       "description": "Alternate coding system applied to a dimension",
       "default": ""
+    },
+    "pivot": {
+      "type": "boolean",
+      "title": "Pivot",
+      "description": "Used to retrieve the pivot configuration on the requested data",
+      "default": false
     }
   },
   "links": [
@@ -362,6 +368,12 @@
               "client_key": {
                 "$ref": "#/definitions/client_key"
               },
+              "client_key": {
+                "$ref": "#/definitions/client_key"
+              },
+              "pivot": {
+                "$ref": "#/definitions/pivot"
+              },
               "domain_codes": {
                 "title": "Domain code",
                 "description": "FAOSTAT domain code.",
@@ -507,6 +519,9 @@
           },
           "lang": {
             "$ref": "#/definitions/lang"
+          },
+          "pivot": {
+            "$ref": "#/definitions/pivot"
           },
           "domain_codes": {
             "title": "Domain codes",
@@ -707,6 +722,115 @@
                 "$ref": "#/definitions/label"
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/data/{domain}/",
+      "method": "GET",
+      "rel": "data_get",
+      "title": "Data direct",
+      "description": "FAOSTAT Data.",
+      "cache": false,
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "pivot": {
+            "$ref": "#/definitions/pivot"
+          },
+          "domain_codes": {
+            "title": "Domain codes",
+            "description": "FAOSTAT domain codes.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "decimal_places": {
+            "title": "Decimal Places",
+            "description": "Number of decimal places for the values of the output.",
+            "type": "integer",
+            "default": 2
+          },
+          "null_values": {
+            "type": "boolean",
+            "title": "Null Values",
+            "description": "Flag to determine whether null values will be shown or not.",
+            "default": false
+          },
+          "group_by": {
+            "type": "string",
+            "title": "Group By",
+            "description": "Comma separated string of the dimensions used to group the result of the query.",
+            "default": ""
+          },
+          "order_by": {
+            "type": "string",
+            "title": "Order By",
+            "description": "Comma separated string of the dimensions used to order the result of the query.",
+            "default": ""
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "",
+              "SUM",
+              "AVG"
+            ],
+            "title": "Operator",
+            "description": "Function to aggregate the result of the query.",
+            "default": ""
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "description": "Size of the page.",
+            "default": 100
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximium number of rows returned by the query.",
+            "default": -1
+          },
+          "page_number": {
+            "type": "integer",
+            "title": "Page Number",
+            "description": "Number of the page to be retrieved.",
+            "default": 1
+          },
+          "show_codes": {
+            "type": "integer",
+            "title": "Show Codes",
+            "description": "Flag that determines whether codes are shown or not.",
+            "default": 1
+          },
+          "show_flags": {
+            "type": "integer",
+            "title": "Show Flags",
+            "description": "Flag that determines whether flags are shown or not.",
+            "default": 1
+          },
+          "show_unit": {
+            "type": "integer",
+            "title": "Show Units",
+            "description": "Flag that determines whether units are shown or not.",
+            "default": 1
           }
         }
       }
@@ -1192,65 +1316,6 @@
             "type": "object",
             "title": "Abbreviations",
             "description": "FAOSTAT abbreviations.",
-            "properties": {
-              "code": {
-                "$ref": "#/definitions/code"
-              },
-              "label": {
-                "$ref": "#/definitions/label"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/authentication/",
-      "method": "GET",
-      "rel": "authentication",
-      "title": "Authentication",
-      "description": "Authenticate FAOSTAT user.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          },
-          "username": {
-            "type": "string",
-            "title": "Username",
-            "description": "Login username."
-          },
-          "password": {
-            "type": "string",
-            "title": "Password",
-            "description": "Login password."
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Authentication Output",
-        "description": "Output of 'authentication' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "object",
-            "title": "Authentication",
-            "description": "Authenticate FAOSTAT user.",
             "properties": {
               "code": {
                 "$ref": "#/definitions/code"
@@ -1811,6 +1876,12 @@
           "domain_code": {
             "title": "Domain code",
             "$ref": "#/definitions/code"
+          },
+          "full": {
+            "type": "boolean",
+            "title": "Full response",
+            "description": "Returns the full dimension object.",
+            "default": false
           }
         }
       },

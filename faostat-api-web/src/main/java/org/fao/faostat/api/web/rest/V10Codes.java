@@ -381,7 +381,9 @@ public class V10Codes {
                              @QueryParam("group_subdimensions") boolean group_subdimensions,
                              @QueryParam("subdimensions") String subdimensions,
                              @QueryParam("whitelist") List<String> whitelist,
-                             @QueryParam("blacklist") List<String> blacklist) {
+                             @QueryParam("blacklist") List<String> blacklist,
+                             @QueryParam("full") boolean full
+    ) {
 
 
         /* Init Core library. */

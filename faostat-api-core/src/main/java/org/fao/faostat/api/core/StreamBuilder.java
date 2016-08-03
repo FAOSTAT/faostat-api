@@ -342,6 +342,7 @@
 package org.fao.faostat.api.core;
 
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.beans.OutputBean;
@@ -354,6 +355,9 @@ import java.util.*;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 public class StreamBuilder {
+
+    private static final Logger LOGGER = Logger.getLogger(StreamBuilder.class);
+
 
     public StreamingOutput createOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
 
@@ -774,14 +778,14 @@ public class StreamBuilder {
         try {
 
             /* Initiate core library. */
-            log.append("StreamBuilder\t").append("initiate api...").append("\n");
+            LOGGER.info("initiate api...");
             FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-            log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+            LOGGER.info("initiate api: done");
 
             /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            LOGGER.info("initiate output...");
             final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+            LOGGER.info("initiate output: done");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -792,23 +796,22 @@ public class StreamBuilder {
 
     }
 
-    public StreamingOutput createDimensionOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
+    public StreamingOutput createDimensionOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
         /* Log. */
-        final StringBuilder log = new StringBuilder();
+        StringBuilder log = new StringBuilder();
 
         /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
+        LOGGER.info("initiate api...");
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
+        LOGGER.info("initiate api: done");
 
         try {
 
             /* Query FAOSTAT. */
-            //System.out.println(metadataBean);
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
+            LOGGER.info("initiate output...");
             final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
+            LOGGER.info("initiate output: done");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -838,9 +841,9 @@ public class StreamBuilder {
         StringBuilder sb = new StringBuilder();
         sb.append("\"metadata\": {");
         if (o.getProcessingTime() != null) {
-//            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
-            sb.append("\"processing_time\": ").append(o.getProcessingTime());
+            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
         }
+
         if (o.getDsd() != null && o.getDsd().size() > 0) {
             sb.append("\"dsd\": [");
             for (int a = 0; a < o.getDsd().size(); a += 1) {
@@ -858,16 +861,60 @@ public class StreamBuilder {
                 if (a < o.getDsd().size() - 1)
                     sb.append(",");
             }
-           // sb.append("],");
-            sb.append("]");
+           sb.append("],");
         }
         //sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
-        //sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
+        sb.append("\"output_type\": \"").append(o.getOutputType()).append("\"");
         //sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
         //sb.append("\"client_key\": \"").append(o.getClientKey());
-        /*
-         sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
-         sb.append("\"parameters\": {");
+        //sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
+        /*sb.append("\"parameters\": {");
+        int count = 0;
+        for (String key : o.getProcedureParameters().keySet()) {
+            sb.append("\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"");
+            if (count < o.getProcedureParameters().keySet().size() - 1) {
+                sb.append(",");
+                count++;
+            }
+        }*/
+//        sb.append("}");
+        sb.append("},");
+        return sb.toString();
+    }
+
+    public String createMetadataBackup(MetadataBean o) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"metadata\": {");
+        if (o.getProcessingTime() != null) {
+            sb.append("\"processing_time\": ").append(o.getProcessingTime()).append(",");
+        }
+
+        if (o.getDsd() != null && o.getDsd().size() > 0) {
+            sb.append("\"dsd\": [");
+            for (int a = 0; a < o.getDsd().size(); a += 1) {
+                sb.append("{");
+                HashMap<String, Object> col = (HashMap<String, Object>)o.getDsd().get(a);
+                int counter = 0;
+                for (String key : col.keySet()) {
+                    sb.append("\"").append(key).append("\": \"").append(col.get(key)).append("\"");
+                    if (counter < col.keySet().size() - 1) {
+                        sb.append(",");
+                    }
+                    counter += 1;
+                }
+                sb.append("}");
+                if (a < o.getDsd().size() - 1)
+                    sb.append(",");
+            }
+            sb.append("],");
+        }
+
+        sb.append("\"datasource\": \"").append(o.getDatasource()).append("\",");
+        sb.append("\"output_type\": \"").append(o.getOutputType()).append("\",");
+        sb.append("\"api_key\": \"").append(o.getApiKey()).append("\",");
+        sb.append("\"client_key\": \"").append(o.getClientKey());
+        sb.append("\"client_key\": \"").append(o.getClientKey()).append("\",");
+        sb.append("\"parameters\": {");
         int count = 0;
         for (String key : o.getProcedureParameters().keySet()) {
             sb.append("\"").append(key).append("\": \"").append(o.getProcedureParameters().get(key)).append("\"");
@@ -876,7 +923,7 @@ public class StreamBuilder {
                 count++;
             }
         }
-        sb.append("}");*/
+        sb.append("}");
         sb.append("},");
         return sb.toString();
     }

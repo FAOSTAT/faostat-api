@@ -373,26 +373,26 @@ public class FAOSTATAPICore {
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            log.append("FAOSTATAPICore\t").append("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            log.append("FAOSTATAPICore\t").append("initiate out...");
             OutputBean out = new OutputBean();
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            log.append("FAOSTATAPICore\t").append("add metadata...");
             out.setMetadata(metadataBean);
 
             /* Log query. */
-            log.append("FAOSTATAPICore\t").append("query: ").append(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters())).append("\n");
+            log.append("FAOSTATAPICore\t").append("query: ").append(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters()));
 
             /* Query the DB. */
-            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            log.append("FAOSTATAPICore\t").append("query db...");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
-            log.append("FAOSTATAPICore\t").append("i not null? ").append(i != null).append("\n");
-            log.append("FAOSTATAPICore\t").append("i.getResultSet() not null? ").append(i.getResultSet() != null).append("\n");
+            log.append("FAOSTATAPICore\t").append("query db: done");
+            log.append("FAOSTATAPICore\t").append("i not null? ").append(i != null);
+            log.append("FAOSTATAPICore\t").append("i.getResultSet() not null? ").append(i.getResultSet() != null);
 
             /* Add column names. */
             out.setColumnNames(i.getColumnNames());
@@ -402,8 +402,8 @@ public class FAOSTATAPICore {
 //            LOGGER.info(out.getColumnNames());
 
             /* Add data to the output. */
-//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
-            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize());
+            log.append("FAOSTATAPICore\t").append("add data...");
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
                     case ARRAYS:
@@ -417,15 +417,15 @@ public class FAOSTATAPICore {
                         break;
                 }
             }
-            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+            log.append("FAOSTATAPICore\t").append("add data: done");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            log.append("FAOSTATAPICore\t").append("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            log.append("FAOSTATAPICore\t").append("return output...");
 
             /* System.out.println(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters())); */
             return out;
@@ -444,26 +444,26 @@ public class FAOSTATAPICore {
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            log.append("FAOSTATAPICore\t").append("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            log.append("FAOSTATAPICore\t").append("initiate out...");
             OutputBean out = new OutputBean();
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            log.append("FAOSTATAPICore\t").append("add metadata...");
             out.setMetadata(metadataBean);
 
             /* Log query. */
-            log.append("FAOSTATAPICore\t").append("query: ").append(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters())).append("\n");
+            log.append("FAOSTATAPICore\t").append("query: ").append(this.getQueries().getQuery(queryCode, metadataBean.getProcedureParameters()));
 
             /* Query the DB. */
-            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            log.append("FAOSTATAPICore\t").append("query db...");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
-            log.append("FAOSTATAPICore\t").append("i not null? ").append(i != null).append("\n");
-            log.append("FAOSTATAPICore\t").append("i.getResultSet() not null? ").append(i.getResultSet() != null).append("\n");
+            log.append("FAOSTATAPICore\t").append("query db: done");
+            log.append("FAOSTATAPICore\t").append("i not null? ").append(i != null);
+            log.append("FAOSTATAPICore\t").append("i.getResultSet() not null? ").append(i.getResultSet() != null);
 
             /* Add column names. */
             out.setColumnNames(i.getColumnNames());
@@ -473,8 +473,8 @@ public class FAOSTATAPICore {
             }*/
 
             /* Add data to the output. */
-//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
-            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize());
+            log.append("FAOSTATAPICore\t").append("add data...");
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
                     case ARRAYS:
@@ -488,20 +488,20 @@ public class FAOSTATAPICore {
                         break;
                 }
             }
-            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+            log.append("FAOSTATAPICore\t").append("add data: done");
 
             /* Add DSD. */
-            log.append("FAOSTATAPICore\t").append("add DSD...").append("\n");
+            log.append("FAOSTATAPICore\t").append("add DSD...");
             out.getMetadata().setDsd(createDSD(datasourceBean, metadataBean));
-            log.append("FAOSTATAPICore\t").append("add DSD: done").append("\n");
+            log.append("FAOSTATAPICore\t").append("add DSD: done");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            log.append("FAOSTATAPICore\t").append("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            log.append("FAOSTATAPICore\t").append("return output...");
             return out;
 
         } catch (Exception e) {
@@ -515,52 +515,58 @@ public class FAOSTATAPICore {
         /* Logs. */
         StringBuilder log = new StringBuilder();
 
+        // full version
+        boolean isFull = (metadataBean.getFull() != null)? metadataBean.getFull(): false;
+
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
             long t0 = System.currentTimeMillis();
 
             /* Initiate variables. */
             List<List<Map<String, Object>>> dimensions = getDomainDimensions(queryCode, datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("dimensions? ").append(dimensions.size()).append("\n");
+            LOGGER.info("dimensions? " + dimensions.size());
             List<Map<String, Object>> tmp = new ArrayList<>();
             for (List<Map<String, Object>> l : dimensions) {
                 tmp.addAll(l);
             }
-            log.append("FAOSTATAPICore\t").append("tmp? ").append(tmp.size()).append("\n");
-
-            LOGGER.info(dimensions);
-
-            //System.out.println("TMP: " + tmp);
+            LOGGER.info("tmp? " + tmp.size());
+            LOGGER.info("Dimensions: " + dimensions);
 
             /* Group Dimensions. */
             List<Map<String, Object>> output = new ArrayList<>();
             String currentList = tmp.get(0).get("ListBoxNo").toString();
             Map<String, Object> group = new HashMap<>();
-            group.put("ord", Integer.parseInt(currentList));
-            group.put("parameter", "List" + currentList + "Codes");
+            //group.put("ord", Integer.parseInt(currentList));
+            //group.put("parameter", "List" + currentList + "Codes");
+            if ( isFull ) {
+                // TODO: the parameter should come from a constant or better from the DB!
+                group.put("parameter", "List" + currentList + "Codes");
+            }
             group.put("id", tmp.get(0).get("VarType").toString());
             group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (int i = 0; i < tmp.size(); i += 1) {
                 if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
 
-                    //System.out.println("TMP: " + tmp.get(i).get("ListBoxNo"));
-
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
                     m.put("label", tmp.get(i).get("TabName").toString());
-                    m.put("description", tmp.get(i).get("TabName").toString());
+                    //m.put("description", tmp.get(i).get("TabName").toString());
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
-                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-                    m.put("parameter", "List" + currentList + "Codes");
+                    //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+                    //m.put("parameter", "List" + currentList + "Codes");
 
                     // options
                     Map<String, Object> o = new HashMap<>();
                     o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
                     o.put("type", tmp.get(i).get("ListBoxFormat").toString());
-                    m.put("options", o);
+
+                    if ( isFull ) {
+                        // TODO: the parameter should come from a constant or better from the DB!
+                        m.put("parameter", "List" + currentList + "Codes");
+                        m.put("options", o);
+                    }
 
                     /* Add available coding systems. */
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
@@ -571,17 +577,15 @@ public class FAOSTATAPICore {
                         }
                     }
 
-                    LOGGER.info(m);
-
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
                     output.add(group);
                     currentList = tmp.get(i).get("ListBoxNo").toString();
                     group = new HashMap<>();
-                    group.put("ord", Integer.parseInt(currentList));
+                    //group.put("ord", Integer.parseInt(currentList));
 
                     // TODO: the parameter should come from a constant or better from the DB!
-                    group.put("parameter", "List" + currentList + "Codes");
+                    //group.put("parameter", "List" + currentList + "Codes");
 
                     group.put("id", tmp.get(i).get("VarType").toString());
                     group.put("href", "/codes/" + tmp.get(i).get("VarType").toString() + "/");
@@ -589,23 +593,24 @@ public class FAOSTATAPICore {
 
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
-
-                    LOGGER.info(tmp.get(i).get("id").toString());
-                    LOGGER.info(tmp.get(i).get("VarType").toString());
-
                     m.put("label", tmp.get(i).get("TabName").toString());
-                    m.put("description", tmp.get(i).get("TabName").toString());
+                    //m.put("description", tmp.get(i).get("TabName").toString());
                     m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
-                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-
-                    // TODO: the parameter should come from a constant or better from the DB!
-                    m.put("parameter", "List" + currentList + "Codes");
+                    //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
 
                     // options
                     Map<String, Object> o = new HashMap<>();
                     o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
                     o.put("type", tmp.get(i).get("ListBoxFormat").toString());
-                    m.put("options", o);
+
+                    if ( isFull ) {
+                        // TODO: the parameter should come from a constant or better from the DB!
+                        m.put("parameter", "List" + currentList + "Codes");
+                        m.put("options", o);
+
+                        // TODO: the parameter should come from a constant or better from the DB!
+                        group.put("parameter", "List" + currentList + "Codes");
+                    }
 
                     /* Add available coding systems. */
                     String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
@@ -620,71 +625,17 @@ public class FAOSTATAPICore {
             }
             output.add(group);
 
-            LOGGER.info(group);
-
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
             OutputBean out = new OutputBean(new FAOSTATIterable(output));
-            ArrayList<Map<String, Object>> sl;
-
-            switch (metadataBean.getOutputType()) {
-                // TODO: is it needed the CSV?
-                // Should be removed
-                case CSV:
-                    for (int i = 0; i < output.size(); i += 1) {
-                        List<String> l = new ArrayList<>();
-                        l.add(output.get(i).get("id").toString());
-                        l.add(output.get(i).get("parameter").toString());
-                        l.add(output.get(i).get("ord").toString());
-                        l.add(output.get(i).get("href").toString());
-                        sl = (ArrayList<Map<String, Object>>)output.get(i).get("subdimensions");
-                        if (sl != null && sl.size() > 0) {
-                            for (int j = 0; j < sl.size(); j += 1) {
-                                l.add(sl.get(j).get("id").toString());
-                                l.add(sl.get(j).get("parameter").toString());
-                                l.add(sl.get(j).get("ord").toString());
-                                l.add(sl.get(j).get("href").toString());
-                                if (j < sl.size() - 1) {
-                                    out.getData().addList(l);
-                                    l = new ArrayList<>();
-                                    l.add(output.get(i).get("id").toString());
-                                    l.add(output.get(i).get("parameter").toString());
-                                    l.add(output.get(i).get("ord").toString());
-                                    l.add(output.get(i).get("href").toString());
-                                }
-                            }
-                        }
-                        out.getData().addList(l);
-                    }
-                    out.setColumnNames(new ArrayList<String>());
-                    out.getColumnNames().add("ID");
-                    out.getColumnNames().add("Parameter");
-                    out.getColumnNames().add("Order");
-                    out.getColumnNames().add("Href");
-                    sl = (ArrayList<Map<String, Object>>)output.get(0).get("subdimensions");
-                    if (sl != null && sl.size() > 0) {
-                        out.getColumnNames().add("Subdimension ID");
-                        out.getColumnNames().add("Subdimension Parameter");
-                        out.getColumnNames().add("Subdimension Order");
-                        out.getColumnNames().add("Subdimension Href");
-                    }
-                    break;
-            }
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
             out.setMetadata(metadataBean);
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
-
-            LOGGER.info(": " + (out));
-            LOGGER.info(": " + (out.getData()));
             return out;
 
         } catch (Exception e) {
@@ -692,6 +643,188 @@ public class FAOSTATAPICore {
         }
 
     }
+
+//    public OutputBean queryDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+//
+//        /* Logs. */
+//        StringBuilder log = new StringBuilder();
+//
+//        try {
+//
+//            /* Statistics. */
+//            LOGGER.info("initiate statistics...");
+//            long t0 = System.currentTimeMillis();
+//
+//            /* Initiate variables. */
+//            List<List<Map<String, Object>>> dimensions = getDomainDimensions(queryCode, datasourceBean, metadataBean);
+//            LOGGER.info("dimensions? " + dimensions.size());
+//            List<Map<String, Object>> tmp = new ArrayList<>();
+//            for (List<Map<String, Object>> l : dimensions) {
+//                tmp.addAll(l);
+//            }
+//            LOGGER.info("tmp? " + tmp.size());
+//
+//            LOGGER.info("Dimensions: " + dimensions);
+//
+//
+//            /* Group Dimensions. */
+//            List<Map<String, Object>> output = new ArrayList<>();
+//            String currentList = tmp.get(0).get("ListBoxNo").toString();
+//            Map<String, Object> group = new HashMap<>();
+//            group.put("ord", Integer.parseInt(currentList));
+//            group.put("parameter", "List" + currentList + "Codes");
+//            group.put("id", tmp.get(0).get("VarType").toString());
+//            group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
+//            group.put("subdimensions", new ArrayList<Map<String, Object>>());
+//            for (int i = 0; i < tmp.size(); i += 1) {
+//                if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
+//
+//                    //System.out.println("TMP: " + tmp.get(i).get("ListBoxNo"));
+//
+//                    Map<String, Object> m = new HashMap<>();
+//                    m.put("id", tmp.get(i).get("id").toString());
+//                    m.put("label", tmp.get(i).get("TabName").toString());
+//                    //m.put("description", tmp.get(i).get("TabName").toString());
+//                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
+//                    //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+//                    m.put("parameter", "List" + currentList + "Codes");
+//
+//                    // options
+//                    Map<String, Object> o = new HashMap<>();
+//                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
+//                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
+//                    m.put("options", o);
+//
+//                    /* Add available coding systems. */
+//                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
+//                    m.put("coding_systems", new ArrayList<String>());
+//                    for (String cs : codingSystems) {
+//                        if (cs.length() > 0) {
+//                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
+//                        }
+//                    }
+//
+//                    LOGGER.info(m);
+//
+//                    ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
+//                } else {
+//                    output.add(group);
+//                    currentList = tmp.get(i).get("ListBoxNo").toString();
+//                    group = new HashMap<>();
+//                    group.put("ord", Integer.parseInt(currentList));
+//
+//                    // TODO: the parameter should come from a constant or better from the DB!
+//                    group.put("parameter", "List" + currentList + "Codes");
+//
+//                    group.put("id", tmp.get(i).get("VarType").toString());
+//                    group.put("href", "/codes/" + tmp.get(i).get("VarType").toString() + "/");
+//                    group.put("subdimensions", new ArrayList<Map<String, Object>>());
+//
+//                    Map<String, Object> m = new HashMap<>();
+//                    m.put("id", tmp.get(i).get("id").toString());
+//
+//                    LOGGER.info(tmp.get(i).get("id").toString());
+//                    LOGGER.info(tmp.get(i).get("VarType").toString());
+//
+//                    m.put("label", tmp.get(i).get("TabName").toString());
+//                    m.put("description", tmp.get(i).get("TabName").toString());
+//                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
+//                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
+//
+//                    // TODO: the parameter should come from a constant or better from the DB!
+//                    m.put("parameter", "List" + currentList + "Codes");
+//
+//                    // options
+//                    Map<String, Object> o = new HashMap<>();
+//                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
+//                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
+//                    m.put("options", o);
+//
+//                    /* Add available coding systems. */
+//                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
+//                    m.put("coding_systems", new ArrayList<String>());
+//                    for (String cs : codingSystems) {
+//                        if (cs.length() > 0) {
+//                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
+//                        }
+//                    }
+//                    ((ArrayList<Map<String, Object>>)group.get("subdimensions")).add(m);
+//                }
+//            }
+//            output.add(group);
+//
+//            LOGGER.info(group);
+//
+//            /* Initiate output. */
+//            LOGGER.info("initiate out...");
+//            OutputBean out = new OutputBean(new FAOSTATIterable(output));
+//            ArrayList<Map<String, Object>> sl;
+//
+//            switch (metadataBean.getOutputType()) {
+//                // TODO: is it needed the CSV?
+//                // Should be removed
+//                case CSV:
+//                    for (int i = 0; i < output.size(); i += 1) {
+//                        List<String> l = new ArrayList<>();
+//                        l.add(output.get(i).get("id").toString());
+//                        l.add(output.get(i).get("parameter").toString());
+//                        l.add(output.get(i).get("ord").toString());
+//                        l.add(output.get(i).get("href").toString());
+//                        sl = (ArrayList<Map<String, Object>>)output.get(i).get("subdimensions");
+//                        if (sl != null && sl.size() > 0) {
+//                            for (int j = 0; j < sl.size(); j += 1) {
+//                                l.add(sl.get(j).get("id").toString());
+//                                l.add(sl.get(j).get("parameter").toString());
+//                                l.add(sl.get(j).get("ord").toString());
+//                                l.add(sl.get(j).get("href").toString());
+//                                if (j < sl.size() - 1) {
+//                                    out.getData().addList(l);
+//                                    l = new ArrayList<>();
+//                                    l.add(output.get(i).get("id").toString());
+//                                    l.add(output.get(i).get("parameter").toString());
+//                                    l.add(output.get(i).get("ord").toString());
+//                                    l.add(output.get(i).get("href").toString());
+//                                }
+//                            }
+//                        }
+//                        out.getData().addList(l);
+//                    }
+//                    out.setColumnNames(new ArrayList<String>());
+//                    out.getColumnNames().add("ID");
+//                    out.getColumnNames().add("Parameter");
+//                    out.getColumnNames().add("Order");
+//                    out.getColumnNames().add("Href");
+//                    sl = (ArrayList<Map<String, Object>>)output.get(0).get("subdimensions");
+//                    if (sl != null && sl.size() > 0) {
+//                        out.getColumnNames().add("Subdimension ID");
+//                        out.getColumnNames().add("Subdimension Parameter");
+//                        out.getColumnNames().add("Subdimension Order");
+//                        out.getColumnNames().add("Subdimension Href");
+//                    }
+//                    break;
+//            }
+//
+//            /* Add metadata. */
+//            LOGGER.info("add metadata...");
+//            out.setMetadata(metadataBean);
+//
+//            /* Statistics. */
+//            long tf = System.currentTimeMillis();
+//            LOGGER.info("set statistics...");
+//            out.getMetadata().setProcessingTime(tf - t0);
+//
+//            /* Return output. */
+//            LOGGER.info("return output...");
+//
+//            LOGGER.info(": " + (out));
+//            LOGGER.info(": " + (out.getData()));
+//            return out;
+//
+//        } catch (Exception e) {
+//            throw new Exception(log.toString());
+//        }
+//
+//    }
 
     public OutputBean queryData(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
@@ -704,7 +837,7 @@ public class FAOSTATAPICore {
 
             /* Check parameters. */
             for (String key : metadataBean.getProcedureParameters().keySet()) {
-                log.append("FAOSTATAPICore\t").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
+                LOGGER.info("P: " + key + ", V: " + metadataBean.getProcedureParameters().get(key));
             }
 
             long end = System.currentTimeMillis();
@@ -713,7 +846,7 @@ public class FAOSTATAPICore {
 
             /* TODO: why get("List4Codes") */
             for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes")) {
-                log.append("FAOSTATAPICore\t").append("\t").append(key).append("\n");
+                LOGGER.info(key);
             }
 
             end = System.currentTimeMillis();
@@ -721,7 +854,7 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData getProcedureParameters: " + (duration));
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            LOGGER.info("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             end = System.currentTimeMillis();
@@ -729,7 +862,7 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData statistics: " + (duration));
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            LOGGER.info("initiate out...");
             OutputBean out = new OutputBean();
 
             end = System.currentTimeMillis();
@@ -737,7 +870,7 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData initiate: " + (duration));
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            LOGGER.info("add metadata...");
             out.setMetadata(metadataBean);
 
             end = System.currentTimeMillis();
@@ -745,32 +878,32 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData metadataBean: " + (duration));
 
             /* Add DSD. */
-            log.append("FAOSTATAPICore\t").append("add DSD...").append("\n");
+            LOGGER.info("add DSD...");
             out.getMetadata().setDsd(createDSD(datasourceBean, metadataBean));
-            log.append("FAOSTATAPICore\t").append("add DSD: done").append("\n");
+            LOGGER.info("add DSD: done");
 
             end = System.currentTimeMillis();
             duration = (end - start);
             LOGGER.info("QueryData createDSD: " + (duration));
 
             /* Query the DB. */
-            log.append("FAOSTATAPICore\t").append("query? ").append(this.getQueries().getQuery("data", metadataBean.getProcedureParameters())).append("\n");
+            LOGGER.info("query? " + this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
 
             end = System.currentTimeMillis();
             duration = (end - start);
             LOGGER.info("QueryData Query the DB: " + (duration));
 
-            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            LOGGER.info("query db...");
             JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
-            log.append("FAOSTATAPICore\t").append("JDBCIterable? ").append(i != null).append("\n");
+            LOGGER.info("query db: done");
+            LOGGER.info("JDBCIterable? " + (i != null));
 
             end = System.currentTimeMillis();
             duration = (end - start);
             LOGGER.info("QueryData JDBCIterable: " + (duration));
 
             /* Add column names. */
-            log.append("FAOSTATAPICore\t").append("column names? ").append(i.getColumnNames().size()).append("\n");
+            LOGGER.info("column names? " + i.getColumnNames().size());
             out.setColumnNames(i.getColumnNames());
 
             end = System.currentTimeMillis();
@@ -785,8 +918,8 @@ public class FAOSTATAPICore {
             LOGGER.info("QueryData getQueries timing: " + (duration));
 
             /* Add data to the output. */
-//            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
-            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+//            LOGGER.info("data size: ").append(i.getResultSet().getFetchSize());
+            LOGGER.info("add data...");
             LOGGER.info("QueryData getFetchSize timing: " + (duration));
             while (i.hasNext()) {
                 switch (metadataBean.getOutputType()) {
@@ -801,15 +934,15 @@ public class FAOSTATAPICore {
                         break;
                 }
             }
-            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+            LOGGER.info("add data: done");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            LOGGER.info("return output...");
 
             end = System.currentTimeMillis();
             duration = (end - start);
@@ -833,28 +966,28 @@ public class FAOSTATAPICore {
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            LOGGER.info("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            LOGGER.info("initiate out...");
             OutputBean out = new OutputBean();
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            LOGGER.info("add metadata...");
             out.setMetadata(metadataBean);
 
             /* Query the DB. */
-            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            LOGGER.info("query db...");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+            LOGGER.info("query db: done");
 
             /* Add column names. */
             LOGGER.info(i.getColumnNames());
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            LOGGER.info("add data...");
 
             while (i.hasNext()) {
 
@@ -888,15 +1021,15 @@ public class FAOSTATAPICore {
                 }
 
             }
-            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+            LOGGER.info("add data: done");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            LOGGER.info("return output...");
             return out;
 
         } catch (Exception e) {
@@ -913,28 +1046,28 @@ public class FAOSTATAPICore {
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            LOGGER.info("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            LOGGER.info("initiate out...");
             OutputBean out = new OutputBean();
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
+            LOGGER.info("add metadata...");
             out.setMetadata(metadataBean);
 
             /* Query the DB. */
-            log.append("FAOSTATAPICore\t").append("query db...").append("\n");
+            LOGGER.info("query db...");
             JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
-            log.append("FAOSTATAPICore\t").append("query db: done").append("\n");
+            LOGGER.info("query db: done");
 
             /* Add column names. */
             out.setColumnNames(i.getColumnNames());
 
             /* Add data to the output. */
-            log.append("FAOSTATAPICore\t").append("data size: ").append(i.getResultSet().getFetchSize()).append("\n");
-            log.append("FAOSTATAPICore\t").append("add data...").append("\n");
+            LOGGER.info("data size: " + i.getResultSet().getFetchSize());
+            LOGGER.info("add data...");
 
             Set<Object> tmp = new HashSet<>();
 
@@ -959,15 +1092,15 @@ public class FAOSTATAPICore {
 
             }
 
-            log.append("FAOSTATAPICore\t").append("add data: done").append("\n");
+            LOGGER.info("add data: done");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            LOGGER.info("return output...");
             return out;
 
         } catch (Exception e) {
@@ -984,7 +1117,7 @@ public class FAOSTATAPICore {
         try {
 
             /* Statistics. */
-            log.append("FAOSTATAPICore\t").append("initiate statistics...").append("\n");
+            LOGGER.info("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Get domain's dimensions. */
@@ -1054,11 +1187,13 @@ public class FAOSTATAPICore {
 
                         LOGGER.info("row: " + row);
 
-                        row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
-                        row.put("subdimension_ord", m.get("TabOrder").toString());
-                        row.put("subdimension_label", m.get("TabName").toString());
-//                        log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(metadataBean.getBlackList()).contains(row.get("code").toString().toUpperCase())).append("\n");
+                        //row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
+                        //row.put("subdimension_ord", m.get("TabOrder").toString());
+                        //row.put("subdimension_label", m.get("TabName").toString());
+//                      log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(metadataBean.getBlackList()).contains(row.get("code").toString().toUpperCase()));
                         if (isAdmissibleCode(row, metadataBean)) {
+                            //row.remove("aggregate_type");
+                            row.remove("children");
                             codes.add(row);
                         }
                     }
@@ -1085,13 +1220,15 @@ public class FAOSTATAPICore {
                     /* Create code. */
                     row = createCode(subDimensionIterable.nextMap());
                     if (isAdmissibleCode(row, metadataBean)) {
+                        //row.remove("aggregate_type");
+                        row.remove("children");
                         codes.add(row);
                     }
                 }
 
             }
 
-            LOGGER.info("codes");
+            LOGGER.info("---Codes");
             LOGGER.info(codes);
 
             /* Add children. */
@@ -1100,6 +1237,7 @@ public class FAOSTATAPICore {
                 if (c1.get("parent") != null && c1.get("parent") != "0") {
                     for (Map<String, Object> c2 : codes) {
                         if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
+                            // TODO: probably should be added children
                             ((ArrayList<Map<String, Object>>) c2.get("children")).add(c1);
                         }
                     }
@@ -1108,93 +1246,21 @@ public class FAOSTATAPICore {
 
             /* Group subdimensions, if required and if subdimensions exists. */
             final List<Map<String, Object>> output = new ArrayList<>();
-            if (subDimensions != null && Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
-
-                /* Prepare output. */
-                for (Map<String, Object> m : subDimensions) {
-                    Map<String, Object> subdimension = new HashMap<>();
-                    subdimension.put("metadata", new HashMap<String, Object>());
-                    subdimension.put("data", new ArrayList<HashMap<String, Object>>());
-                    output.add(subdimension);
-                }
-
-                /* Group codes. */
-                String current_id = codes.get(0).get("subdimension_id").toString();
-                String current_ord = codes.get(0).get("subdimension_ord").toString();
-                String current_label = codes.get(0).get("subdimension_label").toString();
-                int current_idx = 0;
-                for (int i = 0; i < codes.size(); i += 1) {
-
-                    /* Current code. */
-                    Map<String, Object> c = codes.get(i);
-
-                    if (c.get("subdimension_id").toString().equalsIgnoreCase(current_id)) {
-                        ((ArrayList<Map<String, Object>>) output.get(current_idx).get("data")).add(c);
-                    } else {
-
-                        /* Write metadata. */
-                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("id", current_id);
-                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("ord", current_ord);
-                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("label", current_label);
-
-                        /* Reset parameters. */
-                        current_id = codes.get(i).get("subdimension_id").toString();
-                        current_ord = codes.get(i).get("subdimension_ord").toString();
-                        current_label = codes.get(i).get("subdimension_label").toString();
-                        current_idx += 1;
-                        ((ArrayList<Map<String, Object>>) output.get(current_idx).get("data")).add(c);
-
-                    }
-                }
-
-                /* Write metadata for the last iteration. */
-                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("id", current_id);
-                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("ord", current_ord);
-                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("label", current_label);
-
-            }
-            /* Add all codes if no grouping required */
-            else {
-                output.addAll(codes);
-            }
+            output.addAll(codes);
 
             /* Initiate output. */
-            log.append("FAOSTATAPICore\t").append("initiate out...").append("\n");
+            LOGGER.info("initiate out...");
             OutputBean out = new OutputBean(new FAOSTATIterable(output));
-            log.append("FAOSTATAPICore\t").append("initiate out: done").append("\n");
-
-            /* TODO: If CSV works only without grouping at the moment */
-            if (!Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
-                switch (metadataBean.getOutputType()) {
-                    case CSV:
-                        for (int i = 0; i < output.size(); i += 1) {
-                            List<String> l = new ArrayList<>();
-                            l.add(output.get(i).get("code").toString());
-                            l.add(output.get(i).get("label").toString());
-                            l.add(output.get(i).get("ord").toString());
-                            l.add(output.get(i).get("description").toString());
-                            l.add(output.get(i).get("aggregate_type").toString());
-                            out.getData().addList(l);
-                        }
-                        out.setColumnNames(new ArrayList<String>());
-                        /* TODO: Why hardcoded column names? */
-                        out.getColumnNames().add("Code");
-                        out.getColumnNames().add("Label");
-                        out.getColumnNames().add("Order");
-                        out.getColumnNames().add("Description");
-                        out.getColumnNames().add("Aggregate Type");
-                        break;
-                }
-            }
+            LOGGER.info("initiate out: done");
 
             /* Add metadata. */
-            log.append("FAOSTATAPICore\t").append("add metadata...").append("\n");
-            log.append("FAOSTATAPICore\t").append("metadataBean != null? ").append(metadataBean != null).append("\n");
-            log.append("FAOSTATAPICore\t").append("metadataBean.getProcedureParameters() != null? ").append(metadataBean.getProcedureParameters() != null).append("\n");
+            LOGGER.info("add metadata...");
+            LOGGER.info("metadataBean != null? " + (metadataBean != null));
+            LOGGER.info("metadataBean.getProcedureParameters() != null? " + (metadataBean.getProcedureParameters() != null));
             for (String key : dimension.keySet()) {
-                log.append("FAOSTATAPICore\t").append("\tdimension: ").append(key).append(" = ").append(dimension.get(key)).append("\n");
+                LOGGER.info("dimension: " + key + " = " + dimension.get(key));
             }
-            log.append("FAOSTATAPICore\t").append("\tparameter: ").append(dimension.get("ListBoxNo")).append("\n");
+            LOGGER.info("parameter: " + dimension.get("ListBoxNo"));
 
             /* TODO: the 'parameter' for data procedure is fundamental */
             if (dimension.get("ListBoxNo") != null) {
@@ -1204,15 +1270,15 @@ public class FAOSTATAPICore {
             }
 
             out.setMetadata(metadataBean);
-            log.append("FAOSTATAPICore\t").append("add metadata... DONE").append("\n");
+            LOGGER.info("add metadata... DONE");
 
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            log.append("FAOSTATAPICore\t").append("set statistics...").append("\n");
+            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
             /* Return output. */
-            log.append("FAOSTATAPICore\t").append("return output...").append("\n");
+            LOGGER.info("return output...");
             return out;
 
         } catch (Exception e) {
@@ -1221,6 +1287,254 @@ public class FAOSTATAPICore {
 
     }
 
+//    public OutputBean queryCodes(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+//
+//        /* Logs. */
+//        StringBuilder log = new StringBuilder();
+//
+//        try {
+//
+//            /* Statistics. */
+//            LOGGER.info("initiate statistics...");
+//            long t0 = System.currentTimeMillis();
+//
+//            /* Get domain's dimensions. */
+//            List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
+//
+//            LOGGER.info(dimensions);
+//
+//            /* Organize data in an object. */
+//            final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
+//
+//            LOGGER.info(structuredDimensions);
+//
+//            /* Get the dimension of interest. */
+//            Map<String, Object> dimension = null;
+//            String dimensionCode = metadataBean.getProcedureParameters().get("id").toString();
+//            for (Map<String, Object> d : structuredDimensions) {
+//                /* checking if is at dimension level */
+//                if (d.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+//                    LOGGER.info(d.get("id").toString());
+//                    dimension = d;
+//                    break;
+//                }
+//                /* checking if is at subdimension level */
+//                ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) d.get("subdimensions");
+//                for (Map<String, Object> subd : subdimensions) {
+//                    if (subd.get("id").toString().equalsIgnoreCase(dimensionCode)) {
+//                        LOGGER.info(subd.get("id").toString());
+//                        dimension = subd;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            LOGGER.info("DimensionCode: " + dimensionCode);
+//            LOGGER.info("Dimension: " + dimension);
+//
+//            /* Prepare output. */
+//            List<Map<String, Object>> codes = new ArrayList<>();
+//            Map<String, Object> row;
+//
+//            /* Get subdimensions. */
+//            ArrayList<Map<String, Object>> subDimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
+//
+//            LOGGER.info("subDimensions: " + subDimensions);
+//
+//            if (subDimensions != null) {
+//
+//                /* Fetch codes for each sub-dimension. */
+//                for (Map<String, Object> m : subDimensions) {
+//
+//                    LOGGER.info("subDimension: " + m);
+//
+//                    /* Define options to fetch codes. */
+//                    MetadataBean subDimensionOptions = new MetadataBean();
+//                    subDimensionOptions.addParameter("domain_code", metadataBean.getProcedureParameters().get("domain_code"));
+//                    subDimensionOptions.addParameter("report_code", metadataBean.getProcedureParameters().get("report_code"));
+//                    subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
+//                    subDimensionOptions.addParameter("dimension", m.get("ListBoxNo").toString());
+//                    subDimensionOptions.addParameter("subdimension", m.get("TabOrder").toString());
+//
+//                    /* Query codes */
+//                    JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
+//
+//                    /* Iterate over codes. */
+//                    while (subDimensionIterable.hasNext()) {
+//                        row = createCode(subDimensionIterable.nextMap());
+//
+//                        LOGGER.info("row: " + row);
+//
+//                        //row.put("subdimension_id", m.get("TabName").toString().replace(" ", "").toLowerCase());
+//                        //row.put("subdimension_ord", m.get("TabOrder").toString());
+//                        //row.put("subdimension_label", m.get("TabName").toString());
+////                      log.append("\t\tcontains ").append(row.get("code").toString().toUpperCase()).append("? ").append(Arrays.asList(metadataBean.getBlackList()).contains(row.get("code").toString().toUpperCase()));
+//                        if (isAdmissibleCode(row, metadataBean)) {
+//                            //row.remove("aggregate_type");
+//                            row.remove("children");
+//                            codes.add(row);
+//                        }
+//                    }
+//
+//                }
+//
+//            } else {
+//
+//                /* Fetch codes. */
+//                MetadataBean subDimensionOptions = new MetadataBean();
+//                subDimensionOptions.addParameter("domain_code", metadataBean.getProcedureParameters().get("domain_code"));
+//                subDimensionOptions.addParameter("report_code", metadataBean.getProcedureParameters().get("report_code"));
+//                subDimensionOptions.addParameter("lang", metadataBean.getProcedureParameters().get("lang"));
+//                subDimensionOptions.addParameter("dimension", dimension.get("ListBoxNo").toString());
+//                subDimensionOptions.addParameter("subdimension", dimension.get("TabOrder").toString());
+//
+//                 /* Query codes. */
+//                JDBCIterable subDimensionIterable = getJDBCIterable("codes", datasourceBean, subDimensionOptions);
+//
+//
+//                LOGGER.info("subDimensionIterable: " + subDimensionIterable);
+//
+//                while (subDimensionIterable.hasNext()) {
+//                    /* Create code. */
+//                    row = createCode(subDimensionIterable.nextMap());
+//                    if (isAdmissibleCode(row, metadataBean)) {
+//                        codes.add(row);
+//                    }
+//                }
+//
+//            }
+//
+//            LOGGER.info("---Codes");
+//            LOGGER.info(codes);
+//
+//            /* Add children. */
+//            // TODO: verify is this condition is right. should work on EA/ODA
+//            for (Map<String, Object> c1 : codes) {
+//                if (c1.get("parent") != null && c1.get("parent") != "0") {
+//                    for (Map<String, Object> c2 : codes) {
+//                        if (c2.get("code").toString().equalsIgnoreCase(c1.get("parent").toString())) {
+//                            // TODO: probably should be added children
+//                            ((ArrayList<Map<String, Object>>) c2.get("children")).add(c1);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            /* Group subdimensions, if required and if subdimensions exists. */
+//            final List<Map<String, Object>> output = new ArrayList<>();
+//            if (subDimensions != null && Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
+//
+//                /* Prepare output. */
+//                for (Map<String, Object> m : subDimensions) {
+//                    Map<String, Object> subdimension = new HashMap<>();
+//                    subdimension.put("metadata", new HashMap<String, Object>());
+//                    subdimension.put("data", new ArrayList<HashMap<String, Object>>());
+//                    output.add(subdimension);
+//                }
+//
+//                /* Group codes. */
+//                String current_id = codes.get(0).get("subdimension_id").toString();
+//                String current_ord = codes.get(0).get("subdimension_ord").toString();
+//                String current_label = codes.get(0).get("subdimension_label").toString();
+//                int current_idx = 0;
+//                for (int i = 0; i < codes.size(); i += 1) {
+//
+//                    /* Current code. */
+//                    Map<String, Object> c = codes.get(i);
+//
+//                    if (c.get("subdimension_id").toString().equalsIgnoreCase(current_id)) {
+//                        ((ArrayList<Map<String, Object>>) output.get(current_idx).get("data")).add(c);
+//                    } else {
+//
+//                        /* Write metadata. */
+//                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("id", current_id);
+//                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("ord", current_ord);
+//                        ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("label", current_label);
+//
+//                        /* Reset parameters. */
+//                        current_id = codes.get(i).get("subdimension_id").toString();
+//                        current_ord = codes.get(i).get("subdimension_ord").toString();
+//                        current_label = codes.get(i).get("subdimension_label").toString();
+//                        current_idx += 1;
+//                        ((ArrayList<Map<String, Object>>) output.get(current_idx).get("data")).add(c);
+//
+//                    }
+//                }
+//
+//                /* Write metadata for the last iteration. */
+//                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("id", current_id);
+//                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("ord", current_ord);
+//                ((HashMap<String, Object>) output.get(current_idx).get("metadata")).put("label", current_label);
+//
+//            }
+//            /* Add all codes if no grouping required */
+//            else {
+//                output.addAll(codes);
+//            }
+//
+//            /* Initiate output. */
+//            LOGGER.info("initiate out...");
+//            OutputBean out = new OutputBean(new FAOSTATIterable(output));
+//            LOGGER.info("initiate out: done");
+//
+//            /* TODO: If CSV works only without grouping at the moment */
+//            if (!Boolean.parseBoolean(metadataBean.getProcedureParameters().get("group_subdimensions").toString())) {
+//                switch (metadataBean.getOutputType()) {
+//                    case CSV:
+//                        for (int i = 0; i < output.size(); i += 1) {
+//                            List<String> l = new ArrayList<>();
+//                            l.add(output.get(i).get("code").toString());
+//                            l.add(output.get(i).get("label").toString());
+//                            l.add(output.get(i).get("ord").toString());
+//                            l.add(output.get(i).get("description").toString());
+//                            l.add(output.get(i).get("aggregate_type").toString());
+//                            out.getData().addList(l);
+//                        }
+//                        out.setColumnNames(new ArrayList<String>());
+//                        /* TODO: Why hardcoded column names? */
+//                        out.getColumnNames().add("Code");
+//                        out.getColumnNames().add("Label");
+//                        out.getColumnNames().add("Order");
+//                        out.getColumnNames().add("Description");
+//                        out.getColumnNames().add("Aggregate Type");
+//                        break;
+//                }
+//            }
+//
+//            /* Add metadata. */
+//            LOGGER.info("add metadata...");
+//            LOGGER.info("metadataBean != null? " + (metadataBean != null));
+//            LOGGER.info("metadataBean.getProcedureParameters() != null? " + (metadataBean.getProcedureParameters() != null));
+//            for (String key : dimension.keySet()) {
+//                LOGGER.info("dimension: " + key + " = " + dimension.get(key));
+//            }
+//            LOGGER.info("parameter: " + dimension.get("ListBoxNo"));
+//
+//            /* TODO: the 'parameter' for data procedure is fundamental */
+//            if (dimension.get("ListBoxNo") != null) {
+//                metadataBean.getProcedureParameters().put("parameter", "List" + dimension.get("ListBoxNo").toString() + "Codes");
+//            } else {
+//                metadataBean.getProcedureParameters().put("parameter", dimension.get("parameter"));
+//            }
+//
+//            out.setMetadata(metadataBean);
+//            LOGGER.info("add metadata... DONE");
+//
+//            /* Statistics. */
+//            long tf = System.currentTimeMillis();
+//            LOGGER.info("set statistics...");
+//            out.getMetadata().setProcessingTime(tf - t0);
+//
+//            /* Return output. */
+//            LOGGER.info("return output...");
+//            return out;
+//
+//        } catch (Exception e) {
+//            throw new Exception(log.toString());
+//        }
+//
+//    }
+
     /**
      * Creates a code Object
      */
@@ -1228,9 +1542,9 @@ public class FAOSTATAPICore {
         Map<String, Object> code = new HashMap<>();
         code.put("code", dbRow.get("Code"));
         code.put("label", dbRow.get("Label"));
-        code.put("ord", dbRow.get("Order"));
+        //code.put("ord", dbRow.get("Order"));
         code.put("parent", dbRow.get("Parent"));
-        code.put("description", "TODO");
+        //code.put("description", "TODO");
         code.put("aggregate_type", dbRow.get("AggregateType"));
         code.put("children", new ArrayList<Map<String, Object>>());
         return code;
@@ -1328,7 +1642,6 @@ public class FAOSTATAPICore {
             }*/
 
             tmp.put("id", dimension.get(0).get("VarType"));
-
             tmp.put("ord", dimension.get(0).get("ListBoxNo"));
             tmp.put("label", "TODO");
             tmp.put("description", "TODO");
@@ -1382,6 +1695,30 @@ public class FAOSTATAPICore {
         String domain_code = ((List<String>)o.getProcedureParameters().get("domain_codes")).get(0);
         o.addParameter("domain_code", domain_code);
 
+        Boolean addCodes = true;
+        if ( o.getProcedureParameters().get("show_codes") != null) {
+            addCodes = o.getProcedureParameters().get("show_codes").equals(1);
+        }
+        Boolean addFlags = true;
+        if ( o.getProcedureParameters().get("show_flags") != null) {
+            addFlags = o.getProcedureParameters().get("show_flags").equals(1);
+        }
+
+        Boolean addUnit = true;
+        if ( o.getProcedureParameters().get("show_unit") != null) {
+            addUnit = o.getProcedureParameters().get("show_unit").equals(1);
+        }
+        Boolean addPivot = false;
+        if (o.getPivot() != null) {
+            addPivot = o.getPivot();
+        }
+
+        // TODO: use an enumeration
+        LOGGER.info("Show Codes: " + addCodes);
+        LOGGER.info("Show Flags: " + addFlags);
+        LOGGER.info("Show Units: " + addUnit);
+        LOGGER.info("Pivot: " + addPivot);
+
         try {
 
             /* Query DB. */
@@ -1393,26 +1730,6 @@ public class FAOSTATAPICore {
                 Map<String, Object> row = i.nextMap();
                 ((ArrayList<Map<String, Object>>)original.get("original")).add(row);
 
-//                LOGGER.info("-------------------------------");
-
-                // TODO: use an enumeration
-/*                LOGGER.info("Show Codes: " + o.getProcedureParameters().get("show_codes"));
-                LOGGER.info("Show Flags: " + o.getProcedureParameters().get("show_flags"));
-                LOGGER.info("Show Units: " + o.getProcedureParameters().get("show_unit"));*/
-
-                Boolean addCodes = true;
-                if ( o.getProcedureParameters().get("show_codes") != null) {
-                    addCodes = o.getProcedureParameters().get("show_codes").equals(1);
-                }
-                Boolean addFlags = true;
-                if ( o.getProcedureParameters().get("show_flags") != null) {
-                    addFlags = o.getProcedureParameters().get("show_flags").equals(1);
-                }
-
-                Boolean addUnit = true;
-                if ( o.getProcedureParameters().get("show_unit") != null) {
-                    addUnit = o.getProcedureParameters().get("show_unit").equals(1);
-                }
 
                 /* Create descriptors for code and label columns. */
                 if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Flag") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
@@ -1420,11 +1737,13 @@ public class FAOSTATAPICore {
                     // if show_codes
                     if(addCodes.equals(true)) {
                         Map<String, Object> codeCol = new HashMap<>();
-                        codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
+                        //codeCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
                         codeCol.put("label", row.get("CodeName"));
                         codeCol.put("type", "code");
                         codeCol.put("key", row.get("CodeName"));
-                        codeCol.put("pivot", row.get("Pivot"));
+                        if (addPivot.equals(true)) {
+                            codeCol.put("pivot", row.get("Pivot"));
+                        }
                         if (row.get("VarType") != null && row.get("VarType").toString().length() > 0) {
                             codeCol.put("dimension_id", row.get("VarType"));
                         }
@@ -1433,24 +1752,24 @@ public class FAOSTATAPICore {
 
                     // adding label
                     Map<String, Object> labelCol = new HashMap<>();
-                    labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    //labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     labelCol.put("label", row.get("ColName"));
                     labelCol.put("type", "label");
                     labelCol.put("key", row.get("ColName"));
-                    labelCol.put("pivot", row.get("Pivot"));
+                    if (addPivot.equals(true)) {
+                        labelCol.put("pivot", row.get("Pivot"));
+                    }
                     if (row.get("VarType") != null && row.get("VarType").toString().length() > 0) {
                         labelCol.put("dimension_id", row.get("VarType"));
                     }
                     dsd.add(labelCol);
-
-//                    System.out.println(row.get("ColName") + " " + row.get("CodeIndex") + " "  +row.get("NameIndex"));
                 }
 
                 /* Create descriptor for the unit. */
                 if(addUnit.equals(true)) {
                     if (row.get("Col").toString().equalsIgnoreCase("Unit")) {
                         Map<String, Object> unitCol = new HashMap<>();
-                        unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                        //unitCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                         switch (o.getProcedureParameters().get("lang").toString()) {
                             case "E":
                                 unitCol.put("label", "Unit");
@@ -1467,7 +1786,9 @@ public class FAOSTATAPICore {
                         }
                         unitCol.put("type", "unit");
                         unitCol.put("dimension_id", "unit");
-                        unitCol.put("pivot", row.get("Pivot"));
+                        if (addPivot.equals(true)) {
+                            unitCol.put("pivot", row.get("Pivot"));
+                        }
                         dsd.add(unitCol);
                     }
                 }
@@ -1478,7 +1799,7 @@ public class FAOSTATAPICore {
                         Map<String, Object> flagCol = new HashMap<>();
 
                         if(addCodes.equals(true)) {
-                            flagCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
+                            //flagCol.put("index", Integer.parseInt(row.get("CodeIndex").toString()));
                         }
                         switch (o.getProcedureParameters().get("lang").toString()) {
                             case "E":
@@ -1496,18 +1817,22 @@ public class FAOSTATAPICore {
                         }
                         flagCol.put("type", "flag");
                         flagCol.put("dimension_id", "flag");
-                        flagCol.put("pivot", row.get("Pivot"));
+                        if (addPivot.equals(true)) {
+                            flagCol.put("pivot", row.get("Pivot"));
+                        }
                         dsd.add(flagCol);
 
                         Map<String, Object> labelCol = new HashMap<>();
-                        labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                        //labelCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                         labelCol.put("label", row.get("ColName"));
                         //                    labelCol.put("type", "flag");
                         //                    labelCol.put("type", "label");
                         labelCol.put("type", "flag_label");
                         labelCol.put("key", row.get("ColName"));
                         labelCol.put("dimension_id", "flag");
-                        labelCol.put("pivot", row.get("Pivot"));
+                        if (addPivot.equals(true)) {
+                            labelCol.put("pivot", row.get("Pivot"));
+                        }
                         dsd.add(labelCol);
                     }
                 }
@@ -1516,12 +1841,14 @@ public class FAOSTATAPICore {
                 if (row.get("Col").toString().equalsIgnoreCase("Value")) {
 //                    LOGGER.info(row);
                     Map<String, Object> valueCol = new HashMap<>();
-                    valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
+                    //valueCol.put("index", Integer.parseInt(row.get("NameIndex").toString()));
                     valueCol.put("label", row.get("ColName").toString());
                     valueCol.put("type", "value");
                     valueCol.put("key", row.get("ColName").toString());
                     valueCol.put("dimension_id", "value");
-                    valueCol.put("pivot", row.get("Pivot"));
+                    if (addPivot.equals(true)) {
+                        valueCol.put("pivot", row.get("Pivot"));
+                    }
                     dsd.add(valueCol);
                 }
 

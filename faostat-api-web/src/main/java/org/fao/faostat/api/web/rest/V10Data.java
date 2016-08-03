@@ -361,6 +361,7 @@ import org.fao.faostat.api.web.rest.V10DataSize;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.*;
 
@@ -373,8 +374,6 @@ import java.util.*;
 public class V10Data {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
-
-
 
     @POST
     //    @Path("/bean/")
@@ -433,6 +432,7 @@ public class V10Data {
 
             /* add report_code dimension (this is used for the query) */
             metadataBean.addParameter("report_code", "download");
+            metadataBean.setFull(true);
 
             // TODO: this should be checked with performance
             /* if a dimension is not passed, all the other codes are taken */
@@ -517,11 +517,13 @@ public class V10Data {
                     filtersCS.get("List7AltCodes"),
                     b.getGroup_by(), b.getOrder_by(), b.getOperator(),
                     b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(),
-                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit());
+                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
+                    b.isPivot()
+            );
 
         } catch (Exception e) {
             /* TODO: instead of the log should be used an error response status different from each request error.
-            /* TODO: i.e. 400 for a Bad Request. https://it.wikipedia.org/wiki/Codici_di_stato_HTTP */
+            /* TODO: i.e. 400 for a Bad Request. https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
             return Response.status(500).entity(log.toString()).build();
         }
 
@@ -556,13 +558,14 @@ public class V10Data {
                             @FormParam("decimal_places") int decimal_places,
                             @FormParam("page_number") int page_number,
                             @FormParam("limit") @DefaultValue("-1") int limit,
-
                             // TODO: convert it all to boolean and convert it into string?
                             @FormParam("null_values") boolean null_values,
                             @FormParam("show_codes") @DefaultValue("1") int show_codes,
                             @FormParam("show_flags") @DefaultValue("1") int show_flags,
-                            @FormParam("show_unit") @DefaultValue("1") int show_unit) {
+                            @FormParam("show_unit") @DefaultValue("1") int show_unit,
+                            @FormParam("pivot") @DefaultValue("false") boolean pivot) {
 
+        long t0 = System.currentTimeMillis();
 
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
@@ -606,6 +609,9 @@ public class V10Data {
         metadataBean.addParameter("show_flags", show_flags);
         metadataBean.addParameter("show_unit", show_unit);
 
+        // setting pivot
+        metadataBean.setPivot(Boolean.valueOf(pivot));
+
         /* Type */
         // TODO: switch properly to CSV Produce Type;
         if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
@@ -634,6 +640,10 @@ public class V10Data {
 
             final JDBCIterable i = new JDBCIterable();
             i.query(datasourceBean, query);
+
+            // statistics
+            long tf = System.currentTimeMillis();
+            metadataBean.setProcessingTime(tf - t0);
 
             StreamingOutput stream = new StreamingOutput() {
 
@@ -721,7 +731,19 @@ public class V10Data {
                                        @QueryParam("api_key") String api_key,
                                        @QueryParam("client_key") String client_key,
                                        @QueryParam("output_type") String output_type,
-                                       @QueryParam("query") String query,
+                                       /*@QueryParam("group_by") String group_by,
+                                       @QueryParam("order_by") String order_by,
+                                       @QueryParam("operator") String operator,
+                                       @QueryParam("page_size") int page_size,
+                                       @QueryParam("decimal_places") int decimal_places,
+                                       @QueryParam("page_number") int page_number,
+                                       @QueryParam("limit") @DefaultValue("-1") int limit,
+                                       // TODO: convert it all to boolean and convert it into string?
+                                       @QueryParam("null_values") boolean null_values,
+                                       @QueryParam("show_codes") @DefaultValue("1") int show_codes,
+                                       @QueryParam("show_flags") @DefaultValue("1") int show_flags,
+                                       @QueryParam("show_unit") @DefaultValue("1") int show_unit,*/
+                                       @QueryParam("pivot") @DefaultValue("false") boolean pivot,
                                        @Context UriInfo uriInfo) {
 
         /* Logger. */
@@ -739,6 +761,8 @@ public class V10Data {
         metadataBean.addParameter("domain_codes", new ArrayList<String>(){{add(domainCode);}});
         metadataBean.addParameter("domain_code", domainCode); /* Get the first domain code, to get the dimensions later on. */
         metadataBean.addParameter("report_code", "download"); // TODO: this should be removed.
+
+        metadataBean.setFull(true);
 
         /* Init filters. */
         Map<String, List<String>> filters = new HashMap<>();
@@ -767,11 +791,12 @@ public class V10Data {
 
         LOGGER.info("domain:" + domainCode);
         String queryURI = uriInfo.getRequestUri().getQuery();
-        LOGGER.info("query: " + query);
+       // LOGGER.info("query: " + query);
         LOGGER.info("metadataBean: " + metadataBean);
         LOGGER.info("queryURI: " + queryURI);
         MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
         LOGGER.info("params: " + params);
+        LOGGER.info("pivot: " + pivot);
 
         /* Datasource bean. */
         DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
@@ -782,35 +807,44 @@ public class V10Data {
             OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
 
             /* for each dimension tries to map to a filter */
+            boolean validFilter = false;
             while (ob.getData().hasNext()) {
 
                 Map<String, Object> m = ob.getData().next();
                 String id = m.get("id").toString();
                 String parameter = m.get("parameter").toString();
 
-                LOGGER.info("-----------------------------");
-                LOGGER.info("id:" + id);
-                LOGGER.info("parameter:" + parameter);
-                LOGGER.info("params:" + params.get(id));
+                // the "[]" is for the arrays passed on the GET ajax call
+                List<String> p = params.get(id) != null? params.get(id): params.get(id + "[]");
 
-                if (params.get(id) != null) {
+                if (p != null) {
                     filters.get(parameter).clear();
-                    for(String v : params.get(id)) {
+                    for(String v :p) {
                         List<String> items = Arrays.asList(v.split(","));
-                        LOGGER.info("----addings:" + items);
+                        LOGGER.info("----adding: " + items);
                         filters.get(parameter).addAll(items);
+                        validFilter = true;
                     }
 
+                }else{
+                    LOGGER.info("----is null:"  + id + " -> " + p);
                 }
-
 
             }
 
-            LOGGER.info("filters: " + filters);
+            if (!validFilter) {
+                LOGGER.warn("Invalid request. Please add at least one filter.");
+                throw new Exception("Please add at least one filter.");
+            }
 
+            // TODO: set the bean with values from query parameters. At the moment the defaults are passed to the Data method.
             DataBean b = new DataBean();
 
-            return getData(lang, new ArrayList<String>(){{add(domainCode);}}, datasource, api_key, client_key, output_type,
+            return getData(lang, new ArrayList<String>(){{add(domainCode);}},
+                    datasource,
+                    api_key,
+                    client_key,
+                    output_type,
                     filters.get("List1Codes"),
                     filters.get("List2Codes"),
                     filters.get("List3Codes"),
@@ -825,15 +859,22 @@ public class V10Data {
                     filtersCS.get("List5AltCodes"),
                     filtersCS.get("List6AltCodes"),
                     filtersCS.get("List7AltCodes"),
-                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
-                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(),
-                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit());
+                    // TODO: this should be set in the request
+                   /* group_by, order_by, operator,
+                    page_size, decimal_places, page_number, limit,
+                    null_values, show_codes, show_flags, show_unit,*/
+                   b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                   b.getPage_size(),  b.getDecimal_places(), b.getPage_number(), b.getLimit(),
+                   b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
+                   pivot
+            );
 
 
-            } catch (Exception e) {
+        } catch (Exception e) {
+            LOGGER.error("Exception:" + e.getMessage());
             /* TODO: instead of the log should be used an error response status different from each request error.
-            /* TODO: i.e. 400 for a Bad Request. https://it.wikipedia.org/wiki/Codici_di_stato_HTTP */
-            return Response.status(500).entity(e.toString()).build();
+            /* TODO: i.e. 400 for a Bad Request. https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
+            return Response.status(400).entity(e.getMessage()).build();
         }
 
         /* Stream result */

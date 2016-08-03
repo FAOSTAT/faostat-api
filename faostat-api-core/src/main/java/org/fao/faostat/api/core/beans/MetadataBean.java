@@ -370,6 +370,10 @@ public class MetadataBean {
 
     private List<Map<String, Object>> dsd;
 
+    private Boolean pivot = false;
+
+    private Boolean full = false;
+
     private Long processingTime;
 
     public MetadataBean() {
@@ -379,6 +383,7 @@ public class MetadataBean {
         this.setOutputType(OUTPUTTYPE.OBJECTS);
         this.setProcedureParameters(new HashMap<String, Object>());
         this.setDsd(new ArrayList<Map<String, Object>>());
+        this.setClientKey(null);
     }
 
     public MetadataBean(String datasource, String apiKey, String clientKey, String outputType) {
@@ -454,6 +459,14 @@ public class MetadataBean {
         this.procedureParameters = procedureParameters;
     }
 
+    public Boolean getPivot() {
+        return pivot;
+    }
+
+    public void setPivot(Boolean pivot) {
+        this.pivot = pivot;
+    }
+
     public List<Map<String, Object>> getDsd() {
         return dsd;
     }
@@ -470,6 +483,14 @@ public class MetadataBean {
         this.processingTime = processingTime;
     }
 
+    public Boolean getFull() { return full; }
+
+    public void setFull(Boolean full) {
+        if (full != null ) {
+            this.full = full;
+        }
+    }
+
     @Override
     public String toString() {
         return "MetadataBean{" +
@@ -480,6 +501,8 @@ public class MetadataBean {
                 ", blackList=" + blackList +
                 ", whiteList=" + whiteList +
                 ", procedureParameters=" + procedureParameters +
+                ", pivot=" + pivot +
+                ", full=" + full +
                 ", dsd=" + dsd +
                 ", processingTime=" + processingTime +
                 '}';

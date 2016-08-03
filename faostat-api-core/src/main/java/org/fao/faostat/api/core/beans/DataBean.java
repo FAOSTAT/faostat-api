@@ -385,7 +385,9 @@ public class DataBean {
 
     private int show_flags = 1;
 
-    private int show_unit = -1;
+    private int show_unit = 1;
+
+    private boolean pivot = false;
 
     public List<String> getDomain_codes() {
         return domain_codes;
@@ -522,6 +524,10 @@ public class DataBean {
     public void setShow_unit(int show_unit) {
         this.show_unit = show_unit;
     }
+
+    public boolean isPivot() { return pivot;}
+
+    public void setPivot(boolean pivot) {this.pivot = pivot;}
 
     @Override
     public String toString() {

@@ -367,7 +367,8 @@ public class V10Dimensions {
                                   @QueryParam("datasource") String datasource,
                                   @QueryParam("api_key") String api_key,
                                   @QueryParam("client_key") String client_key,
-                                  @QueryParam("output_type") String output_type
+                                  @QueryParam("output_type") String output_type,
+                                  @QueryParam("full") boolean full
     ) {
 
         /* Init Core library. */
@@ -380,6 +381,9 @@ public class V10Dimensions {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
+
+        // set full
+        metadataBean.setFull(full);
 
         //Report Code
         // Workaround for the dimension request
