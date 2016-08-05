@@ -341,14 +341,31 @@
  */
 package org.fao.faostat.api.web.rest;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
+
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Suite;
+import org.springframework.test.annotation.Repeat;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
+
+
+import javax.ws.rs.core.MultivaluedMap;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -356,22 +373,154 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
+@RunWith(Parameterized.class)
 public class TestFAOSTATAPI extends JerseyTest {
 
-    public TestFAOSTATAPI() {
-//        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
-//                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
-//                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
-//                .requestListenerClass(RequestContextListener.class).build());
+    @Parameterized.Parameter
+    public String language;
+
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
     }
 
-//    @Test
-//    public void testGetSchema(){
-//        WebResource ws = resource().path("v1.0/");
-//        ClientResponse response = ws.get(ClientResponse.class);
-//        assertEquals(200, response.getStatus());
-//        String out = response.getEntity(String.class);
-//        assertNotNull(out);
-//    }
+    public TestFAOSTATAPI() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+
+    }
+
+    @Test
+    public void testGetSchemaAPI(){
+        WebResource ws = resource().path("/");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testDimensionsAPI(){
+        WebResource ws = resource().path("/" + language + "/dimensions/QC");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testCodesAPI(){
+        WebResource ws = resource().path("/" + language + "/codes/area/QC");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testDataGetAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("year", "2010");
+        params.add("element", "2510");
+        params.add("item", "27");
+        WebResource ws = resource()
+                .path("/en/data/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
+
+    }
+
+    @Test
+    public void testGroupsAndDomainsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/groupsanddomains");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("group_name"));
+        assertEquals(true, oData.has("group_code"));
+        assertEquals(true, oData.has("domain_code"));
+        assertEquals(true, oData.has("domain_name"));
+        assertEquals(true, oData.has("date_update"));
+
+    }
+
+    @Test
+    public void testGroupsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/groups");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+
+    }
+
+    @Test
+    public void testDomainsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/domains");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+        assertEquals(true, oData.has("date_update"));
+
+    }
+
+    @Test
+    public void testDomainsWithGroupCodeAPI(){
+
+        WebResource ws = resource().path("/" + language + "/domains/Q");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+        assertEquals(true, oData.has("date_update"));
+
+    }
+
+
+    @Test
+    public void testMetadataAPI(){
+
+        WebResource ws = resource().path("/" + language + "/metadata/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+
+    }
 
 }
