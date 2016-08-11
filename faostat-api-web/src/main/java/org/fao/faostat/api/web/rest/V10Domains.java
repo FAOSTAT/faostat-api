@@ -351,6 +351,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -408,13 +410,13 @@ public class V10Domains {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("group_code", group_code);
-        metadataBean.setBlackList(blacklist);
-        metadataBean.setWhiteList(whitelist);
 
         // TODO: move to an ENUM (if really needed to set a default. This should be hold in the DB)
         metadataBean.addParameter("section", "download");
 
-        LOGGER.info(metadataBean);
+       /* Set white/blacklist. */
+        metadataBean.setBlackList(parseArrayRequest(blacklist));
+        metadataBean.setWhiteList(parseArrayRequest(whitelist));
 
         /* Query the DB and return the results. */
         try {
@@ -434,6 +436,18 @@ public class V10Domains {
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
+
+    }
+
+    private List<String> parseArrayRequest(List<String> l) {
+
+        List<String> r = new ArrayList<String>();
+
+        for(String v : l) {
+            r.addAll(Arrays.asList(v.split(",")));
+        }
+
+        return r;
 
     }
 

@@ -341,6 +341,8 @@
  */
 package org.fao.faostat.api.core.jdbc;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -476,7 +478,7 @@ public class JDBCIterable implements Iterator<List<String>> {
 
     public String nextJSON() {
 
-        JSONObject obj = new JSONObject();
+        /*JSONObject obj = new JSONObject();
 
         if (this.isHasNext()) {
             try {
@@ -508,13 +510,16 @@ public class JDBCIterable implements Iterator<List<String>> {
             }
         }
 
-        return obj.toString();
+        return obj.toString();*/
+
+        Gson gson = new Gson();
+        return gson.toJson(nextMap());
 
     }
 
     public Map<String, Object> nextMap() {
 
-        Map<String, Object> out = new HashMap<String, Object>();
+        Map<String, Object> out = new LinkedHashMap<String, Object>();
         String value;
         String columnType;
 
@@ -577,6 +582,8 @@ public class JDBCIterable implements Iterator<List<String>> {
                             sb.append(Double.parseDouble(value));
                         } else if (columnType.endsWith("Integer")) {
                             sb.append(Integer.parseInt(value));
+                        } else if (columnType.endsWith("Long")) {
+                            sb.append(Long.parseLong(value));
                         } else if (columnType.endsWith("Date")) {
                             sb.append("\"").append(new Date(value).toString()).append("\"");
                         } else {
@@ -620,6 +627,7 @@ public class JDBCIterable implements Iterator<List<String>> {
         return sb.toString();
     }
 
+    /* @Deprecated */
     public String nextArray() {
 
         String s = "[";
@@ -636,6 +644,8 @@ public class JDBCIterable implements Iterator<List<String>> {
                             s += Double.parseDouble(value);
                         } else if (columnType.endsWith("Integer")) {
                             s += Integer.parseInt(value);
+                        } else if (columnType.endsWith("Long")) {
+                            s += Long.parseLong(value);
                         } else if (columnType.endsWith("Date")) {
                             s += new Date(value).toString();
                         } else {

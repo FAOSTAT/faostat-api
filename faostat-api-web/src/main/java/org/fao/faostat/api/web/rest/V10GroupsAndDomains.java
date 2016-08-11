@@ -357,7 +357,7 @@ import javax.ws.rs.core.StreamingOutput;
  * */
 @Component
 @Path("/{lang}/groupsanddomains/")
-@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
+@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8"})
 public class V10GroupsAndDomains {
 
     @GET

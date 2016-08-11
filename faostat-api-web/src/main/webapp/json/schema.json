@@ -1329,178 +1329,6 @@
       }
     },
     {
-      "href": "{lang}/abbreviations/",
-      "method": "GET",
-      "rel": "abbreviations",
-      "title": "Abbreviations",
-      "description": "FAOSTAT abbreviations.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Abbreviations Output",
-        "description": "Output of 'abbreviations' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "object",
-            "title": "Abbreviations",
-            "description": "FAOSTAT abbreviations.",
-            "properties": {
-              "code": {
-                "$ref": "#/definitions/code"
-              },
-              "label": {
-                "$ref": "#/definitions/label"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/domaintabs/{domain_code}/",
-      "method": "GET",
-      "rel": "domaintabs",
-      "title": "Domain Tabs",
-      "description": "FAOSTAT domain tabs.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          },
-          "domain_code": {
-            "$ref": "#/definitions/code"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Domain Tabs Output",
-        "description": "Output of 'domaintabs' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "array",
-            "title": "Domain Tabs",
-            "description": "FAOSTAT domain tabs.",
-            "items": {
-              "type": "object",
-              "title": "Domain Tab",
-              "description": "Single tab of the domain",
-              "properties": {
-                "DomainCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "TabCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "TabName": {
-                  "$ref": "#/definitions/label"
-                },
-                "Ord": {
-                  "$ref": "#/definitions/ord"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/domainreports/{domain_code}/",
-      "method": "GET",
-      "rel": "domainreports",
-      "title": "Domain Reports",
-      "description": "FAOSTAT domain reports.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          },
-          "domain_code": {
-            "$ref": "#/definitions/code"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Domain Reports Output",
-        "description": "Output of 'domainreports' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "array",
-            "title": "Domain Reports",
-            "description": "FAOSTAT domain reports.",
-            "items": {
-              "type": "object",
-              "title": "Domain Report",
-              "description": "Single report of the domain",
-              "properties": {
-                "DomainCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "ReportCode": {
-                  "$ref": "#/definitions/code"
-                },
-                "ReportName": {
-                  "$ref": "#/definitions/label"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "href": "{lang}/groupsanddomains",
       "method": "GET",
       "rel": "groupsanddomains",
@@ -1560,162 +1388,6 @@
                 "Ord": {
                   "$ref": "#/definitions/ord"
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/glossary/",
-      "method": "GET",
-      "rel": "glossary",
-      "title": "Glossary",
-      "description": "FAOSTAT glossary.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Glossary Output",
-        "description": "Output of 'glossary' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "object",
-            "title": "Glossary",
-            "description": "FAOSTAT glossary.",
-            "properties": {
-              "code": {
-                "$ref": "#/definitions/code"
-              },
-              "label": {
-                "$ref": "#/definitions/label"
-              },
-              "source": {
-                "$ref": "#/definitions/description"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/units/",
-      "method": "GET",
-      "rel": "units",
-      "title": "Units",
-      "description": "FAOSTAT units.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Units Output",
-        "description": "Output of 'units' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "object",
-            "title": "Units",
-            "description": "List of FAOSTAT units.",
-            "properties": {
-              "code": {
-                "$ref": "#/definitions/code"
-              },
-              "label": {
-                "$ref": "#/definitions/label"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/classifications/{domain_code}/",
-      "method": "GET",
-      "rel": "classifications",
-      "title": "Classifications",
-      "description": "FAOSTAT classifications.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          },
-          "domain_code": {
-            "$ref": "#/definitions/code"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Classifications Output",
-        "description": "Output of 'classifications' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "object",
-            "title": "Classifications",
-            "description": "List of FAOSTAT classifications.",
-            "properties": {
-              "code": {
-                "$ref": "#/definitions/code"
-              },
-              "label": {
-                "$ref": "#/definitions/label"
-              },
-              "description": {
-                "$ref": "#/definitions/description"
               }
             }
           }
@@ -1787,60 +1459,6 @@
                 "type": "string",
                 "title": "Estimation",
                 "description": "Estimation."
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "href": "{lang}/methodologies/",
-      "method": "GET",
-      "rel": "methodologies",
-      "title": "Methodologies",
-      "description": "List of FAOSTAT methodologies.",
-      "schema": {
-        "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
-          "output_type": {
-            "$ref": "#/definitions/output_type"
-          },
-          "api_key": {
-            "$ref": "#/definitions/api_key"
-          },
-          "client_key": {
-            "$ref": "#/definitions/client_key"
-          },
-          "lang": {
-            "$ref": "#/definitions/lang"
-          }
-        }
-      },
-      "targetSchema": {
-        "type": "object",
-        "name": "Schema Output",
-        "description": "Output of 'methodologies' service.",
-        "properties": {
-          "metadata": {
-            "$ref": "#/definitions/metadata"
-          },
-          "data": {
-            "type": "array",
-            "title": "Methodologies",
-            "description": "List of FAOSTAT methodologies.",
-            "items": {
-              "type": "object",
-              "title": "Methodology",
-              "description": "FAOSTAT methodology",
-              "properties": {
-                "code": {
-                  "$ref": "#/definitions/code"
-                },
-                "label": {
-                  "$ref": "#/definitions/label"
-                }
               }
             }
           }
@@ -1967,46 +1585,11 @@
           "blacklist": {
             "$ref": "#/definitions/blacklist"
           },
-          "group_subdimensions": {
-            "type": "boolean",
-            "title": "Group Subdimensions",
-            "description": "Determines whether codes must be grouped in the final output. For instance, the 'areagroup' codelist returns three different objects within 'data': 'countries', 'regions' and 'specialgroups'.",
-            "default": false
-          },
-          "subcodelists": {
-            "type": "array",
-            "title": "Sub Codelists",
-            "description": "List of sub codelists to be included in the output.",
-            "items": {
-              "$ref": "#/definitions/code"
-            },
-            "enum": [
-              "areas",
-              "countries",
-              "regions",
-              "specialgroups",
-              "items",
-              "itemsaggregated",
-              "elements",
-              "years"
-            ],
-            "default": null
-          },
           "show_lists": {
             "type": "boolean",
             "title": "Show Lists",
             "description": "Determines whether codes representing lists must be included in the output.",
             "default": true
-          },
-          "show_full_metadata": {
-            "type": "boolean",
-            "title": "Show Full Metadata",
-            "description": "Determines whether the full metadata must be included in the output. A shorter version will be used otherwise.",
-            "default": true
-          },
-          "ord": {
-            "$ref": "#/definitions/ord",
-            "default": null
           }
         }
       },
@@ -2378,7 +1961,7 @@
       }
     },
     {
-      "href": "{lang}/definitions/{domain_code}",
+      "href": "{lang}/definitions",
       "method": "GET",
       "rel": "definitions",
       "title": "definitions",
@@ -2404,11 +1987,63 @@
       }
     },
     {
-      "href": "{lang}/definitions/{domain_code}/{type}",
+      "href": "{lang}/definitions/{type}",
       "method": "GET",
       "rel": "definitions_by_type",
       "title": "definitions by type",
       "description": "FAOSTAT definitions by type.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/definitions/domain/{domain_code}",
+      "method": "GET",
+      "rel": "definitions_domain",
+      "title": "definitions domain",
+      "description": "FAOSTAT domain definitions.",
+      "schema": {
+        "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "api_key": {
+            "$ref": "#/definitions/api_key"
+          },
+          "client_key": {
+            "$ref": "#/definitions/client_key"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/definitions/domain/{domain_code}/{type}",
+      "method": "GET",
+      "rel": "definitions_domain_by_type",
+      "title": "definitions domain by type",
+      "description": "FAOSTAT domain definitions by type.",
       "schema": {
         "properties": {
           "datasource": {

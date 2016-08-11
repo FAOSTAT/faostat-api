@@ -351,6 +351,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -383,8 +385,9 @@ public class V10Groups {
 
         /* Store white/blacklists. */
         // TODO: is it needed here?
-        metadataBean.setBlackList(blacklist);
-        metadataBean.setWhiteList(whitelist);
+        /* Set white/blacklist. */
+        metadataBean.setBlackList(parseArrayRequest(blacklist));
+        metadataBean.setWhiteList(parseArrayRequest(whitelist));
 
         // TODO: move to an ENUM (if really needed to set a default. This should be hold in the DB)
         metadataBean.addParameter("section", "download");
@@ -408,6 +411,18 @@ public class V10Groups {
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
+
+    }
+
+    private List<String> parseArrayRequest(List<String> l) {
+
+        List<String> r = new ArrayList<String>();
+
+        for(String v : l) {
+            r.addAll(Arrays.asList(v.split(",")));
+        }
+
+        return r;
 
     }
 

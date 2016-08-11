@@ -374,7 +374,7 @@ public class DatasourceBean {
         try {
 
             if (properties == null) {
-                LOGGER.info("properties are null! " +  properties);
+                LOGGER.info("DATASOURCE.properties are null! " +  properties);
                 ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                 properties = new Properties();
                 InputStream input = classloader.getResourceAsStream("datasources.properties");
@@ -387,7 +387,7 @@ public class DatasourceBean {
                     }
                 }
             }else{
-                LOGGER.info("properties already set " +  properties);
+                LOGGER.info("DATASOURCE.properties already set " +  properties);
             }
 
             this.setDbName(properties.getProperty(datasource + ".dbname"));
@@ -395,6 +395,7 @@ public class DatasourceBean {
             this.setPassword(properties.getProperty(datasource + ".pwd"));
             this.setUrl(properties.getProperty(datasource + ".url"));
             this.setUsername(properties.getProperty(datasource + ".user"));
+
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {

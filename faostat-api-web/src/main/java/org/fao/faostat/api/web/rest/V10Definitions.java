@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
@@ -358,18 +359,104 @@ import javax.ws.rs.core.StreamingOutput;
  * */
 @Component
 @Path("/{lang}/definitions")
-//@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8"})
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Definitions {
 
+    private static final Logger LOGGER = Logger.getLogger(V10Definitions.class);
+
     @GET
-    @Path("/{domain_code}/{metadata_type}")
-    public Response getDefinition(@PathParam("lang") String lang,
-                                  @PathParam("domain_code") String domain_code,
-                                  @PathParam("metadata_type") String metadata_type,
-                                  @QueryParam("datasource") String datasource,
-                                  @QueryParam("api_key") String api_key,
-                                  @QueryParam("client_key") String client_key,
-                                  @QueryParam("output_type") String output_type) {
+    public Response getDefinitions(@PathParam("lang") String lang,
+                                   @QueryParam("datasource") String datasource,
+                                   @QueryParam("api_key") String api_key,
+                                   @QueryParam("client_key") String client_key,
+                                   @QueryParam("output_type") String output_type) {
+
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("definitions", datasourceBean, metadataBean);
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+    @GET
+    @Path("/{definition_type}")
+    public Response getDefinitionsByType(@PathParam("lang") String lang,
+                                         @PathParam("definition_type") String definition_type,
+                                         @QueryParam("datasource") String datasource,
+                                         @QueryParam("api_key") String api_key,
+                                         @QueryParam("client_key") String client_key,
+                                         @QueryParam("output_type") String output_type) {
+
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("definition_type", definition_type);
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("definitions_by_type", datasourceBean, metadataBean);
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+    @GET
+    @Path("/domain/{domain_code}")
+    public Response getDefinitionsDomain(@PathParam("lang") String lang,
+                                               @PathParam("domain_code") String domain_code,
+                                               @QueryParam("datasource") String datasource,
+                                               @QueryParam("api_key") String api_key,
+                                               @QueryParam("client_key") String client_key,
+                                               @QueryParam("output_type") String output_type) {
 
 
         /* Init Core library. */
@@ -385,12 +472,6 @@ public class V10Definitions {
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
-        metadataBean.addParameter("metadata_type", metadata_type);
-
-        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
-            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
-        }
 
         /* Query the DB and return the results. */
         try {
@@ -399,9 +480,108 @@ public class V10Definitions {
             StreamBuilder sb = new StreamBuilder();
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("definition_by_type", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createOutputStream("definitions_domain", datasourceBean, metadataBean);
 
             /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+
+    @Path("/domain/{domain_code}/{definition_type}")
+    public Response getDefinitionsDomainByType(@PathParam("lang") String lang,
+                                               @PathParam("domain_code") String domain_code,
+                                               @PathParam("definition_type") String definition_type,
+                                               @QueryParam("datasource") String datasource,
+                                               @QueryParam("api_key") String api_key,
+                                               @QueryParam("client_key") String client_key,
+                                               @QueryParam("output_type") String output_type) {
+
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("definition_type", definition_type);
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Stream builder. */
+            StreamBuilder sb = new StreamBuilder();
+
+            /* Query the DB and create an output stream. */
+            StreamingOutput stream = sb.createOutputStream("definitions_domain", datasourceBean, metadataBean);
+
+            /* Stream result */
+            return Response.status(200).entity(stream).build();
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+
+
+    /*@GET
+    @Path("/{domain_code}/{metadata_type}")
+    public Response getDefinition(@PathParam("lang") String lang,
+                                  @PathParam("domain_code") String domain_code,
+                                  @PathParam("metadata_type") String metadata_type,
+                                  @QueryParam("datasource") String datasource,
+                                  @QueryParam("api_key") String api_key,
+                                  @QueryParam("client_key") String client_key,
+                                  @QueryParam("output_type") String output_type) {
+
+
+        *//* Init Core library. *//*
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        *//* Store user preferences. *//*
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        *//* Datasource bean. *//*
+        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+        *//* Store procedure parameters. *//*
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_code", domain_code);
+        metadataBean.addParameter("metadata_type", metadata_type);
+
+        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
+        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
+            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        }
+
+        *//* Query the DB and return the results. *//*
+        try {
+
+            *//* Stream builder. *//*
+            StreamBuilder sb = new StreamBuilder();
+
+            *//* Query the DB and create an output stream. *//*
+            StreamingOutput stream = sb.createOutputStream("definition_by_type", datasourceBean, metadataBean);
+
+            *//* Stream result *//*
             return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (WebApplicationException e) {
@@ -422,17 +602,17 @@ public class V10Definitions {
                                  @QueryParam("output_type") String output_type) {
 
 
-        /* Init Core library. */
+        *//* Init Core library. *//*
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
-        /* Store user preferences. */
+        *//* Store user preferences. *//*
         MetadataBean metadataBean = new MetadataBean();
         metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
-        /* Datasource bean. */
+        *//* Datasource bean. *//*
         DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
-        /* Store procedure parameters. */
+        *//* Store procedure parameters. *//*
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_code", domain_code);
 
@@ -441,16 +621,16 @@ public class V10Definitions {
             produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
         }
 
-        /* Query the DB and return the results. */
+        *//* Query the DB and return the results. *//*
         try {
 
-            /* Stream builder. */
+            *//* Stream builder. *//*
             StreamBuilder sb = new StreamBuilder();
 
-            /* Query the DB and create an output stream. */
+            *//* Query the DB and create an output stream. *//*
             StreamingOutput stream = sb.createOutputStream("definition", datasourceBean, metadataBean);
 
-            /* Stream result */
+            *//* Stream result *//*
             return Response.status(200).entity(stream).type(produceType).build();
 
         } catch (WebApplicationException e) {
@@ -459,6 +639,6 @@ public class V10Definitions {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-    }
+    }*/
 
 }

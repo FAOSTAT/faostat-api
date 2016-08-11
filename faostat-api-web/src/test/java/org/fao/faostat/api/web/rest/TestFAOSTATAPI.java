@@ -342,11 +342,7 @@
 package org.fao.faostat.api.web.rest;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonArray;
+import com.google.gson.*;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -368,6 +364,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -420,6 +417,48 @@ public class TestFAOSTATAPI extends JerseyTest {
     }
 
     @Test
+    public void testCodesBlackListAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("blacklist", "2,3");
+
+        WebResource ws = resource()
+                .path("/" + language + "/codes/area/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        // check if codes are in the list
+        for(int i=0; i < a.size(); i++) {
+            String code = a.get(i).getAsJsonObject().get("code").getAsString();
+            assertNotEquals("2", code);
+            assertNotEquals("3", code);
+        }
+
+    }
+
+    @Test
+    public void testCodesWhiteListAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("whitelist", "2,3");
+
+        WebResource ws = resource()
+                .path("/" + language + "/codes/area/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(2, a.size());
+    }
+
+
+    @Test
     public void testDataGetAPI(){
 
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
@@ -427,6 +466,7 @@ public class TestFAOSTATAPI extends JerseyTest {
         params.add("year", "2010");
         params.add("element", "2510");
         params.add("item", "27");
+
         WebResource ws = resource()
                 .path("/en/data/QC")
                 .queryParams(params);
@@ -455,6 +495,7 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertEquals(true, oData.has("domain_code"));
         assertEquals(true, oData.has("domain_name"));
         assertEquals(true, oData.has("date_update"));
+        //assertEquals(true, oData.has("note"));
 
     }
 
@@ -488,6 +529,7 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertEquals(true, oData.has("code"));
         assertEquals(true, oData.has("label"));
         assertEquals(true, oData.has("date_update"));
+        //assertEquals(true, oData.has("note"));
 
     }
 
@@ -520,7 +562,165 @@ public class TestFAOSTATAPI extends JerseyTest {
         JsonArray a = o.get("data").getAsJsonArray();
         JsonObject oData =  a.get(0).getAsJsonObject();
 
+        assertEquals(true, oData.has("metadata_group_code"));
+        assertEquals(true, oData.has("metadata_label"));
+        assertEquals(true, oData.has("metadata_text"));
+        assertEquals(true, oData.has("domain_code"));
+        assertEquals(true, oData.has("metadata_code"));
+        assertEquals(true, oData.has("metadata_group_label"));
 
     }
+
+    @Test
+    public void testSearchAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("q", "rice");
+        WebResource ws = resource()
+                .path("/en/search")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("id"));
+        assertEquals(true, oData.has("rank"));
+        // TODO: this should be "label" in lowercase
+        assertEquals(true, oData.has("Label"));
+        assertEquals(true, oData.has("Code"));
+        assertEquals(true, oData.has("DomainCode"));
+
+    }
+
+    @Test
+    public void testSuggestionsAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("q", "rice");
+        WebResource ws = resource()
+                .path("/en/suggestions")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("id"));
+        assertEquals(true, oData.has("rank"));
+        assertEquals(true, oData.has("label"));
+
+    }
+
+    @Test
+    public void testBulkDownloadsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/bulkdownloads/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        // TODO: lowercase
+        assertEquals(true, oData.has("FileContent"));
+        assertEquals(true, oData.has("Type"));
+        assertEquals(true, oData.has("FileSizeUnit"));
+        assertEquals(true, oData.has("URL"));
+        assertEquals(true, oData.has("FileSize"));
+
+    }
+
+    @Test
+    public void testDocumentsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/documents/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        // TODO: lowercase
+        assertEquals(true, oData.has("FileTitle"));
+        assertEquals(true, oData.has("FileName"));
+        assertEquals(true, oData.has("CreatedDate"));
+
+        // TODO: remove
+        assertEquals(true, oData.has("DomainCode"));
+        assertEquals(true, oData.has("FilePath"));
+
+    }
+
+    @Test
+    public void testDefinitionsAPI(){
+
+        WebResource ws = resource().path("/" + language + "/definitions");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+
+    }
+
+    /*@Test
+    public void testDefinitionsByTypeAPI(){
+
+        WebResource ws = resource().path("/" + language + "/definitions/abbreviation");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+
+    }*/
+
+   /* @Test
+    public void testDefinitionsDomainAPI(){
+
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+    }*/
+
+   /* @Test
+    public void testDefinitionsDomainByTypeAPI(){
+
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC/area");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+
+    }*/
+
+
 
 }

@@ -360,17 +360,8 @@ public class QUERIES {
     public QUERIES() {
         this.setQueries(new HashMap<String, String>());
 
-//        this.getQueries().put("groups", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label FROM Domain D GROUP BY D.GroupCode, D.GroupName{{lang}}");
-//        this.getQueries().put("groups", "EXEC Warehouse.dbo.usp_GetGroups @lang = N'{{lang}}'");
-//        this.getQueries().put("domains", "SELECT D.DomainCode AS code, D.DomainName{{lang}} AS label, D.Ord AS ord FROM Domain D WHERE D.GroupCode = '{{group_code}}' ORDER BY D.Ord");
-//        this.getQueries().put("domainstree", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
         this.getQueries().put("groupsdomains", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
-
-//        this.getQueries().put("groupsanddomains", "SELECT D.GroupCode AS code, D.GroupName{{lang}} AS label, D.DomainCode, D.DomainName{{lang}}, D.Ord AS ord FROM Domain D ORDER BY D.Ord");
-
-//        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
         this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @ReportCode = N'{{report_code}}', @Lang = N'{{lang}}'");
-//        this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
         this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @ReportCode = N'{{report_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
 
         this.getQueries().put("methodologies", "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC");
@@ -388,21 +379,24 @@ public class QUERIES {
         this.getQueries().put("rankings", "EXEC Warehouse.dbo.usp_Rank @DomainCode='{{domain_codes}}', @lang='{{lang}}', @List1Codes='{{List1Codes}}', @List2Codes='{{List2Codes}}', @List3Codes='{{List3Codes}}', @List4Codes='{{List4Codes}}', @List5Codes='{{List5Codes}}', @List6Codes='{{List6Codes}}', @List7Codes='{{List7Codes}}', @FilterList={{filter_list}}, @RankType='{{rank_type}}', @NoResults={{results}}");
         this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
 
-        this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
-
         this.getQueries().put("suggestions", "EXEC Warehouse.dbo.usp_SearchSuggestions @query = '{{query}}', @lang = '{{lang}}'");
         this.getQueries().put("search", "EXEC Warehouse.dbo.usp_SearchResults @query = '{{query}}', @lang = '{{lang}}'");
-
-        this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
-        this.getQueries().put("domainreports", "EXEC Warehouse.dbo.usp_GetDomainReports @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
 
         this.getQueries().put("reportheaders", "EXECUTE Warehouse.dbo.usp_GetReportHead @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
         this.getQueries().put("reportdata", "EXECUTE Warehouse.dbo.usp_GetReportData @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
 
         this.getQueries().put("metadata", "EXEC Warehouse.dbo.usp_GetMetadataDomain @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
 
-        this.getQueries().put("definition", "EXEC Warehouse.dbo.usp_GetDomainMetadataTables @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
-        this.getQueries().put("definition_by_type", "EXEC Warehouse.dbo.usp_GetDomainMetadata @DomainCode = '{{domain_code}}', @MetadataType = '{{metadata_type}}', @Lang = '{{lang}}'");
+        this.getQueries().put("definitions", "EXEC Warehouse.dbo.usp_GetDefinitionTables @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_by_type", "EXEC Warehouse.dbo.usp_GetDefinition @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_domain", "EXEC Warehouse.dbo.usp_GetDomainDefinitionTables @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_domain_by_type", "EXEC Warehouse.dbo.usp_GetDomainDefinition @DomainCode = '{{domain_code}}', @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
+
+
+        // currently not used
+        this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
+        this.getQueries().put("domainreports", "EXEC Warehouse.dbo.usp_GetDomainReports @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
+        this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
 
     }
 
@@ -413,13 +407,12 @@ public class QUERIES {
                 String tmp = "\\{\\{" + key + "\\}\\}";
                 if (procedureParameters.get(key) != null) {
 
-/*
-                    LOGGER.info("-----------");
+/*                    LOGGER.info("-----------");
                     LOGGER.info(query);
                     LOGGER.info(tmp);
                     LOGGER.info(key);
-                    LOGGER.info(procedureParameters.get(key));
-*/
+                    LOGGER.info(procedureParameters.get(key));*/
+
 
                     if (procedureParameters.get(key) instanceof List) {
                         List<String> l = (List<String>)procedureParameters.get(key);
@@ -455,7 +448,7 @@ public class QUERIES {
     }
 
     private String escapeSpecialCharacters(String s) {
-       return s.replaceAll("(?=[]\\[+$&|!(){}^\"~*?:\\\\-])", "\\\\");
+        return s.replaceAll("(?=[]\\[+$&|!(){}^\"~*?:\\\\-])", "\\\\");
     }
 
     public Map<String, String> getQueries() {

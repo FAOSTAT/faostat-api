@@ -365,22 +365,12 @@ public class StreamBuilder {
         final StringBuilder log = new StringBuilder();
 
         /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        /* Check parameters. */
-        log.append("StreamBuilder\t").append("queryCode: ").append(queryCode).append("\n");
-        for (String key : metadataBean.getProcedureParameters().keySet()) {
-            log.append("StreamBuilder\t").append("key: ").append(key).append(", value: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
-        }
 
         try {
 
             /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
             final OutputBean out = faostatapiCore.query(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -724,16 +714,12 @@ public class StreamBuilder {
         final StringBuilder log = new StringBuilder();
 
         /* Initiate core library. */
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
 
         try {
 
             /* Query FAOSTAT. */
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
             final OutputBean out = faostatapiCore.queryDomains(queryCode, datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -778,14 +764,10 @@ public class StreamBuilder {
         try {
 
             /* Initiate core library. */
-            LOGGER.info("initiate api...");
             FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-            LOGGER.info("initiate api: done");
 
             /* Query FAOSTAT. */
-            LOGGER.info("initiate output...");
             final OutputBean out = faostatapiCore.queryCodes(datasourceBean, metadataBean);
-            LOGGER.info("initiate output: done");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -802,16 +784,12 @@ public class StreamBuilder {
         StringBuilder log = new StringBuilder();
 
         /* Initiate core library. */
-        LOGGER.info("initiate api...");
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        LOGGER.info("initiate api: done");
 
         try {
 
             /* Query FAOSTAT. */
-            LOGGER.info("initiate output...");
             final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
-            LOGGER.info("initiate output: done");
 
             /* Switch the output format. */
             return formatOutput(out);
@@ -848,7 +826,7 @@ public class StreamBuilder {
             sb.append("\"dsd\": [");
             for (int a = 0; a < o.getDsd().size(); a += 1) {
                 sb.append("{");
-                HashMap<String, Object> col = (HashMap<String, Object>)o.getDsd().get(a);
+                LinkedHashMap<String, Object> col = (LinkedHashMap<String, Object>)o.getDsd().get(a);
                 int counter = 0;
                 for (String key : col.keySet()) {
                     sb.append("\"").append(key).append("\": \"").append(col.get(key)).append("\"");

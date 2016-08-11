@@ -352,6 +352,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -377,9 +379,9 @@ public class V10Codes {
 //                             @QueryParam("show_lists") String show_lists,
                              // TODO: the defaultvalue should be in the bean?
                              @QueryParam("show_lists") @DefaultValue("true") String show_lists,
-                             @QueryParam("show_full_metadata") boolean show_full_metadata,
-                             @QueryParam("group_subdimensions") boolean group_subdimensions,
-                             @QueryParam("subdimensions") String subdimensions,
+                             //@QueryParam("show_full_metadata") boolean show_full_metadata,
+                             //@QueryParam("group_subdimensions") boolean group_subdimensions,
+                             //@QueryParam("subdimensions") String subdimensions,
                              @QueryParam("whitelist") List<String> whitelist,
                              @QueryParam("blacklist") List<String> blacklist,
                              @QueryParam("full") boolean full
@@ -398,14 +400,8 @@ public class V10Codes {
         metadataBean.addParameter("domain_code", domain_code);
         metadataBean.addParameter("id", id);
         metadataBean.addParameter("show_lists", (show_lists == null || show_lists.isEmpty())? true : show_lists);
-        metadataBean.addParameter("show_full_metadata", String.valueOf(show_full_metadata));
-        metadataBean.addParameter("subdimensions", subdimensions);
         metadataBean.addParameter("whitelist", whitelist);
         metadataBean.addParameter("blacklist", blacklist);
-        metadataBean.addParameter("group_subdimensions", String.valueOf(group_subdimensions));
-
-//        LOGGER.info("metadataBean: -" + metadataBean + "-");
-
         //Report Code
         // Workaround for the dimension request
         // this is the default value accepted by the Store Procedure
@@ -415,8 +411,8 @@ public class V10Codes {
         metadataBean.addParameter("report_code", report_code);
 
         /* Set white/blacklist. */
-        metadataBean.setBlackList(blacklist);
-        metadataBean.setWhiteList(whitelist);
+        metadataBean.setBlackList(parseArrayRequest(blacklist));
+        metadataBean.setWhiteList(parseArrayRequest(whitelist));
 
         /* Query the DB and return the results. */
         try {
@@ -436,6 +432,21 @@ public class V10Codes {
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
+
+    }
+
+    // this is used to passed the data as
+    // blacklist=6110&blacklist=6108
+    // or blacklist=6110,6108
+    private List<String> parseArrayRequest(List<String> l) {
+
+        List<String> r = new ArrayList<String>();
+
+        for(String v : l) {
+            r.addAll(Arrays.asList(v.split(",")));
+        }
+
+        return r;
 
     }
 
