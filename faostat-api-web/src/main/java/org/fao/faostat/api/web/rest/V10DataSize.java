@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
@@ -360,6 +361,8 @@ import java.util.List;
 @Path("/{lang}/datasize")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10DataSize {
+
+    private static final Logger LOGGER = Logger.getLogger(V10DataSize.class);
 
     @POST
     public Response getData(@PathParam("lang") String lang,
@@ -415,10 +418,12 @@ public class V10DataSize {
             StreamingOutput stream = sb.createOutputStream("data_size", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            return Response.status(500).entity(e).build();
+            return Response.status(500).entity(e.getMessage()).build();
         }
 
     }

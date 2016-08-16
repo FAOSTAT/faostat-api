@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
@@ -362,6 +363,8 @@ import java.util.List;
 @Path("/{lang}/groups/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Groups {
+
+    private static final Logger LOGGER = Logger.getLogger(V10Groups.class);
 
     @GET
     public Response getGroups(@PathParam("lang") String lang,
@@ -406,8 +409,10 @@ public class V10Groups {
           //  StreamingOutput stream = sb.createDomainsOutputStream("groups", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }

@@ -493,6 +493,7 @@ public class FAOSTATAPICore {
             /* Group Dimensions. */
             List<Map<String, Object>> output = new ArrayList<>();
             String currentList = tmp.get(0).get("ListBoxNo").toString();
+            LOGGER.info("currentList: " + currentList);
             Map<String, Object> group = new LinkedHashMap<>();
             //group.put("ord", Integer.parseInt(currentList));
             //group.put("parameter", "List" + currentList + "Codes");
@@ -500,11 +501,17 @@ public class FAOSTATAPICore {
                 // TODO: the parameter should come from a constant or better from the DB!
                 group.put("parameter", "List" + currentList + "Codes");
             }
+            LOGGER.info("isFull: " + isFull);
             group.put("id", tmp.get(0).get("VarType").toString());
             group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (int i = 0; i < tmp.size(); i += 1) {
+
+                LOGGER.info(tmp.get(i));
+
                 if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
+
+                    LOGGER.info("IF");
 
                     Map<String, Object> m = new LinkedHashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
@@ -514,10 +521,14 @@ public class FAOSTATAPICore {
                     //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     //m.put("parameter", "List" + currentList + "Codes");
 
+                    LOGGER.info(m);
+
                     // options
                     Map<String, Object> o = new LinkedHashMap<>();
                     o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
                     o.put("type", tmp.get(i).get("ListBoxFormat").toString());
+
+                    LOGGER.info(o);
 
                     if ( isFull ) {
                         // TODO: the parameter should come from a constant or better from the DB!
@@ -534,8 +545,13 @@ public class FAOSTATAPICore {
                         }
                     }
 
+                    LOGGER.info("coding_systems");
+
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
+
+                    LOGGER.info("ELSE");
+
                     output.add(group);
                     currentList = tmp.get(i).get("ListBoxNo").toString();
                     group = new LinkedHashMap<>();
@@ -596,7 +612,8 @@ public class FAOSTATAPICore {
             return out;
 
         } catch (Exception e) {
-            throw new Exception(log.toString());
+            LOGGER.error(e);
+            throw new Exception(e.getMessage());
         }
 
     }

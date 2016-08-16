@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DatasourceBean;
@@ -361,6 +362,8 @@ import java.util.List;
 @Path("/{lang}/rankings")
 //@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10Rankings {
+
+    private static final Logger LOGGER = Logger.getLogger(V10Rankings.class);
 
     @POST
     public Response getData(@PathParam("lang") String lang,
@@ -426,10 +429,12 @@ public class V10Rankings {
             StreamingOutput stream = sb.createOutputStreamRankings("rankings", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).type(produceType).build();
+            return Response.ok(stream).type(produceType).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            return Response.status(500).entity(e).build();
+            return Response.status(500).entity(e.getMessage()).build();
         }
 
     }

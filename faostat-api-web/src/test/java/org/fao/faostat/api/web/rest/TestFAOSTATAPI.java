@@ -386,9 +386,10 @@ public class TestFAOSTATAPI extends JerseyTest {
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
                 .requestListenerClass(RequestContextListener.class).build());
-
     }
 
+
+    // Schema
     @Test
     public void testGetSchemaAPI(){
         WebResource ws = resource().path("/");
@@ -398,6 +399,8 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertNotNull(out);
     }
 
+
+    // Dimensions
     @Test
     public void testDimensionsAPI(){
         WebResource ws = resource().path("/" + language + "/dimensions/QC");
@@ -407,6 +410,8 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertNotNull(out);
     }
 
+
+    // Codes
     @Test
     public void testCodesAPI(){
         WebResource ws = resource().path("/" + language + "/codes/area/QC");
@@ -458,6 +463,29 @@ public class TestFAOSTATAPI extends JerseyTest {
     }
 
 
+    // Data
+/*    @Test
+    public void testDataBeanAPI(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("domain_codes", "GT");
+        params.add("List1Codes", "131");
+        params.add("List2Codes", "7231");
+        params.add("List3Codes", "5058");
+        params.add("List4Codes", "2014");
+
+        WebResource ws = resource()
+                .path("/en/data/bean")
+                .queryParams(params);
+
+        String response =  ws.post(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
+
+    }*/
+
     @Test
     public void testDataGetAPI(){
 
@@ -479,6 +507,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Groups and Domains
     @Test
     public void testGroupsAndDomainsAPI(){
 
@@ -551,6 +580,7 @@ public class TestFAOSTATAPI extends JerseyTest {
     }
 
 
+    // Metadata
     @Test
     public void testMetadataAPI(){
 
@@ -571,6 +601,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Search
     @Test
     public void testSearchAPI(){
 
@@ -596,6 +627,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Suggestions
     @Test
     public void testSuggestionsAPI(){
 
@@ -618,6 +650,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Bulk Downloads
     @Test
     public void testBulkDownloadsAPI(){
 
@@ -638,6 +671,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Documents
     @Test
     public void testDocumentsAPI(){
 
@@ -660,6 +694,7 @@ public class TestFAOSTATAPI extends JerseyTest {
 
     }
 
+    // Definitions
     @Test
     public void testDefinitionsAPI(){
 

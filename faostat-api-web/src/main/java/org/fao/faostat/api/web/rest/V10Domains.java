@@ -366,8 +366,6 @@ public class V10Domains {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
-    //private static final Logger LOGGER = Logger.getLogger(V10Data.class);
-
     @GET
     @Path("/{group_code}/")
     public Response getDomainsByGroup(@PathParam("lang") String lang,
@@ -384,6 +382,8 @@ public class V10Domains {
 
             return getDomains(lang, group_code, blacklist, whitelist, datasource, api_key, client_key, output_type);
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
@@ -431,8 +431,10 @@ public class V10Domains {
             StreamingOutput stream = sb.createDomainsOutputStream("groupsdomains", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }

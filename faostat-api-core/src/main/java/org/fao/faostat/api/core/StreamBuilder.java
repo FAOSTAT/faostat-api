@@ -347,6 +347,7 @@ import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.beans.OutputBean;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
 import java.util.*;
@@ -413,8 +414,11 @@ public class StreamBuilder {
 
     }
 
+    // TODO: make it more generic
     private StreamingOutput exceptionHandler(final Exception e, final StringBuilder log) {
-        return new StreamingOutput() {
+        LOGGER.error(e + " " + log);
+        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+       /* return new StreamingOutput() {
             @Override
             public void write(OutputStream os) throws IOException, WebApplicationException {
                 Writer writer = new BufferedWriter(new OutputStreamWriter(os));
@@ -425,7 +429,7 @@ public class StreamBuilder {
                 writer.flush();
                 writer.close();
             }
-        };
+        };*/
     }
 
     private StreamingOutput createOutputStreamCSV(final OutputBean out) throws Exception {
@@ -454,7 +458,6 @@ public class StreamBuilder {
                 while (out.getData().hasNextList()) {
                     List<String> l = out.getData().nextList();
                     for (int i = 0; i < l.size(); i += 1) {
-//                        System.out.println(l.get(i));
                         writer.write("\"" + l.get(i) + "\"");
                         if (i < l.size() - 1) {
                             writer.write(",");

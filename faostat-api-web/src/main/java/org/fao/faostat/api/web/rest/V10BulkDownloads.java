@@ -393,8 +393,10 @@ public class V10BulkDownloads {
             StreamingOutput stream = sb.createOutputStream("bulkdownloads", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();
         }

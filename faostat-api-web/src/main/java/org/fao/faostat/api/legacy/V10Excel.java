@@ -339,54 +339,43 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
-import com.google.gson.Gson;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.beans.MetadataBean;
-import org.fao.faostat.api.core.beans.TestBean;
+import com.sun.jersey.api.core.InjectParam;
+import org.fao.faostat.api.core.ExcelExporter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import java.util.Enumeration;
+import java.io.File;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
+ *
+ * Jersey configuration overrides any access to static files, so the Excel generation has been divided into two
+ * services: csv2excel converts the CSV into Excel, while excels returns an Excel file.
  * */
 @Component
-@Path("/test/")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-public class Test {
+@Path("/excels/{filename}")
+public class V10Excel {
 
-    @POST
-    @Path("/bean/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response test(TestBean paperino) {
-        System.out.println(paperino);
-        Gson g = new Gson();
-        return Response.status(200).entity(g.toJson(paperino)).build();
+    @InjectParam
+    ExcelExporter excelExporter;
 
-    }
+    @GET
+    public Response getExcel(@PathParam("filename") String filename) {
 
-    @POST
-    @Path("/{lang}/bean/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response test(@PathParam("lang") String lang, TestBean paperino) {
-        System.out.println(lang);
-        System.out.println(paperino);
-        Gson g = new Gson();
-        return Response.status(200).entity(g.toJson(paperino)).build();
+        try {
+
+            String filepath = excelExporter.getExcelPath() + File.separator + filename;
+            File file = new File(filepath);
+
+            /* Stream result */
+            return Response.status(200).entity((Object) file).header("Content-Disposition", "attachment").build();
+
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
 
     }
 

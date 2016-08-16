@@ -341,67 +341,147 @@
  */
 package org.fao.faostat.api.web.rest;
 
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.beans.MetadataBean;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
-import org.springframework.stereotype.Component;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
+
+import javax.ws.rs.core.MultivaluedMap;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
-@Component
-@Path("/{lang}/methodologies/")
-//@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Methodologies {
+@RunWith(Parameterized.class)
+public class TestFAOSTATCodesAPI extends JerseyTest {
 
-    @GET
-    public Response getMethodologies(@PathParam("lang") String lang,
-                                     @QueryParam("datasource") String datasource,
-                                     @QueryParam("api_key") String api_key,
-                                     @QueryParam("client_key") String client_key,
-                                     @QueryParam("output_type") String output_type) {
+    @Parameterized.Parameter
+    public String language;
+
+    @Parameterized.Parameters
+    //public static Object[] data() {return new Object[] { "en", "fr", "es" }; }
+    public static Object[] data() {
+        return new Object[] { "en" };
+    }
+
+    public TestFAOSTATCodesAPI() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+    }
 
 
-        /* Init Core library. */
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+    // Codes
+    @Test
+    public void testCodesAPI(){
 
-        /* Store user preferences. */
-        MetadataBean metadataBean = new MetadataBean();
-        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
 
-        /* Store procedure parameters. */
-        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        List<String> domains = getDomains();
 
-        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
-            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
+        for(String domain : domains) {
+
+            List<String> subdimensions = getSubdimensionsID("CS");
+
+            for(String subdimension : subdimensions) {
+
+                //System.out.println(domain + " " + subdimension);
+                List<String> codes = getCodes(domain, subdimension);
+
+                if (codes.size() <= 0) {
+                    System.out.println(domain + " " + subdimension + " " + codes.size());
+                }
+
+                assertNotEquals(0, codes.size());
+
+            }
+
         }
 
-        /* Query the DB and return the results. */
-        try {
+    }
 
-            /* Stream builder. */
-            StreamBuilder sb = new StreamBuilder();
+    private List<String> getDomains() {
 
-            /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+        List<String> v = new ArrayList<String>();
 
-            /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("methodologies", datasourceBean, metadataBean);
+        WebResource ws = resource().path("/" + language + "/domains");
+        String response =  ws.get(String.class);
 
-            /* Stream result */
-            return Response.status(200).entity(stream).type(produceType).build();
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
 
-        } catch (Exception e) {
-            return Response.status(500).entity(e.getMessage()).build();
+        for(int i = 0; i < a.size(); i++) {
+            v.add(a.get(i).getAsJsonObject().get("code").getAsString());
         }
+
+        return v;
+    }
+
+    private List<String> getSubdimensionsID(String domain) {
+
+        List<String> v = new ArrayList<String>();
+
+        System.out.println("Domain: " + domain);
+        WebResource ws = resource().path("/" + language + "/dimensions/" + domain);
+        String response =  ws.get(String.class);
+        ClientResponse clientResponse = ws.get(ClientResponse.class);
+        System.out.println("--" + clientResponse + "--");
+
+        if (response != null) {
+            System.out.println("--" + response.toString() + "--");
+            if (response.toString() != "") {
+                System.out.println("--" + response + "--");
+                JsonParser parser = new JsonParser();
+                JsonObject o = parser.parse(response).getAsJsonObject();
+                JsonArray a = o.get("data").getAsJsonArray();
+
+                for (int i = 0; i < a.size(); i++) {
+                    JsonObject r = a.get(i).getAsJsonObject();
+                    JsonArray s = r.get("subdimensions").getAsJsonArray();
+                    for (int j = 0; j < s.size(); j++) {
+                        v.add(s.get(j).getAsJsonObject().get("id").getAsString());
+                    }
+                }
+            } else {
+                System.out.println("|aihdsaiuhasiuhasiuhsad");
+            }
+        }
+
+        return v;
+
+    }
+
+    private List<String> getCodes(String domain, String id) {
+
+        List<String> v = new ArrayList<String>();
+
+        WebResource ws = resource().path("/" + language + "/codes/" + id + "/" + domain);
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        for(int i = 0; i < a.size(); i++) {
+           v.add(a.get(i).getAsJsonObject().get("code").getAsString());
+        }
+
+        return v;
 
     }
 

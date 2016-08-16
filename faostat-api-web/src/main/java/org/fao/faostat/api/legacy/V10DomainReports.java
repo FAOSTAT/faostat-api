@@ -339,7 +339,7 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
@@ -356,9 +356,9 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/{lang}/domaintabs/{domain_code}/")
+@Path("/{lang}/domainreports/{domain_code}/")
 @Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
-public class V10DomainTabs {
+public class V10DomainReports {
 
     @GET
     public Response getAbbreviations(@PathParam("lang") String lang,
@@ -390,7 +390,7 @@ public class V10DomainTabs {
             StreamBuilder sb = new StreamBuilder();
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("domaintabs", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createOutputStream("domainreports", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.status(200).entity(stream).build();

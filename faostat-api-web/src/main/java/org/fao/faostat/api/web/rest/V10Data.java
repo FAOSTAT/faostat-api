@@ -521,12 +521,11 @@ public class V10Data {
                     b.isPivot()
             );
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            /* TODO: instead of the log should be used an error response status different from each request error.
-            /* TODO: i.e. 400 for a Bad Request. https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
-            return Response.status(500).entity(log.toString()).build();
+            return Response.status(500).entity(e.getMessage()).build();
         }
-
     }
 
     @POST
@@ -638,8 +637,8 @@ public class V10Data {
 
             String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
 
-            final JDBCIterable i = new JDBCIterable();
-            i.query(datasourceBean, query);
+            final JDBCIterable it = new JDBCIterable();
+            it.query(datasourceBean, query);
 
             // statistics
             long tf = System.currentTimeMillis();
@@ -657,55 +656,20 @@ public class V10Data {
                     switch (metadataBean.getOutputType()) {
                         case CSV:
 
-                            /* Get Headers from Metadata */
-                            List<String> headers = i.getColumnNames();
-
-                            /* write headers */
-                            for (int i = 0; i < headers.size(); i += 1) {
-                                writer.write("\"" + headers.get(i) + "\"");
-                                if (i < headers.size() - 1)
-                                    writer.write(",");
-                                else
-                                    writer.write("\n");
-                            }
-
-                            /* Add CSV rows. */
-                            while (i.hasNext()) {
-                                writer.write(i.nextCSV());
-                            }
+                            writeCSV(it, writer);
                             break;
+
                         default:
 
-                            /* Initiate the output. */
-                            writer.write("{");
-
-                            /* Add metadata. */
-                            metadataBean.setDsd(dsd);
-                            writer.write(sb.createMetadata(metadataBean));
-
-                            /* Initiate Data the array. */
-                            writer.write("\"data\": [");
-
-                            while (i.hasNext()) {
-                                writer.write(i.nextJSON());
-                                if (i.hasNext()) {
-                                    writer.write(",");
-                                }
-                            }
-
-                            /* Close the array. */
-                            writer.write("]");
-
-                            /* Close the object. */
-                            writer.write("}");
+                            writeJSON(sb, metadataBean, dsd, it, writer);
                             break;
 
                     }
 
-                /* Flush the writer. */
+                    /* Flush the writer. */
                     writer.flush();
 
-                /* Close the writer. */
+                    /* Close the writer. */
                     writer.close();
 
                 }
@@ -713,15 +677,63 @@ public class V10Data {
             };
 
             /* Stream result */
-            return Response.status(200).entity(stream).type(produceType).build();
+            return Response.ok(stream).type(produceType).build();
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            LOGGER.error("Error " + e.getMessage());
             return Response.status(500).entity(e.getMessage()).build();
         }
 
     }
 
+    private void writeCSV(JDBCIterable it, Writer writer) throws IOException {
+
+        /* Get Headers from Metadata */
+        List<String> headers = it.getColumnNames();
+
+        /* write headers */
+        for (int i = 0; i < headers.size(); i += 1) {
+            writer.write("\"" + headers.get(i) + "\"");
+            if (i < headers.size() - 1)
+                writer.write(",");
+            else
+                writer.write("\n");
+        }
+
+        /* Add CSV rows. */
+        while (it.hasNext()) {
+            writer.write(it.nextCSV());
+        }
+
+    }
+
+    private void writeJSON(StreamBuilder sb, MetadataBean metadataBean, List<Map<String, Object>> dsd, JDBCIterable it, Writer writer) throws IOException {
+
+        /* Initiate the output. */
+        writer.write("{");
+
+        /* Add metadata. */
+        metadataBean.setDsd(dsd);
+        writer.write(sb.createMetadata(metadataBean));
+
+                            /* Initiate Data the array. */
+        writer.write("\"data\": [");
+
+        while (it.hasNext()) {
+            writer.write(it.nextJSON());
+            if (it.hasNext()) {
+                writer.write(",");
+            }
+        }
+
+        /* Close the array. */
+        writer.write("]");
+
+        /* Close the object. */
+        writer.write("}");
+
+    }
 
     @GET
     @Path("/{domain}")
@@ -791,7 +803,7 @@ public class V10Data {
 
         LOGGER.info("domain:" + domainCode);
         String queryURI = uriInfo.getRequestUri().getQuery();
-       // LOGGER.info("query: " + query);
+        // LOGGER.info("query: " + query);
         LOGGER.info("metadataBean: " + metadataBean);
         LOGGER.info("queryURI: " + queryURI);
         MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
@@ -899,22 +911,18 @@ public class V10Data {
                    /* group_by, order_by, operator,
                     page_size, decimal_places, page_number, limit,
                     null_values, show_codes, show_flags, show_unit,*/
-                   b.getGroup_by(), b.getOrder_by(), b.getOperator(),
-                   b.getPage_size(),  b.getDecimal_places(), b.getPage_number(), b.getLimit(),
-                   b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
-                   b.isPivot()
+                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getPage_size(),  b.getDecimal_places(), b.getPage_number(), b.getLimit(),
+                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
+                    b.isPivot()
             );
 
 
+        } catch (WebApplicationException e) {
+            return e.getResponse();
         } catch (Exception e) {
-            LOGGER.error("Exception:" + e.getMessage());
-            /* TODO: instead of the log should be used an error response status different from each request error.
-            /* TODO: i.e. 400 for a Bad Request. https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
             return Response.status(500).entity(e.getMessage()).build();
         }
-
-        /* Stream result */
-        //return Response.status(200).entity(log.toString()).build();
 
     }
 

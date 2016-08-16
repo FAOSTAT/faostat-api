@@ -395,7 +395,7 @@ public class V10Definitions {
             StreamingOutput stream = sb.createOutputStream("definitions", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();
@@ -439,7 +439,7 @@ public class V10Definitions {
             StreamingOutput stream = sb.createOutputStream("definitions_by_type", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();
@@ -483,7 +483,7 @@ public class V10Definitions {
             StreamingOutput stream = sb.createOutputStream("definitions_domain", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();
@@ -529,7 +529,7 @@ public class V10Definitions {
             StreamingOutput stream = sb.createOutputStream("definitions_domain", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();
@@ -538,8 +538,6 @@ public class V10Definitions {
         }
 
     }
-
-
 
     /*@GET
     @Path("/{domain_code}/{metadata_type}")

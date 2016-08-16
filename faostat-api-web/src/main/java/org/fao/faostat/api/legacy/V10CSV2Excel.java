@@ -339,15 +339,16 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
 import com.sun.jersey.api.core.InjectParam;
+/*import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;*/
 import org.fao.faostat.api.core.ExcelExporter;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.io.File;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -356,22 +357,25 @@ import java.io.File;
  * services: csv2excel converts the CSV into Excel, while excels returns an Excel file.
  * */
 @Component
-@Path("/excels/{filename}")
-public class V10Excel {
+@Path("/csv2excel/")
+public class V10CSV2Excel {
 
     @InjectParam
     ExcelExporter excelExporter;
 
-    @GET
-    public Response getExcel(@PathParam("filename") String filename) {
+    @POST
+    public Response csv2excel(@FormParam("csv") String csv,
+                              @FormParam("metadata") String metadata,
+                              @FormParam("filename") String filename) {
 
+        /* Create the file and return the results. */
         try {
 
-            String filepath = excelExporter.getExcelPath() + File.separator + filename;
-            File file = new File(filepath);
+            /* Create Excel file. */
+            filename = excelExporter.createExcel(csv, metadata, filename);
 
             /* Stream result */
-            return Response.status(200).entity((Object) file).header("Content-Disposition", "attachment").build();
+            return Response.status(200).entity(filename).build();
 
         } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).build();

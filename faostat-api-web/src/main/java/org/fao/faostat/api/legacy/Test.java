@@ -339,68 +339,45 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.beans.MetadataBean;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+import com.google.gson.Gson;
+import org.fao.faostat.api.core.beans.TestBean;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/{lang}/glossary/")
-//@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class V10Glossary {
+@Path("/test/")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class Test {
 
-    @GET
-    public Response getGlossary(@PathParam("lang") String lang,
-                                @QueryParam("datasource") String datasource,
-                                @QueryParam("api_key") String api_key,
-                                @QueryParam("client_key") String client_key,
-                                @QueryParam("output_type") String output_type) {
+    @POST
+    @Path("/bean/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response test(TestBean paperino) {
+        System.out.println(paperino);
+        Gson g = new Gson();
+        return Response.status(200).entity(g.toJson(paperino)).build();
 
-        /* Init Core library. */
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+    }
 
-        /* Store user preferences. */
-        MetadataBean metadataBean = new MetadataBean();
-        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
-
-        /* Store procedure parameters. */
-        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-
-        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
-            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
-        }
-
-        /* Query the DB and return the results. */
-        try {
-
-            /* Stream builder. */
-            StreamBuilder sb = new StreamBuilder();
-
-            /* Datasource bean. */
-            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
-
-            /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("glossary", datasourceBean, metadataBean);
-
-            /* Stream result */
-            return Response.status(200).entity(stream).type(produceType).build();
-
-        } catch (Exception e) {
-            return Response.status(500).entity(e.getMessage()).build();
-        }
+    @POST
+    @Path("/{lang}/bean/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response test(@PathParam("lang") String lang, TestBean paperino) {
+        System.out.println(lang);
+        System.out.println(paperino);
+        Gson g = new Gson();
+        return Response.status(200).entity(g.toJson(paperino)).build();
 
     }
 

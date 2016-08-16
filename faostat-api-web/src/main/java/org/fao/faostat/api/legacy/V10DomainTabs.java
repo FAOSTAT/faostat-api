@@ -339,13 +339,12 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.beans.MetadataBean;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+import org.fao.faostat.api.core.beans.DatasourceBean;
+import org.fao.faostat.api.core.beans.MetadataBean;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -357,16 +356,18 @@ import javax.ws.rs.core.StreamingOutput;
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
  * */
 @Component
-@Path("/{lang}/abbreviations/")
-//@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8"})
-public class V10Abbreviations {
+@Path("/{lang}/domaintabs/{domain_code}/")
+@Produces({MediaType.APPLICATION_JSON + ";charset=utf-8", "text/csv;charset=utf-8"})
+public class V10DomainTabs {
 
     @GET
     public Response getAbbreviations(@PathParam("lang") String lang,
+                                     @PathParam("domain_code") String domain_code,
                                      @QueryParam("datasource") String datasource,
                                      @QueryParam("api_key") String api_key,
                                      @QueryParam("client_key") String client_key,
                                      @QueryParam("output_type") String output_type) {
+
 
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
@@ -380,11 +381,7 @@ public class V10Abbreviations {
 
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-
-        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
-            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
-        }
+        metadataBean.addParameter("domain_code", domain_code);
 
         /* Query the DB and return the results. */
         try {
@@ -393,10 +390,10 @@ public class V10Abbreviations {
             StreamBuilder sb = new StreamBuilder();
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("abbreviations", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createOutputStream("domaintabs", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).type(produceType).build();
+            return Response.status(200).entity(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();

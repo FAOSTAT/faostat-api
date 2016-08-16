@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.log4j.Logger;
 import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DataBean;
@@ -366,6 +367,9 @@ import java.util.Map;
 @Path("/{lang}/report/headers/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class V10ReportHeaders {
+
+    // TODO: to be merged with ReportData request
+    private static final Logger LOGGER = Logger.getLogger(V10ReportHeaders.class);
 
     @POST
     public Response getData(@PathParam("lang") String lang,
@@ -430,7 +434,7 @@ public class V10ReportHeaders {
             StreamingOutput stream = sb.createOutputStream("reportheaders", datasourceBean, metadataBean);
 
             /* Stream result */
-            return Response.status(200).entity(stream).build();
+            return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
             return e.getResponse();
