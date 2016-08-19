@@ -618,317 +618,50 @@ public class FAOSTATAPICore {
 
     }
 
-//    public OutputBean queryDimensions(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
-//
-//        /* Logs. */
-//        StringBuilder log = new StringBuilder();
-//
-//        try {
-//
-//            /* Statistics. */
-//            LOGGER.info("initiate statistics...");
-//            long t0 = System.currentTimeMillis();
-//
-//            /* Initiate variables. */
-//            List<List<Map<String, Object>>> dimensions = getDomainDimensions(queryCode, datasourceBean, metadataBean);
-//            LOGGER.info("dimensions? " + dimensions.size());
-//            List<Map<String, Object>> tmp = new ArrayList<>();
-//            for (List<Map<String, Object>> l : dimensions) {
-//                tmp.addAll(l);
-//            }
-//            LOGGER.info("tmp? " + tmp.size());
-//
-//            LOGGER.info("Dimensions: " + dimensions);
-//
-//
-//            /* Group Dimensions. */
-//            List<Map<String, Object>> output = new ArrayList<>();
-//            String currentList = tmp.get(0).get("ListBoxNo").toString();
-//            Map<String, Object> group = new HashMap<>();
-//            group.put("ord", Integer.parseInt(currentList));
-//            group.put("parameter", "List" + currentList + "Codes");
-//            group.put("id", tmp.get(0).get("VarType").toString());
-//            group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
-//            group.put("subdimensions", new ArrayList<Map<String, Object>>());
-//            for (int i = 0; i < tmp.size(); i += 1) {
-//                if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
-//
-//                    //System.out.println("TMP: " + tmp.get(i).get("ListBoxNo"));
-//
-//                    Map<String, Object> m = new HashMap<>();
-//                    m.put("id", tmp.get(i).get("id").toString());
-//                    m.put("label", tmp.get(i).get("TabName").toString());
-//                    //m.put("description", tmp.get(i).get("TabName").toString());
-//                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
-//                    //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-//                    m.put("parameter", "List" + currentList + "Codes");
-//
-//                    // options
-//                    Map<String, Object> o = new HashMap<>();
-//                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
-//                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
-//                    m.put("options", o);
-//
-//                    /* Add available coding systems. */
-//                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
-//                    m.put("coding_systems", new ArrayList<String>());
-//                    for (String cs : codingSystems) {
-//                        if (cs.length() > 0) {
-//                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
-//                        }
-//                    }
-//
-//                    LOGGER.info(m);
-//
-//                    ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
-//                } else {
-//                    output.add(group);
-//                    currentList = tmp.get(i).get("ListBoxNo").toString();
-//                    group = new HashMap<>();
-//                    group.put("ord", Integer.parseInt(currentList));
-//
-//                    // TODO: the parameter should come from a constant or better from the DB!
-//                    group.put("parameter", "List" + currentList + "Codes");
-//
-//                    group.put("id", tmp.get(i).get("VarType").toString());
-//                    group.put("href", "/codes/" + tmp.get(i).get("VarType").toString() + "/");
-//                    group.put("subdimensions", new ArrayList<Map<String, Object>>());
-//
-//                    Map<String, Object> m = new HashMap<>();
-//                    m.put("id", tmp.get(i).get("id").toString());
-//
-//                    LOGGER.info(tmp.get(i).get("id").toString());
-//                    LOGGER.info(tmp.get(i).get("VarType").toString());
-//
-//                    m.put("label", tmp.get(i).get("TabName").toString());
-//                    m.put("description", tmp.get(i).get("TabName").toString());
-//                    m.put("href", "/codes/" + tmp.get(i).get("id").toString() + "/");
-//                    m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
-//
-//                    // TODO: the parameter should come from a constant or better from the DB!
-//                    m.put("parameter", "List" + currentList + "Codes");
-//
-//                    // options
-//                    Map<String, Object> o = new HashMap<>();
-//                    o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
-//                    o.put("type", tmp.get(i).get("ListBoxFormat").toString());
-//                    m.put("options", o);
-//
-//                    /* Add available coding systems. */
-//                    String[] codingSystems = tmp.get(i).get("CodingSystems").toString().split(";");
-//                    m.put("coding_systems", new ArrayList<String>());
-//                    for (String cs : codingSystems) {
-//                        if (cs.length() > 0) {
-//                            ((ArrayList<String>) m.get("coding_systems")).add(cs);
-//                        }
-//                    }
-//                    ((ArrayList<Map<String, Object>>)group.get("subdimensions")).add(m);
-//                }
-//            }
-//            output.add(group);
-//
-//            LOGGER.info(group);
-//
-//            /* Initiate output. */
-//            LOGGER.info("initiate out...");
-//            OutputBean out = new OutputBean(new FAOSTATIterable(output));
-//            ArrayList<Map<String, Object>> sl;
-//
-//            switch (metadataBean.getOutputType()) {
-//                // TODO: is it needed the CSV?
-//                // Should be removed
-//                case CSV:
-//                    for (int i = 0; i < output.size(); i += 1) {
-//                        List<String> l = new ArrayList<>();
-//                        l.add(output.get(i).get("id").toString());
-//                        l.add(output.get(i).get("parameter").toString());
-//                        l.add(output.get(i).get("ord").toString());
-//                        l.add(output.get(i).get("href").toString());
-//                        sl = (ArrayList<Map<String, Object>>)output.get(i).get("subdimensions");
-//                        if (sl != null && sl.size() > 0) {
-//                            for (int j = 0; j < sl.size(); j += 1) {
-//                                l.add(sl.get(j).get("id").toString());
-//                                l.add(sl.get(j).get("parameter").toString());
-//                                l.add(sl.get(j).get("ord").toString());
-//                                l.add(sl.get(j).get("href").toString());
-//                                if (j < sl.size() - 1) {
-//                                    out.getData().addList(l);
-//                                    l = new ArrayList<>();
-//                                    l.add(output.get(i).get("id").toString());
-//                                    l.add(output.get(i).get("parameter").toString());
-//                                    l.add(output.get(i).get("ord").toString());
-//                                    l.add(output.get(i).get("href").toString());
-//                                }
-//                            }
-//                        }
-//                        out.getData().addList(l);
-//                    }
-//                    out.setColumnNames(new ArrayList<String>());
-//                    out.getColumnNames().add("ID");
-//                    out.getColumnNames().add("Parameter");
-//                    out.getColumnNames().add("Order");
-//                    out.getColumnNames().add("Href");
-//                    sl = (ArrayList<Map<String, Object>>)output.get(0).get("subdimensions");
-//                    if (sl != null && sl.size() > 0) {
-//                        out.getColumnNames().add("Subdimension ID");
-//                        out.getColumnNames().add("Subdimension Parameter");
-//                        out.getColumnNames().add("Subdimension Order");
-//                        out.getColumnNames().add("Subdimension Href");
-//                    }
-//                    break;
-//            }
-//
-//            /* Add metadata. */
-//            LOGGER.info("add metadata...");
-//            out.setMetadata(metadataBean);
-//
-//            /* Statistics. */
-//            long tf = System.currentTimeMillis();
-//            LOGGER.info("set statistics...");
-//            out.getMetadata().setProcessingTime(tf - t0);
-//
-//            /* Return output. */
-//            LOGGER.info("return output...");
-//
-//            LOGGER.info(": " + (out));
-//            LOGGER.info(": " + (out.getData()));
-//            return out;
-//
-//        } catch (Exception e) {
-//            throw new Exception(log.toString());
-//        }
-//
-//    }
+    public OutputBean queryDefinitions(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
-    public OutputBean queryData(DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+        /* Statistics. */
+        long t0 = System.currentTimeMillis();
 
-        long start = System.currentTimeMillis();
+        /* Initiate output. */
+        OutputBean out = new OutputBean();
 
-        /* Logs. */
-        StringBuilder log = new StringBuilder();
+        /* Add metadata. */
+        out.setMetadata(metadataBean);
 
-        try {
+        /* Query the DB. */
+        JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
 
-            /* Check parameters. */
-            for (String key : metadataBean.getProcedureParameters().keySet()) {
-                LOGGER.info("P: " + key + ", V: " + metadataBean.getProcedureParameters().get(key));
+        /* Add column names. */
+        out.setColumnNames(i.getColumnNames());
+
+        /* Add data to the output. */
+        while (i.hasNext()) {
+
+            Map<String, Object> dbRow = i.nextMap();
+
+            Map<String, Object> o = new LinkedHashMap<String, Object>();
+            o.put("code", dbRow.get("code"));
+            o.put("label", dbRow.get("label"));
+            o.put("id", dbRow.get("VarType"));
+            o.put("subdimension_id", dbRow.get("VarSubType"));
+
+/*            if (!String.valueOf(dbRow.get("VarType")).equals("")) {
+                o.put("id", dbRow.get("VarType"));
             }
+            if (!String.valueOf(dbRow.get("VarSubType")).equals("")) {
+                o.put("subdimension_id", dbRow.get("VarSubType"));
+            }*/
 
-            long end = System.currentTimeMillis();
-            long duration = (end - start);
-            LOGGER.info("QueryData Check parameters: " + (duration));
-
-            /* TODO: why get("List4Codes") */
-            for (String key : (List<String>)metadataBean.getProcedureParameters().get("List4Codes")) {
-                LOGGER.info(key);
-            }
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData getProcedureParameters: " + (duration));
-
-            /* Statistics. */
-            LOGGER.info("initiate statistics...");
-            long t0 = System.currentTimeMillis();
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData statistics: " + (duration));
-
-            /* Initiate output. */
-            LOGGER.info("initiate out...");
-            OutputBean out = new OutputBean();
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData initiate: " + (duration));
-
-            /* Add metadata. */
-            LOGGER.info("add metadata...");
-            out.setMetadata(metadataBean);
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData metadataBean: " + (duration));
-
-            /* Add DSD. */
-            LOGGER.info("add DSD...");
-            out.getMetadata().setDsd(createDSD(datasourceBean, metadataBean));
-            LOGGER.info("add DSD: done");
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData createDSD: " + (duration));
-
-            /* Query the DB. */
-            LOGGER.info("query? " + this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData Query the DB: " + (duration));
-
-            LOGGER.info("query db...");
-            JDBCIterable i = getJDBCIterable("data", datasourceBean, metadataBean);
-            LOGGER.info("query db: done");
-            LOGGER.info("JDBCIterable? " + (i != null));
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData JDBCIterable: " + (duration));
-
-            /* Add column names. */
-            LOGGER.info("column names? " + i.getColumnNames().size());
-            out.setColumnNames(i.getColumnNames());
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData getColumnNames timing: " + (duration));
-
-            /* Add query. */
-            out.getMetadata().addParameter("query", this.getQueries().getQuery("data", metadataBean.getProcedureParameters()));
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("QueryData getQueries timing: " + (duration));
-
-            /* Add data to the output. */
-//            LOGGER.info("data size: ").append(i.getResultSet().getFetchSize());
-            LOGGER.info("add data...");
-            LOGGER.info("QueryData getFetchSize timing: " + (duration));
-            while (i.hasNext()) {
-                switch (metadataBean.getOutputType()) {
-                    case ARRAYS:
-                        out.getData().addList(i.next());
-                        break;
-                    case CSV:
-                        out.getData().addList(i.next());
-                        break;
-                    default:
-                        out.getData().add(i.nextMap());
-                        break;
-                }
-            }
-            LOGGER.info("add data: done");
-
-            /* Statistics. */
-            long tf = System.currentTimeMillis();
-            LOGGER.info("set statistics...");
-            out.getMetadata().setProcessingTime(tf - t0);
-
-            /* Return output. */
-            LOGGER.info("return output...");
-
-            end = System.currentTimeMillis();
-            duration = (end - start);
-            LOGGER.info("queryData timing: " + (duration));
-
-
-            return out;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(log.toString());
+            out.getData().add(o);
         }
+
+        /* Statistics. */
+        long tf = System.currentTimeMillis();
+        out.getMetadata().setProcessingTime(tf - t0);
+
+        /* Return output. */
+        return out;
 
     }
 
@@ -1551,23 +1284,6 @@ public class FAOSTATAPICore {
         if (row.get("aggregate_type").equals(">")) {
             return Boolean.parseBoolean(o.getProcedureParameters().get("show_lists").toString());
         }
-
-
-       /* else {
-
-            if (o.getBlackList() != null && o.getBlackList().size() > 0) {
-                if (o.getBlackList().contains(row.get("code").toString())) {
-                    return false;
-                }
-            }
-
-            if (o.getWhiteList() != null && o.getWhiteList().size() > 0) {
-                if (!o.getWhiteList().contains(row.get("code").toString())) {
-                    return false;
-                }
-            }
-
-        }*/
 
         return true;
     }

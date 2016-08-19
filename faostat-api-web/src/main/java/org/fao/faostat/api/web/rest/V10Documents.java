@@ -349,9 +349,7 @@ import org.fao.faostat.api.core.beans.MetadataBean;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -362,6 +360,9 @@ import javax.ws.rs.core.StreamingOutput;
 public class V10Documents {
 
     private static final Logger LOGGER = Logger.getLogger(V10Documents.class);
+
+    @Context
+    UriInfo uri;
 
     @GET
     public Response getBulkDownloads(@PathParam("lang") String lang,
@@ -399,8 +400,10 @@ public class V10Documents {
             return Response.ok(stream).build();
 
         } catch (WebApplicationException e) {
+            LOGGER.error(uri.getRequestUri());
             return e.getResponse();
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Response.status(500).entity(e.getMessage()).build();
         }
 

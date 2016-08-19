@@ -346,7 +346,10 @@ package org.fao.faostat.api.core.constants;
  */
 public enum DATASOURCE {
 
-    PRODUCTION, TEST, INTERNAL,
+    PRODUCTION,
+    INTERNAL,
+    TEST,
+    PEER_REVIEW,
 
     DB3, DB4;
 

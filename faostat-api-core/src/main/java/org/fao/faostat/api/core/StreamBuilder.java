@@ -540,177 +540,6 @@ public class StreamBuilder {
 
     }
 
-/*    public StreamingOutput createDataOutputStream(DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
-
-        *//* Log. *//*
-        final StringBuilder log = new StringBuilder();
-
-        *//* Initiate core library. *//*
-        log.append("StreamBuilder\t").append("initiate api...").append("\n");
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-        log.append("StreamBuilder\t").append("initiate api: done").append("\n");
-
-        *//* Check parameters. *//*
-        for (String key : metadataBean.getProcedureParameters().keySet()) {
-            log.append("\tcreateDataOutputStream | ").append("P: ").append(key).append(", V: ").append(metadataBean.getProcedureParameters().get(key)).append("\n");
-        }
-
-        try {
-
-            *//* Query FAOSTAT. *//*
-            log.append("StreamBuilder\t").append("initiate output...").append("\n");
-            final OutputBean out = faostatapiCore.queryData(datasourceBean, metadataBean);
-            log.append("StreamBuilder\t").append("initiate output: done").append("\n");
-
-            *//* Switch the output format. *//*
-            switch (out.getMetadata().getOutputType()) {
-
-                *//* Create a JSON. *//*
-                case JSON:
-                    return createDataOutputStreamJSON(out);
-                case OBJECTS:
-                    return createDataOutputStreamJSON(out);
-                case ARRAYS:
-                    return createDataOutputStreamJSON(out);
-                case CSV:
-                    return createDataOutputStreamCSV(out);
-                default:
-                    throw new WebApplicationException(400);
-
-            }
-
-        } catch (final Exception e) {
-            return exceptionHandler(e, log);
-        }
-
-    }*/
-
-/*    public StreamingOutput createDataOutputStreamCSV(final OutputBean out) throws Exception {
-
-        *//* Initiate the output stream. *//*
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                *//* Initiate the buffer writer. *//*
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-
-                *//* Add column names from DSD. *//*
-                int max = 0;
-                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
-                    int idx = (int)(out.getMetadata().getDsd().get(i).get("index"));
-                    if (idx > max) {
-                        max = idx;
-                    }
-                }
-                String[] headers = new String[max];
-                for (int i = 0; i < headers.length; i += 1) {
-                    headers[i] = "TODO";
-                }
-                for (int i = 0; i < out.getMetadata().getDsd().size(); i += 1) {
-                    int idx = (int) (out.getMetadata().getDsd().get(i).get("index"));
-                    try {
-                        headers[idx] = out.getMetadata().getDsd().get(i).get("label").toString();
-                    } catch (Exception e) {
-//                        System.out.println("\tskip this...");
-                    }
-                }
-                for (int i = 0; i < headers.length; i += 1) {
-                    writer.write("\"" + headers[i] + "\"");
-                    if (i < headers.length - 1)
-                        writer.write(",");
-                    else
-                        writer.write("\n");
-                }
-
-                *//* Add data. *//*
-                while (out.getData().hasNextList()) {
-                    List<String> l = out.getData().nextList();
-                    for (int i = 0; i < l.size(); i += 1) {
-                        writer.write("\"" + l.get(i) + "\"");
-                        if (i < l.size() - 1) {
-                            writer.write(",");
-                        }
-                        else {
-                            writer.write("\n");
-                        }
-                    }
-                }
-
-                *//* Flush the writer. *//*
-                writer.flush();
-
-                *//* Close the writer. *//*
-                writer.close();
-
-            }
-
-        };
-
-    }
-
-    public StreamingOutput createDataOutputStreamJSON(final OutputBean out) throws Exception {
-
-        *//* Initiate the output stream. *//*
-        return new StreamingOutput() {
-
-            @Override
-            public void write(OutputStream os) throws IOException, WebApplicationException {
-
-                *//* Initiate the buffer writer. *//*
-                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
-
-                *//* Initiate the output. *//*
-                writer.write("{");
-
-                *//* Add metadata. *//*
-                writer.write(createMetadata(out.getMetadata()));
-
-                *//* Initiate the array. *//*
-                writer.write("\"data\": [");
-
-                *//* Generate an array of objects of arrays. *//*
-                switch (out.getMetadata().getOutputType()) {
-
-                    case ARRAYS:
-                        while (out.getData().hasNextList()) {
-                            writer.write(out.getData().nextJSONList());
-                            if (out.getData().hasNextList()) {
-                                writer.write(",");
-                            }
-                        }
-                        break;
-                    default:
-                        while (out.getData().hasNext()) {
-                            writer.write(out.getData().nextJSON());
-                            if (out.getData().hasNext()) {
-                                writer.write(",");
-                            }
-                        }
-                        break;
-
-                }
-
-                *//* Close the array. *//*
-                writer.write("]");
-
-                *//* Close the object. *//*
-                writer.write("}");
-
-                *//* Flush the writer. *//*
-                writer.flush();
-
-                *//* Close the writer. *//*
-                writer.close();
-
-            }
-
-        };
-
-    }*/
-
     public StreamingOutput createDomainsOutputStream(String queryCode, DatasourceBean datasourceBean, final MetadataBean metadataBean) throws Exception {
 
         /* Log. */
@@ -793,6 +622,28 @@ public class StreamBuilder {
 
             /* Query FAOSTAT. */
             final OutputBean out = faostatapiCore.queryDimensions(queryCode, datasourceBean, metadataBean);
+
+            /* Switch the output format. */
+            return formatOutput(out);
+
+        } catch (final Exception e) {
+            return exceptionHandler(e, log);
+        }
+
+    }
+
+    public StreamingOutput createDefinitionsDomainOutputStream(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Log. */
+        StringBuilder log = new StringBuilder();
+
+        /* Initiate core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        try {
+
+            /* Query FAOSTAT. */
+            final OutputBean out = faostatapiCore.queryDefinitions(queryCode, datasourceBean, metadataBean);
 
             /* Switch the output format. */
             return formatOutput(out);

@@ -350,8 +350,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -362,6 +364,9 @@ import javax.ws.rs.core.Response;
 public class V10Schema {
 
     private static final Logger LOGGER = Logger.getLogger(V10Schema.class);
+
+    @Context
+    UriInfo uri;
 
     @InjectParam
     JSONSchemaPool jsonSchemaPool;
@@ -374,10 +379,10 @@ public class V10Schema {
             return Response.ok(jsonSchemaPool.getSchema()).build();
 
         } catch (WebApplicationException e) {
-            LOGGER.error(e.getResponse());
+            LOGGER.error(uri.getRequestUri());
             return e.getResponse();
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage());
             return Response.status(500).entity(e.getMessage()).build();
         }
     }

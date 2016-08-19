@@ -375,20 +375,21 @@ public class V10Data {
 
     private static final Logger LOGGER = Logger.getLogger(V10Data.class);
 
+    @Context
+    UriInfo uri;
+
     @POST
     //    @Path("/bean/")
     public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
 
         /* Logger. */
         StringBuilder log = new StringBuilder();
-        log.append("getDataFromBean\t").append("DataBean\t").append(b.toString()).append("\n");
 
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
         /* Datasource bean. */
         DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(b.getDatasource().toUpperCase()));
-        log.append("getDataFromBean\t").append("DatasourceBean\t").append(datasourceBean.toString()).append("\n");
 
         /* Store user preferences. */
         MetadataBean metadataBean = new MetadataBean();
@@ -396,7 +397,6 @@ public class V10Data {
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
         metadataBean.addParameter("domain_codes", b.getDomain_codes());
         metadataBean.addParameter("domain_code", b.getDomain_codes().get(0)); /* Get the first domain code, to get the dimensions later on. */
-        log.append("getDataFromBean\t").append("MetadataBean\t").append(metadataBean.toString()).append("\n");
 
         /* Init filters. */
         Map<String, List<String>> filters = new HashMap<>();
@@ -425,7 +425,6 @@ public class V10Data {
             LOGGER.info("Filter:" + key);
             dimensions.add(key);
         }
-        log.append("getDataFromBean\t").append("dimensions\t").append(dimensions.toString()).append("\n");
 
         /* Get dimensions. */
         try {
@@ -441,24 +440,23 @@ public class V10Data {
 
             /* getting domain dimensions */
             OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
-            log.append("getDataFromBean\t").append("OutputBean\t").append(ob.toString()).append("\n");
+
+            /* Check if at least one filter is passed */
+            boolean validFilter = false;
 
             /* for each dimension tries to map to a filter */
             while (ob.getData().hasNext()) {
 
                 Map<String, Object> m = ob.getData().next();
-                log.append("getDataFromBean\t\t").append("Map\t").append(m.toString()).append("\n");
                 String id = m.get("id").toString();
-                log.append("getDataFromBean\t\t\t").append("ID\t").append(id).append("\n");
                 String parameter = m.get("parameter").toString();
-                log.append("getDataFromBean\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
 
                 LOGGER.info("ID: " + id + " - Parameter: " + parameter);
 
                 /* check mapping filter on dimension id */
                 if (b.getFilters().get(id) != null) {
-                    log.append("getDataFromBean\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                     filters.put(parameter, b.getFilters().get(id));
+                    validFilter = true;
                     continue;
                 } else {
                     // TODO: this should be checked with performance
@@ -469,34 +467,24 @@ public class V10Data {
                 LOGGER.info("Filters: " + filters);
 
                 /* check mapping filter on subdimension id */
-                log.append("getDataFromBean\t\t\t").append("subdimensions?\t").append((m.get("subdimensions") != null)).append("\n");
                 if (m.get("subdimensions") != null) {
 
                     ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>) m.get("subdimensions");
                     for (Map<String, Object> m2 : l) {
-
-                        log.append("getDataFromBean\t\t\t\t").append("m2\t").append(m2).append("\n");
-
                         id = m2.get("id").toString();
                         parameter = m2.get("parameter").toString();
-
-                        log.append("getDataFromBean\t\t\t\t").append("ID\t").append(id).append("\n");
-                        log.append("getDataFromBean\t\t\t\t").append("PARAMETER\t").append(parameter).append("\n");
-
                         /* append filters */
                         if (b.getFilters().get(id) != null) {
-                            log.append("getDataFromBean\t\t\t\t").append("FILTERS\t").append(b.getFilters().get(id)).append("\n");
                             filters.put(parameter, b.getFilters().get(id));
-                            log.append("getDataFromBean\t\t\t\t").append("SIZE\t").append(((List<String>) b.getFilters().get(id)).size()).append("\n");
                         }
-
                     }
-
                 }
-                log.append("\n");
             }
 
-            log.append("getDataFromBean\t").append("filters\t").append(filters.toString()).append("\n");
+            if (!validFilter) {
+                LOGGER.warn("Invalid request. Please add at least one filter.");
+                throw new Exception("Please add at least one filter.");
+            }
 
             LOGGER.info("Calling getData function");
 
@@ -620,6 +608,7 @@ public class V10Data {
             produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
         }
 
+        LOGGER.info(metadataBean);
 
         /* Query the DB and return the results. */
         try {
@@ -680,8 +669,10 @@ public class V10Data {
             return Response.ok(stream).type(produceType).build();
 
         } catch (WebApplicationException e) {
+            LOGGER.error(uri.getRequestUri());
             return e.getResponse();
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Response.status(500).entity(e.getMessage()).build();
         }
 

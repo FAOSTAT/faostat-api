@@ -350,9 +350,7 @@ import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 /**
@@ -364,6 +362,9 @@ import java.util.List;
 public class V10Rankings {
 
     private static final Logger LOGGER = Logger.getLogger(V10Rankings.class);
+
+    @Context
+    UriInfo uri;
 
     @POST
     public Response getData(@PathParam("lang") String lang,
@@ -432,8 +433,10 @@ public class V10Rankings {
             return Response.ok(stream).type(produceType).build();
 
         } catch (WebApplicationException e) {
+            LOGGER.error(uri.getRequestUri());
             return e.getResponse();
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Response.status(500).entity(e.getMessage()).build();
         }
 
