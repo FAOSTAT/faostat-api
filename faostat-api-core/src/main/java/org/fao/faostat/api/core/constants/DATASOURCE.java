@@ -348,8 +348,8 @@ public enum DATASOURCE {
 
     PRODUCTION,
     INTERNAL,
-    TEST,
-    PEER_REVIEW,
+    QA, // DEV-PRODUCTION
+    DEV,
 
     DB3, DB4;
 

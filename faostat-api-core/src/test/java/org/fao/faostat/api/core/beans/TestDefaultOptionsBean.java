@@ -359,7 +359,7 @@ public class TestDefaultOptionsBean extends TestCase {
     }
 
     public void testSetters() {
-        assertEquals(DATASOURCE.TEST, b.getDatasource());
+        assertEquals(DATASOURCE.PRODUCTION, b.getDatasource());
         assertEquals("apiKey", b.getApiKey());
         assertEquals("clientKey", b.getClientKey());
         assertEquals(OUTPUTTYPE.OBJECTS, b.getOutputType());
