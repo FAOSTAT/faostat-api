@@ -355,7 +355,7 @@ public class TestDefaultOptionsBean extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        b = new MetadataBean("test", "apiKey", "clientKey", "objects");
+        b = new MetadataBean("production", "apiKey", "clientKey", "objects");
     }
 
     public void testSetters() {
