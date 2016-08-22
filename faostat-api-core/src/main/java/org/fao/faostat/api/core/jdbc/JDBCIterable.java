@@ -390,12 +390,12 @@ public class JDBCIterable implements Iterator<List<String>> {
 
         try {
 
+            //LOGGER.info("db.getUrl(): " + db.getUrl());
+
             /* Open connections. */
             SQLServerDriver.class.newInstance();
             this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
             this.setStatement(this.getConnection().createStatement());
-
-            //System.out.println("querySQLServer SQL: " +sql);
 
             this.getStatement().executeQuery(sql);
             this.setResultSet(this.getStatement().getResultSet());

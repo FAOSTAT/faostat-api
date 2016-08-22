@@ -339,30 +339,101 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.beans;
+package org.fao.faostat.api.web.rest;
 
-import junit.framework.TestCase;
-import org.fao.faostat.api.core.constants.DATASOURCE;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class TestDefaultOptionsBean extends TestCase {
+import javax.ws.rs.core.MultivaluedMap;
 
-    private MetadataBean b;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        b = new MetadataBean("production", "apiKey", "clientKey", "objects");
+
+@RunWith(Parameterized.class)
+public class TestDimensions extends JerseyTest {
+
+    @Parameterized.Parameter
+    public String language;
+
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
     }
 
-    public void testSetters() {
-        assertEquals(DATASOURCE.PRODUCTION, b.getDatasource());
-        assertEquals("apiKey", b.getApiKey());
-        assertEquals("clientKey", b.getClientKey());
-        assertEquals(OUTPUTTYPE.OBJECTS, b.getOutputType());
+    public TestDimensions() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+    }
+
+    @Test
+    public void testDimensionsAPI(){
+        WebResource ws = resource().path("/" + language + "/dimensions/QC");
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        // check if codes are in the list
+        for(int i=0; i < a.size(); i++) {
+            JsonObject oData =  a.get(i).getAsJsonObject();
+            assertEquals(true, oData.has("id"));
+            assertEquals(true, oData.has("subdimensions"));
+
+            JsonArray subdimensions = oData.get("subdimensions").getAsJsonArray();
+            for(int j=0; j < subdimensions.size(); j++) {
+                JsonObject oSubdimensions =  subdimensions.get(j).getAsJsonObject();
+                assertEquals(true, oSubdimensions.has("id"));
+                assertEquals(true, oSubdimensions.has("label"));
+                assertEquals(true, oSubdimensions.has("coding_systems"));
+            }
+        }
+    }
+
+    @Test
+    public void testDimensionsAPIFull(){
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("full", "true");
+        WebResource ws = resource()
+                .path("/" + language + "/dimensions/QC")
+                .queryParams(params);
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        // check if codes are in the list
+        for(int i=0; i < a.size(); i++) {
+            JsonObject oData =  a.get(i).getAsJsonObject();
+            assertEquals(true, oData.has("id"));
+            assertEquals(true, oData.has("parameter"));
+            assertEquals(true, oData.has("href"));
+            assertEquals(true, oData.has("subdimensions"));
+
+            JsonArray subdimensions = oData.get("subdimensions").getAsJsonArray();
+            for(int j=0; j < subdimensions.size(); j++) {
+                JsonObject oSubdimensions =  subdimensions.get(j).getAsJsonObject();
+                assertEquals(true, oSubdimensions.has("id"));
+                assertEquals(true, oSubdimensions.has("label"));
+                assertEquals(true, oSubdimensions.has("parameter"));
+                assertEquals(true, oSubdimensions.has("href"));
+                assertEquals(true, oSubdimensions.has("coding_systems"));
+                assertEquals(true, oSubdimensions.has("options"));
+            }
+        }
     }
 
 }

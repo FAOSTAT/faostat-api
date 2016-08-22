@@ -339,30 +339,93 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.beans;
+package org.fao.faostat.api.web.rest;
 
-import junit.framework.TestCase;
-import org.fao.faostat.api.core.constants.DATASOURCE;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class TestDefaultOptionsBean extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-    private MetadataBean b;
+@RunWith(Parameterized.class)
+public class TestDefinitions extends JerseyTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        b = new MetadataBean("production", "apiKey", "clientKey", "objects");
+    @Parameterized.Parameter
+    public String language;
+
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
     }
 
-    public void testSetters() {
-        assertEquals(DATASOURCE.PRODUCTION, b.getDatasource());
-        assertEquals("apiKey", b.getApiKey());
-        assertEquals("clientKey", b.getClientKey());
-        assertEquals(OUTPUTTYPE.OBJECTS, b.getOutputType());
+    public TestDefinitions() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+    }
+
+    // Definitions
+    @Test
+    public void testDefinitionsTypesAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/types/");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+    }
+
+    @Test
+    public void testDefinitionsTypesByTypeAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/types/abbreviation");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testDefinitionsDomainAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        // TODO: how to check also id and subdimension_id?
+        for(int i = 0; i < a.size(); i++) {
+            JsonObject oData =  a.get(i).getAsJsonObject();
+            assertEquals(true, oData.has("code"));
+            assertEquals(true, oData.has("label"));
+            assertEquals(true, oData.has("id"));
+            assertEquals(true, oData.has("subdimension_id"));
+        }
+    }
+
+    @Test
+    public void testDefinitionsDomainByTypeAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC/item");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
     }
 
 }

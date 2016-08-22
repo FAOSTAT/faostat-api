@@ -341,41 +341,27 @@
  */
 package org.fao.faostat.api.web.rest;
 
-
 import com.google.gson.*;
 
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Suite;
-import org.springframework.test.annotation.Repeat;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
-
-import javax.swing.text.html.parser.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
+
 @RunWith(Parameterized.class)
-public class TestFAOSTATAPI extends JerseyTest {
+public class TestGroupsAndDomains extends JerseyTest {
 
     @Parameterized.Parameter
     public String language;
@@ -385,185 +371,12 @@ public class TestFAOSTATAPI extends JerseyTest {
         return new Object[] { "en", "fr", "es" };
     }
 
-    public TestFAOSTATAPI() {
+    public TestGroupsAndDomains() {
         super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
                 .requestListenerClass(RequestContextListener.class).build());
     }
-
-
-    // Schema
-    @Test
-    public void testGetSchemaAPI(){
-        WebResource ws = resource().path("/");
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
-    }
-
-
-    // Dimensions
-    @Test
-    public void testDimensionsAPI(){
-        WebResource ws = resource().path("/" + language + "/dimensions/QC");
-
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
-    }
-
-
-    // Codes
-    @Test
-    public void testCodesAPI(){
-        WebResource ws = resource().path("/" + language + "/codes/area/QC");
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
-    }
-
-    @Test
-    public void testCodesBlackListAPI(){
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("blacklist", "2,3");
-
-        WebResource ws = resource()
-                .path("/" + language + "/codes/area/QC")
-                .queryParams(params);
-
-        String response =  ws.get(String.class);
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-
-        // check if codes are in the list
-        for(int i=0; i < a.size(); i++) {
-            String code = a.get(i).getAsJsonObject().get("code").getAsString();
-            assertNotEquals("2", code);
-            assertNotEquals("3", code);
-        }
-    }
-
-    @Test
-    public void testCodesWhiteListAPI(){
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("whitelist", "2,3");
-
-        WebResource ws = resource()
-                .path("/" + language + "/codes/area/QC")
-                .queryParams(params);
-
-        String response =  ws.get(String.class);
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        assertEquals(2, a.size());
-    }
-
-
-    // Data
-    @Test
-    public void testDataBeanAPI(){
-        MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("domain_codes", "QC");
-        params.add("List1Codes", "2");
-        params.add("List2Codes", "2510");
-        params.add("List3Codes", "515");
-        params.add("List4Codes", "2013");
-        params.add("List5Codes", "");
-        params.add("List6Codes", "");
-        params.add("List7Codes", "");
-        params.add("List1AltCodes", "FAO");
-        params.add("List2AltCodes", "");
-        params.add("List3AltCodes", "FAO");
-        params.add("List4AltCodes", "");
-        params.add("List5AltCodes", "");
-        params.add("List6AltCodes", "");
-        params.add("List7AltCodes", "");
-        params.add("null_values", "false");
-        params.add("group_by", "");
-        params.add("order_by", "");
-        params.add("operator", "");
-        params.add("page_size", "100");
-        params.add("limit", "-1");
-        params.add("page_number", "1");
-        params.add("show_codes", "1");
-        params.add("show_flags", "1");
-        params.add("show_unit", "1");
-
-        /*datasource:production
-        output_type:objects
-        api_key:n.a.
-         client_key:n.a.
-        pivot:false
-        domain_codes:QC
-        decimal_places:2
-        List1Codes:2
-        List2Codes:2510
-        List3Codes:515
-        List4Codes:2013
-        List5Codes:
-        List6Codes:
-        List7Codes:
-        List1AltCodes:FAO
-        List2AltCodes:
-        List3AltCodes:FAO
-        List4AltCodes:
-        List5AltCodes:
-        List6AltCodes:
-        List7AltCodes:
-        null_values:false
-        group_by:
-        order_by:
-        operator:
-        page_size:100
-        limit:-1
-        page_number:1
-        show_codes:1
-        show_flags:1
-        show_unit:1*/
-
-//        WebResource ws = resource().path("/en/data/bean");
-        WebResource ws = resource().path("/" + language + "/data/bean");
-
-        String response =  ws.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-                             .post(String.class, params);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        assertEquals(1, a.size());
-    }
-
-    /*@Test
-    public void testDataAPI(){
-
-        String payload ="{\"datasource\":\"production\",\"domain_codes\":[\"QV\"],\"filters\":{\"item\":[\"15\"]}}";
-
-        Form f = new Form();
-        f.add("datasource", "production");
-        f.add("domain_codes", "[\"QV\"]");
-//        f.add("filters", "{\"item\":[\"15\"]}}");
-
-
-
-        WebResource ws = resource().path("/" + language + "/data");
-
-        String response =  ws.type(MediaType.APPLICATION_JSON)
-                             .post(String.class, f);
-
-        System.out.println(response);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        assertEquals(1, a.size());
-
-    }*/
 
     // Groups and Domains
     @Test
@@ -576,12 +389,18 @@ public class TestFAOSTATAPI extends JerseyTest {
         JsonArray a = o.get("data").getAsJsonArray();
         JsonObject oData =  a.get(0).getAsJsonObject();
 
-        assertEquals(true, oData.has("group_name"));
         assertEquals(true, oData.has("group_code"));
+        assertEquals(true, oData.has("group_name"));
         assertEquals(true, oData.has("domain_code"));
         assertEquals(true, oData.has("domain_name"));
         assertEquals(true, oData.has("date_update"));
-        //assertEquals(true, oData.has("note"));
+        assertEquals(true, oData.has("note_update"));
+        assertEquals(true, oData.has("release_current"));
+        assertEquals(true, oData.has("state_current"));
+        assertEquals(true, oData.has("year_current"));
+        assertEquals(true, oData.has("release_next"));
+        assertEquals(true, oData.has("state_next"));
+        assertEquals(true, oData.has("year_next"));
     }
 
     @Test
@@ -611,7 +430,13 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertEquals(true, oData.has("code"));
         assertEquals(true, oData.has("label"));
         assertEquals(true, oData.has("date_update"));
-        //assertEquals(true, oData.has("note"));
+        assertEquals(true, oData.has("note_update"));
+        assertEquals(true, oData.has("release_current"));
+        assertEquals(true, oData.has("state_current"));
+        assertEquals(true, oData.has("year_current"));
+        assertEquals(true, oData.has("release_next"));
+        assertEquals(true, oData.has("state_next"));
+        assertEquals(true, oData.has("year_next"));
     }
 
     @Test
@@ -627,210 +452,72 @@ public class TestFAOSTATAPI extends JerseyTest {
         assertEquals(true, oData.has("code"));
         assertEquals(true, oData.has("label"));
         assertEquals(true, oData.has("date_update"));
+        assertEquals(true, oData.has("note_update"));
+        assertEquals(true, oData.has("release_current"));
+        assertEquals(true, oData.has("state_current"));
+        assertEquals(true, oData.has("year_current"));
+        assertEquals(true, oData.has("release_next"));
+        assertEquals(true, oData.has("state_next"));
+        assertEquals(true, oData.has("year_next"));
     }
 
-
-    // Metadata
     @Test
-    public void testMetadataAPI(){
-        WebResource ws = resource().path("/" + language + "/metadata/QC");
-        String response =  ws.get(String.class);
+    public void testDomainsWithBlacklist(){
 
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("metadata_group_code"));
-        assertEquals(true, oData.has("metadata_label"));
-        assertEquals(true, oData.has("metadata_text"));
-        assertEquals(true, oData.has("domain_code"));
-        assertEquals(true, oData.has("metadata_code"));
-        assertEquals(true, oData.has("metadata_group_label"));
-    }
-
-    // Search
-    @Test
-    public void testSearchAPI(){
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("q", "rice");
-        WebResource ws = resource()
-                .path("/en/search")
+        params.add("blacklist", "QC,QD");
+        WebResource ws = resource().path("/" + language + "/domains/Q")
                 .queryParams(params);
-
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("id"));
-        assertEquals(true, oData.has("rank"));
-        // TODO: this should be "label" in lowercase
-        assertEquals(true, oData.has("Label"));
-        assertEquals(true, oData.has("Code"));
-        assertEquals(true, oData.has("DomainCode"));
-    }
-
-    // Suggestions
-    @Test
-    public void testSuggestionsAPI(){
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("q", "rice");
-        WebResource ws = resource()
-                .path("/en/suggestions")
-                .queryParams(params);
-
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("id"));
-        assertEquals(true, oData.has("rank"));
-        assertEquals(true, oData.has("label"));
-    }
-
-    // Bulk Downloads
-    @Test
-    public void testBulkDownloadsAPI(){
-        WebResource ws = resource().path("/" + language + "/bulkdownloads/QC");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        // TODO: lowercase
-        assertEquals(true, oData.has("FileContent"));
-        assertEquals(true, oData.has("Type"));
-        assertEquals(true, oData.has("FileSizeUnit"));
-        assertEquals(true, oData.has("URL"));
-        assertEquals(true, oData.has("FileSize"));
-    }
-
-    // Documents
-    @Test
-    public void testDocumentsAPI(){
-        WebResource ws = resource().path("/" + language + "/documents/QC");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        // TODO: lowercase
-        assertEquals(true, oData.has("FileTitle"));
-        assertEquals(true, oData.has("FileName"));
-        assertEquals(true, oData.has("CreatedDate"));
-
-        // TODO: remove
-        assertEquals(true, oData.has("DomainCode"));
-        assertEquals(true, oData.has("FilePath"));
-    }
-
-    // Definitions
-    @Test
-    public void testDefinitionsTypesAPI(){
-        WebResource ws = resource().path("/" + language + "/definitions/types/");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("code"));
-        assertEquals(true, oData.has("label"));
-    }
-
-    @Test
-    public void testDefinitionsTypesByTypeAPI(){
-        WebResource ws = resource().path("/" + language + "/definitions/types/abbreviation");
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
-    }
-
-    @Test
-    public void testDefinitionsDomainAPI(){
-        WebResource ws = resource().path("/" + language + "/definitions/domain/QC");
         String response =  ws.get(String.class);
 
         JsonParser parser = new JsonParser();
         JsonObject o = parser.parse(response).getAsJsonObject();
         JsonArray a = o.get("data").getAsJsonArray();
 
-        // TODO: how to check also id and subdimension_id?
         for(int i = 0; i < a.size(); i++) {
             JsonObject oData =  a.get(i).getAsJsonObject();
+            assertNotEquals("QC", oData.has("code"));
+            assertNotEquals("QD", oData.has("code"));
             assertEquals(true, oData.has("code"));
             assertEquals(true, oData.has("label"));
-            assertEquals(true, oData.has("id"));
-            assertEquals(true, oData.has("subdimension_id"));
+            assertEquals(true, oData.has("date_update"));
+            assertEquals(true, oData.has("note_update"));
+            assertEquals(true, oData.has("release_current"));
+            assertEquals(true, oData.has("state_current"));
+            assertEquals(true, oData.has("year_current"));
+            assertEquals(true, oData.has("release_next"));
+            assertEquals(true, oData.has("state_next"));
+            assertEquals(true, oData.has("year_next"));
         }
+
     }
 
     @Test
-    public void testDefinitionsDomainByTypeAPI(){
-        WebResource ws = resource().path("/" + language + "/definitions/domain/QC/item");
-        ClientResponse response = ws.get(ClientResponse.class);
-        assertEquals(200, response.getStatus());
-        String out = response.getEntity(String.class);
-        assertNotNull(out);
+    public void testDomainsWithWhitelist(){
+
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("whitelist", "QC");
+        WebResource ws = resource().path("/" + language + "/domains/")
+                .queryParams(params);
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
+
+        assertEquals(1, a.size());
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+        assertEquals(true, oData.has("date_update"));
+        assertEquals(true, oData.has("note_update"));
+        assertEquals(true, oData.has("release_current"));
+        assertEquals(true, oData.has("state_current"));
+        assertEquals(true, oData.has("year_current"));
+        assertEquals(true, oData.has("release_next"));
+        assertEquals(true, oData.has("state_next"));
+        assertEquals(true, oData.has("year_next"));
+
     }
-
-    /*@Test
-    public void testDefinitionsByTypeAPI(){
-
-        WebResource ws = resource().path("/" + language + "/definitions/abbreviation");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("code"));
-        assertEquals(true, oData.has("label"));
-
-    }*/
-
-   /* @Test
-    public void testDefinitionsDomainAPI(){
-
-        WebResource ws = resource().path("/" + language + "/definitions/domain/QC");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-    }*/
-
-   /* @Test
-    public void testDefinitionsDomainByTypeAPI(){
-
-        WebResource ws = resource().path("/" + language + "/definitions/domain/QC/area");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        JsonObject oData =  a.get(0).getAsJsonObject();
-
-        assertEquals(true, oData.has("code"));
-        assertEquals(true, oData.has("label"));
-
-    }*/
-
-
 
 }

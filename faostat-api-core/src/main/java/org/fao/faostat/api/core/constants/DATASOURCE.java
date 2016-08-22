@@ -351,6 +351,8 @@ public enum DATASOURCE {
     QA, // DEV-PRODUCTION
     DEV,
 
-    DB3, DB4;
+    DB3, DB4,
+    
+    TEST;
 
 }

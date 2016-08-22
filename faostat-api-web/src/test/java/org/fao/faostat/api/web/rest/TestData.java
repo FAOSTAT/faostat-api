@@ -339,30 +339,143 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.beans;
+package org.fao.faostat.api.web.rest;
 
-import junit.framework.TestCase;
-import org.fao.faostat.api.core.constants.DATASOURCE;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
-public class TestDefaultOptionsBean extends TestCase {
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
-    private MetadataBean b;
+import static org.junit.Assert.assertEquals;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        b = new MetadataBean("production", "apiKey", "clientKey", "objects");
+@RunWith(Parameterized.class)
+public class TestData extends JerseyTest {
+
+    @Parameterized.Parameter
+    public String language;
+
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
     }
 
-    public void testSetters() {
-        assertEquals(DATASOURCE.PRODUCTION, b.getDatasource());
-        assertEquals("apiKey", b.getApiKey());
-        assertEquals("clientKey", b.getClientKey());
-        assertEquals(OUTPUTTYPE.OBJECTS, b.getOutputType());
+    public TestData() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
     }
+
+    // Data
+    @Test
+    public void testDataBeanAPI(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("domain_codes", "QC");
+        params.add("List1Codes", "2");
+        params.add("List2Codes", "2510");
+        params.add("List3Codes", "515");
+        params.add("List4Codes", "2013");
+        params.add("List5Codes", "");
+        params.add("List6Codes", "");
+        params.add("List7Codes", "");
+        params.add("List1AltCodes", "FAO");
+        params.add("List2AltCodes", "");
+        params.add("List3AltCodes", "FAO");
+        params.add("List4AltCodes", "");
+        params.add("List5AltCodes", "");
+        params.add("List6AltCodes", "");
+        params.add("List7AltCodes", "");
+        params.add("null_values", "false");
+        params.add("group_by", "");
+        params.add("order_by", "");
+        params.add("operator", "");
+        params.add("page_size", "100");
+        params.add("limit", "-1");
+        params.add("page_number", "1");
+        params.add("show_codes", "1");
+        params.add("show_flags", "1");
+        params.add("show_unit", "1");
+
+        /*datasource:production
+        output_type:objects
+        api_key:n.a.
+         client_key:n.a.
+        pivot:false
+        domain_codes:QC
+        decimal_places:2
+        List1Codes:2
+        List2Codes:2510
+        List3Codes:515
+        List4Codes:2013
+        List5Codes:
+        List6Codes:
+        List7Codes:
+        List1AltCodes:FAO
+        List2AltCodes:
+        List3AltCodes:FAO
+        List4AltCodes:
+        List5AltCodes:
+        List6AltCodes:
+        List7AltCodes:
+        null_values:false
+        group_by:
+        order_by:
+        operator:
+        page_size:100
+        limit:-1
+        page_number:1
+        show_codes:1
+        show_flags:1
+        show_unit:1*/
+
+//        WebResource ws = resource().path("/en/data/bean");
+        WebResource ws = resource().path("/" + language + "/data/bean");
+
+        String response =  ws.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .post(String.class, params);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
+    }
+
+    /*@Test
+    public void testDataAPI(){
+
+        String payload ="{\"datasource\":\"production\",\"domain_codes\":[\"QV\"],\"filters\":{\"item\":[\"15\"]}}";
+
+        Form f = new Form();
+        f.add("datasource", "production");
+        f.add("domain_codes", "[\"QV\"]");
+//        f.add("filters", "{\"item\":[\"15\"]}}");
+
+
+
+        WebResource ws = resource().path("/" + language + "/data");
+
+        String response =  ws.type(MediaType.APPLICATION_JSON)
+                             .post(String.class, f);
+
+        System.out.println(response);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
+
+    }*/
 
 }
