@@ -341,13 +341,11 @@
  */
 package org.fao.faostat.api.web.rest;
 
-
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
@@ -357,29 +355,26 @@ import org.junit.runners.Parameterized;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
-import static org.junit.Assert.*;
-
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- * */
 @RunWith(Parameterized.class)
-public class TestFAOSTATCodesAPI extends JerseyTest {
+public class TestDataAllDomains extends JerseyTest {
+
+    public String datasource = "internal";
 
     @Parameterized.Parameter
     public String language;
 
     @Parameterized.Parameters
-    //public static Object[] data() {return new Object[] { "en", "fr", "es" }; }
     public static Object[] data() {
-        return new Object[] { "en" };
+        return new Object[] { "en", "fr", "es" };
     }
 
-    public TestFAOSTATCodesAPI() {
+    public TestDataAllDomains() {
         super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
@@ -387,102 +382,38 @@ public class TestFAOSTATCodesAPI extends JerseyTest {
     }
 
 
-    // Codes
     @Test
-    public void testCodesAPI(){
+    public void testDataAPI(){
 
+        WebResource ws = resource()
+                .path("/" + language + "/groupsanddomains");
 
-        List<String> domains = getDomains();
-
-        for(String domain : domains) {
-
-            List<String> subdimensions = getSubdimensionsID("CS");
-
-            for(String subdimension : subdimensions) {
-
-                //System.out.println(domain + " " + subdimension);
-                List<String> codes = getCodes(domain, subdimension);
-
-                if (codes.size() <= 0) {
-                    System.out.println(domain + " " + subdimension + " " + codes.size());
-                }
-
-                assertNotEquals(0, codes.size());
-
-            }
-
-        }
-
-    }
-
-    private List<String> getDomains() {
-
-        List<String> v = new ArrayList<String>();
-
-        WebResource ws = resource().path("/" + language + "/domains");
-        String response =  ws.get(String.class);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-
-        for(int i = 0; i < a.size(); i++) {
-            v.add(a.get(i).getAsJsonObject().get("code").getAsString());
-        }
-
-        return v;
-    }
-
-    private List<String> getSubdimensionsID(String domain) {
-
-        List<String> v = new ArrayList<String>();
-
-        System.out.println("Domain: " + domain);
-        WebResource ws = resource().path("/" + language + "/dimensions/" + domain);
-        String response =  ws.get(String.class);
-        ClientResponse clientResponse = ws.get(ClientResponse.class);
-        System.out.println("--" + clientResponse + "--");
-
-        if (response != null) {
-            System.out.println("--" + response.toString() + "--");
-            if (response.toString() != "") {
-                System.out.println("--" + response + "--");
-                JsonParser parser = new JsonParser();
-                JsonObject o = parser.parse(response).getAsJsonObject();
-                JsonArray a = o.get("data").getAsJsonArray();
-
-                for (int i = 0; i < a.size(); i++) {
-                    JsonObject r = a.get(i).getAsJsonObject();
-                    JsonArray s = r.get("subdimensions").getAsJsonArray();
-                    for (int j = 0; j < s.size(); j++) {
-                        v.add(s.get(j).getAsJsonObject().get("id").getAsString());
-                    }
-                }
-            } else {
-                System.out.println("|aihdsaiuhasiuhasiuhsad");
-            }
-        }
-
-        return v;
-
-    }
-
-    private List<String> getCodes(String domain, String id) {
-
-        List<String> v = new ArrayList<String>();
-
-        WebResource ws = resource().path("/" + language + "/codes/" + id + "/" + domain);
         String response =  ws.get(String.class);
         JsonParser parser = new JsonParser();
         JsonObject o = parser.parse(response).getAsJsonObject();
         JsonArray a = o.get("data").getAsJsonArray();
 
         for(int i = 0; i < a.size(); i++) {
-           v.add(a.get(i).getAsJsonObject().get("code").getAsString());
+            JsonObject oData =  a.get(i).getAsJsonObject();
+            assertNotEquals("QC", oData.has("code"));
+            assertEquals(true, oData.has("code"));
+            assertEquals(true, oData.has("label"));
+            assertEquals(true, oData.has("date_update"));
+            assertEquals(true, oData.has("note_update"));
+            assertEquals(true, oData.has("release_current"));
+            assertEquals(true, oData.has("state_current"));
+            assertEquals(true, oData.has("year_current"));
+            assertEquals(true, oData.has("release_next"));
+            assertEquals(true, oData.has("state_next"));
+            assertEquals(true, oData.has("year_next"));
         }
 
-        return v;
+    }
+
+    private void testDataAPISchema(){
+
 
     }
+
 
 }

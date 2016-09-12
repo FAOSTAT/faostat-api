@@ -341,43 +341,45 @@
  */
 package org.fao.faostat.api.web.rest;
 
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+/**
+ * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
+ * */
 @RunWith(Parameterized.class)
-public class TestData extends JerseyTest {
+public class TestCodesAllDomains extends JerseyTest {
+
+    private static final Logger LOGGER = Logger.getLogger(TestCodesAllDomains.class);
 
     @Parameterized.Parameter
     public String language;
 
-    public String datasource = "internal";
-
     @Parameterized.Parameters
-    public static Object[] data() {
-        return new Object[] { "en", "fr", "es" };
-    }
+    public static Object[] data() {return new Object[] { "en", "fr", "es" }; }
 
-    public TestData() {
+    public TestCodesAllDomains() {
         super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
                 .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
                 .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
@@ -385,154 +387,99 @@ public class TestData extends JerseyTest {
     }
 
 
+    // Codes
     @Test
-    public void testDataAPISchema(){
-        MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("area", "2");
-        params.add("item", "27");
-        params.add("element", "2510");
-        params.add("datasource", datasource);
+    public void testCodesAPI(){
 
-        WebResource ws = resource()
-                .path("/" + language + "/data/QC")
-                .queryParams(params);
+        List<String> domains = getDomains();
 
+        for(String domain : domains) {
+
+            List<String> subdimensions = getSubdimensionsID(domain);
+
+            for(String subdimension : subdimensions) {
+
+                LOGGER.info(domain + " " + subdimension);
+                List<String> codes = getCodes(domain, subdimension);
+
+                if (codes.size() <= 0) {
+                    LOGGER.error(domain + " " + subdimension + " " + codes.size());
+                }
+
+                assertNotEquals(0, codes.size());
+
+            }
+
+        }
+
+    }
+
+    private List<String> getDomains() {
+
+        List<String> v = new ArrayList<String>();
+
+        WebResource ws = resource().path("/" + language + "/domains");
         String response =  ws.get(String.class);
+
         JsonParser parser = new JsonParser();
         JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray data = o.get("data").getAsJsonArray();
+        JsonArray a = o.get("data").getAsJsonArray();
 
-        // check dsd and data columns for each row
-        JsonArray dsd = o.get("metadata").getAsJsonObject().get("dsd").getAsJsonArray();
-        for(int i=0; i < dsd.size(); i++) {
-            JsonObject dsdColumn = dsd.get(i).getAsJsonObject();
-            for(int j=0; j < data.size(); j++) {
-                JsonObject row = data.get(j).getAsJsonObject();
-                assertEquals(true, row.has(dsdColumn.get("key").getAsString()));
+        for(int i = 0; i < a.size(); i++) {
+            v.add(a.get(i).getAsJsonObject().get("code").getAsString());
+        }
+
+        return v;
+    }
+
+    private List<String> getSubdimensionsID(String domain) {
+
+        List<String> v = new ArrayList<String>();
+
+        //System.out.println("Domain: " + domain);
+        WebResource ws = resource().path("/" + language + "/dimensions/" + domain);
+        String response =  ws.get(String.class);
+        ClientResponse clientResponse = ws.get(ClientResponse.class);
+        LOGGER.info("--" + clientResponse + "--");
+
+        if (response != null) {
+            if (response.toString() != "") {
+                JsonParser parser = new JsonParser();
+                JsonObject o = parser.parse(response).getAsJsonObject();
+                JsonArray a = o.get("data").getAsJsonArray();
+
+                for (int i = 0; i < a.size(); i++) {
+                    JsonObject r = a.get(i).getAsJsonObject();
+                    JsonArray s = r.get("subdimensions").getAsJsonArray();
+                    for (int j = 0; j < s.size(); j++) {
+                        v.add(s.get(j).getAsJsonObject().get("id").getAsString());
+                    }
+                }
+            } else {
+
             }
         }
+
+        return v;
+
     }
 
-    public void testDataAPISize(){
-        MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("area", "2");
-        params.add("item", "27");
-        params.add("element", "2510");
-        params.add("year", "2010,2011");
-        params.add("datasource", datasource);
+    private List<String> getCodes(String domain, String id) {
 
-        WebResource ws = resource()
-                .path("/" + language + "/data/QC")
-                .queryParams(params);
+        List<String> v = new ArrayList<String>();
 
+        WebResource ws = resource().path("/" + language + "/codes/" + id + "/" + domain);
         String response =  ws.get(String.class);
         JsonParser parser = new JsonParser();
         JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray data = o.get("data").getAsJsonArray();
-
-        // get data size
-        assertEquals(2, data.size());
-    }
-
-    // Data
-    @Test
-    public void testDataBeanAPI(){
-        MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("domain_codes", "QC");
-        params.add("List1Codes", "2");
-        params.add("List2Codes", "2510");
-        params.add("List3Codes", "515");
-        params.add("List4Codes", "2013");
-        params.add("List5Codes", "");
-        params.add("List6Codes", "");
-        params.add("List7Codes", "");
-        params.add("List1AltCodes", "FAO");
-        params.add("List2AltCodes", "");
-        params.add("List3AltCodes", "FAO");
-        params.add("List4AltCodes", "");
-        params.add("List5AltCodes", "");
-        params.add("List6AltCodes", "");
-        params.add("List7AltCodes", "");
-        params.add("null_values", "false");
-        params.add("group_by", "");
-        params.add("order_by", "");
-        params.add("operator", "");
-        params.add("page_size", "100");
-        params.add("limit", "-1");
-        params.add("page_number", "1");
-        params.add("show_codes", "1");
-        params.add("show_flags", "1");
-        params.add("show_unit", "1");
-
-        /*datasource:production
-        output_type:objects
-        api_key:n.a.
-         client_key:n.a.
-        pivot:false
-        domain_codes:QC
-        decimal_places:2
-        List1Codes:2
-        List2Codes:2510
-        List3Codes:515
-        List4Codes:2013
-        List5Codes:
-        List6Codes:
-        List7Codes:
-        List1AltCodes:FAO
-        List2AltCodes:
-        List3AltCodes:FAO
-        List4AltCodes:
-        List5AltCodes:
-        List6AltCodes:
-        List7AltCodes:
-        null_values:false
-        group_by:
-        order_by:
-        operator:
-        page_size:100
-        limit:-1
-        page_number:1
-        show_codes:1
-        show_flags:1
-        show_unit:1*/
-
-//        WebResource ws = resource().path("/en/data/bean");
-        WebResource ws = resource().path("/" + language + "/data/bean");
-
-        String response =  ws.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
-                .post(String.class, params);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
         JsonArray a = o.get("data").getAsJsonArray();
-        assertEquals(1, a.size());
+
+        for(int i = 0; i < a.size(); i++) {
+           v.add(a.get(i).getAsJsonObject().get("code").getAsString());
+        }
+
+        return v;
+
     }
-
-    /*@Test
-    public void testDataAPI(){
-
-        String payload ="{\"datasource\":\"production\",\"domain_codes\":[\"QV\"],\"filters\":{\"item\":[\"15\"]}}";
-
-        Form f = new Form();
-        f.add("datasource", "production");
-        f.add("domain_codes", "[\"QV\"]");
-//        f.add("filters", "{\"item\":[\"15\"]}}");
-
-
-
-        WebResource ws = resource().path("/" + language + "/data");
-
-        String response =  ws.type(MediaType.APPLICATION_JSON)
-                             .post(String.class, f);
-
-        System.out.println(response);
-
-        JsonParser parser = new JsonParser();
-        JsonObject o = parser.parse(response).getAsJsonObject();
-        JsonArray a = o.get("data").getAsJsonArray();
-        assertEquals(1, a.size());
-
-    }*/
-
 
 }

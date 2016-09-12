@@ -44,8 +44,7 @@
     "report_code": {
       "type": "string",
       "title": "Report Code",
-      "description": "Report Code",
-      "default": null
+      "description": "Report Code"
     },
     "faostat_code": {
       "type": "object",
@@ -1813,7 +1812,8 @@
       "rel": "data",
       "title": "Data",
       "description": "FAOSTAT data.",
-      "traditional": true,
+      "traditional": false,
+      "compressArray": true,
       "schema": {
         "properties": {
           "datasource": {
