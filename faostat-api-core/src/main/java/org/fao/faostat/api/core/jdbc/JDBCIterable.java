@@ -578,6 +578,7 @@ public class JDBCIterable implements Iterator<List<String>> {
                     try {
                         columnType = this.getResultSet().getMetaData().getColumnClassName(i);
                         value = this.getResultSet().getString(i).trim();
+                        sb.append(StringEscapeUtils.escapeCsv(value));
                         if (columnType.endsWith("Double")) {
                             sb.append(Double.parseDouble(value));
                         } else if (columnType.endsWith("Integer")) {
@@ -585,10 +586,11 @@ public class JDBCIterable implements Iterator<List<String>> {
                         } else if (columnType.endsWith("Long")) {
                             sb.append(Long.parseLong(value));
                         } else if (columnType.endsWith("Date")) {
-                            sb.append("\"").append(new Date(value).toString()).append("\"");
+                            sb.append(StringEscapeUtils.escapeCsv(value));
+                            //sb.append("\"").append(new Date(value).toString()).append("\"");
                         } else {
                             // TODO: check if there are "" in the string
-                            sb.append("\"").append(value).append("\"");
+                            sb.append(StringEscapeUtils.escapeCsv(value));
                         }
                         if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
                             sb.append(",");
@@ -625,6 +627,57 @@ public class JDBCIterable implements Iterator<List<String>> {
         }
 
         return sb.toString();
+    }
+
+    public String[] nextCSV2() {
+
+        String[] sb = new String[0];
+        try {
+            sb = new String[this.getResultSet().getMetaData().getColumnCount()];
+            String columnType;
+            String value;
+
+            if (this.isHasNext()) {
+                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
+                    try {
+                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
+                        value = this.getResultSet().getString(i).trim();
+                        if (columnType.endsWith("Double")) {
+                            sb[i-1] = String.valueOf(Double.parseDouble(value));
+                        } else if (columnType.endsWith("Integer")) {
+                            sb[i-1] = String.valueOf(Integer.parseInt(value));
+                        } else if (columnType.endsWith("Long")) {
+                            sb[i-1] = String.valueOf(Long.parseLong(value));
+                        } else if (columnType.endsWith("Date")) {
+                            sb[i-1] = new Date(value).toString();
+                        } else {
+                            sb[i-1] = String.valueOf(value);
+                        }
+                    } catch (NullPointerException ignored) {
+                        if (i > 0) {
+                            sb[i-1] = "";
+                        }
+                    }
+                }
+            }
+            this.setHasNext(this.getResultSet().next());
+        } catch(SQLException ignored) {
+
+        }
+
+        if (!this.isHasNext()) {
+            try {
+                this.getResultSet().close();
+                this.getStatement().close();
+                this.getConnection().close();
+            } catch (SQLException ignored) {
+
+            }
+        } else {
+            //sb.append("\n");
+        }
+
+        return sb;
     }
 
     /* @Deprecated */
