@@ -370,8 +370,6 @@ public class TestData extends JerseyTest {
     @Parameterized.Parameter
     public String language;
 
-    public String datasource = "internal";
-
     @Parameterized.Parameters
     public static Object[] data() {
         return new Object[] { "en", "fr", "es" };
@@ -391,7 +389,6 @@ public class TestData extends JerseyTest {
         params.add("area", "2");
         params.add("item", "27");
         params.add("element", "2510");
-        params.add("datasource", datasource);
 
         WebResource ws = resource()
                 .path("/" + language + "/data/QC")
@@ -413,13 +410,13 @@ public class TestData extends JerseyTest {
         }
     }
 
+    @Test
     public void testDataAPISize(){
         MultivaluedMap params = new MultivaluedMapImpl();
         params.add("area", "2");
         params.add("item", "27");
         params.add("element", "2510");
         params.add("year", "2010,2011");
-        params.add("datasource", datasource);
 
         WebResource ws = resource()
                 .path("/" + language + "/data/QC")
@@ -432,6 +429,39 @@ public class TestData extends JerseyTest {
 
         // get data size
         assertEquals(2, data.size());
+    }
+
+    @Test
+    public void testDataAPIAlternateCS(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("item", "27");
+        params.add("element", "2510");
+        params.add("year", "2010,2011");
+        params.add("area_cs", "ISO3");
+
+        WebResource ws = resource()
+                .path("/" + language + "/data/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray data = o.get("data").getAsJsonArray();
+        JsonArray dsd = o.get("metadata").getAsJsonObject().get("dsd").getAsJsonArray();
+
+        // check dsd and data columns for each row
+        for(int i=0; i < dsd.size(); i++) {
+            JsonObject dsdColumn = dsd.get(i).getAsJsonObject();
+            // check for each language, otherwise wouldn't work
+            if (dsdColumn.has("dimension_id") && dsdColumn.get("dimension_id").equals("area") && dsdColumn.get("type").equals("code")) {
+                String key = dsdColumn.get("key").getAsString();
+                for(int j=0; j < data.size(); j++) {
+                    JsonObject row = data.get(j).getAsJsonObject();
+                    assertEquals("AFG",row.get(key).getAsString());
+                }
+            }
+        }
     }
 
     // Data

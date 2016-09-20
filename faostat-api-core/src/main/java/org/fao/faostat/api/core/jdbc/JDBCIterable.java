@@ -578,7 +578,6 @@ public class JDBCIterable implements Iterator<List<String>> {
                     try {
                         columnType = this.getResultSet().getMetaData().getColumnClassName(i);
                         value = this.getResultSet().getString(i).trim();
-                        sb.append(StringEscapeUtils.escapeCsv(value));
                         if (columnType.endsWith("Double")) {
                             sb.append(Double.parseDouble(value));
                         } else if (columnType.endsWith("Integer")) {
