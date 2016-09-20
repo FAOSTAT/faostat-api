@@ -408,7 +408,7 @@ public class FAOSTATAPICore {
             return out;
 
         } catch (Exception e) {
-            throw new Exception(log.toString());
+            throw new Exception(e);
         }
 
     }
@@ -482,18 +482,18 @@ public class FAOSTATAPICore {
 
             /* Initiate variables. */
             List<List<Map<String, Object>>> dimensions = getDomainDimensions(queryCode, datasourceBean, metadataBean);
-            LOGGER.info("dimensions? " + dimensions.size());
+            //LOGGER.info("dimensions? " + dimensions.size());
             List<Map<String, Object>> tmp = new ArrayList<>();
             for (List<Map<String, Object>> l : dimensions) {
                 tmp.addAll(l);
             }
-            LOGGER.info("tmp? " + tmp.size());
-            LOGGER.info("Dimensions: " + dimensions);
+            //LOGGER.info("tmp? " + tmp.size());
+            //LOGGER.info("Dimensions: " + dimensions);
 
             /* Group Dimensions. */
             List<Map<String, Object>> output = new ArrayList<>();
             String currentList = tmp.get(0).get("ListBoxNo").toString();
-            LOGGER.info("currentList: " + currentList);
+            //LOGGER.info("currentList: " + currentList);
             Map<String, Object> group = new LinkedHashMap<>();
             //group.put("ord", Integer.parseInt(currentList));
             //group.put("parameter", "List" + currentList + "Codes");
@@ -501,17 +501,17 @@ public class FAOSTATAPICore {
                 // TODO: the parameter should come from a constant or better from the DB!
                 group.put("parameter", "List" + currentList + "Codes");
             }
-            LOGGER.info("isFull: " + isFull);
+            //LOGGER.info("isFull: " + isFull);
             group.put("id", tmp.get(0).get("VarType").toString());
             group.put("href", "/codes/" + tmp.get(0).get("VarType").toString() + "/");
             group.put("subdimensions", new ArrayList<Map<String, Object>>());
             for (int i = 0; i < tmp.size(); i += 1) {
 
-                LOGGER.info(tmp.get(i));
+                //LOGGER.info(tmp.get(i));
 
                 if (tmp.get(i).get("ListBoxNo").toString().equalsIgnoreCase(currentList)) {
 
-                    LOGGER.info("IF");
+                    //LOGGER.info("IF");
 
                     Map<String, Object> m = new LinkedHashMap<>();
                     m.put("id", tmp.get(i).get("id").toString());
@@ -521,14 +521,14 @@ public class FAOSTATAPICore {
                     //m.put("ord", Integer.parseInt(tmp.get(i).get("TabOrder").toString()));
                     //m.put("parameter", "List" + currentList + "Codes");
 
-                    LOGGER.info(m);
+                    //LOGGER.info(m);
 
                     // options
                     Map<String, Object> o = new LinkedHashMap<>();
                     o.put("selectType", tmp.get(i).get("ListBoxSelectType").toString());
                     o.put("type", tmp.get(i).get("ListBoxFormat").toString());
 
-                    LOGGER.info(o);
+                    //LOGGER.info(o);
 
                     if ( isFull ) {
                         // TODO: the parameter should come from a constant or better from the DB!
@@ -545,12 +545,12 @@ public class FAOSTATAPICore {
                         }
                     }
 
-                    LOGGER.info("coding_systems");
+                    //LOGGER.info("coding_systems");
 
                     ((ArrayList<Map<String, Object>>) group.get("subdimensions")).add(m);
                 } else {
 
-                    LOGGER.info("ELSE");
+                    //LOGGER.info("ELSE");
 
                     output.add(group);
                     currentList = tmp.get(i).get("ListBoxNo").toString();
@@ -696,9 +696,15 @@ public class FAOSTATAPICore {
                 Map<String, Object> o = new LinkedHashMap<String, Object>();
                 o.put("code", dbRow.get("domain_code"));
                 o.put("label", dbRow.get("domain_name"));
-                //o.put("ord", dbRow.get("ord"));
                 o.put("date_update", dbRow.get("date_update"));
+                o.put("note_update", dbRow.get("note_update"));
                 o.put("note", dbRow.get("note"));
+                o.put("release_current", dbRow.get("release_current"));
+                o.put("state_current", dbRow.get("state_current"));
+                o.put("year_current", dbRow.get("year_current"));
+                o.put("release_next", dbRow.get("release_next"));
+                o.put("state_next", dbRow.get("state_next"));
+                o.put("year_next", dbRow.get("year_next"));
 
                 /* No Group (filter) selected */
                 if ( metadataBean.getProcedureParameters().get("group_code") == null) {
@@ -711,7 +717,7 @@ public class FAOSTATAPICore {
                 }else {
 
                     /* Filter by a Group codes */
-                    if (metadataBean.getProcedureParameters().get("group_code").equals((String) dbRow.get("group_code"))) {
+                    if ( metadataBean.getProcedureParameters().get("group_code").toString().equals(String.valueOf(dbRow.get("group_code")))) {
 
                         // TODO: in theory should not be needed
                         if (isAdmissibleDBRow(o, out.getMetadata())) {
@@ -722,15 +728,10 @@ public class FAOSTATAPICore {
                 }
 
             }
-            LOGGER.info("add data: done");
 
-            /* Statistics. */
             long tf = System.currentTimeMillis();
-            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
-            /* Return output. */
-            LOGGER.info("return output...");
             return out;
 
         } catch (Exception e) {
@@ -784,15 +785,10 @@ public class FAOSTATAPICore {
 
             }
 
-            LOGGER.info("add data: done");
-
             /* Statistics. */
             long tf = System.currentTimeMillis();
-            LOGGER.info("set statistics...");
             out.getMetadata().setProcessingTime(tf - t0);
 
-            /* Return output. */
-            LOGGER.info("return output...");
             return out;
 
         } catch (Exception e) {
@@ -808,19 +804,13 @@ public class FAOSTATAPICore {
 
         try {
 
-            /* Statistics. */
-            LOGGER.info("initiate statistics...");
             long t0 = System.currentTimeMillis();
 
             /* Get domain's dimensions. */
             List<List<Map<String, Object>>> dimensions = getDomainDimensions("dimensions", datasourceBean, metadataBean);
 
-            LOGGER.info(dimensions);
-
             /* Organize data in an object. */
             final List<Map<String, Object>> structuredDimensions = organizeDomainDimensions(dimensions);
-
-            LOGGER.info(structuredDimensions);
 
             /* Get the dimension of interest. */
             Map<String, Object> dimension = null;
@@ -828,7 +818,7 @@ public class FAOSTATAPICore {
             for (Map<String, Object> d : structuredDimensions) {
                 /* checking if is at dimension level */
                 if (d.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                    LOGGER.info(d.get("id").toString());
+                    //LOGGER.info(d.get("id").toString());
                     dimension = d;
                     break;
                 }
@@ -836,15 +826,15 @@ public class FAOSTATAPICore {
                 ArrayList<Map<String, Object>> subdimensions = (ArrayList<Map<String, Object>>) d.get("subdimensions");
                 for (Map<String, Object> subd : subdimensions) {
                     if (subd.get("id").toString().equalsIgnoreCase(dimensionCode)) {
-                        LOGGER.info(subd.get("id").toString());
+                        //LOGGER.info(subd.get("id").toString());
                         dimension = subd;
                         break;
                     }
                 }
             }
 
-            LOGGER.info("DimensionCode: " + dimensionCode);
-            LOGGER.info("Dimension: " + dimension);
+            //LOGGER.info("DimensionCode: " + dimensionCode);
+            //LOGGER.info("Dimension: " + dimension);
 
             /* Prepare output. */
             List<Map<String, Object>> codes = new ArrayList<>();
@@ -853,14 +843,12 @@ public class FAOSTATAPICore {
             /* Get subdimensions. */
             ArrayList<Map<String, Object>> subDimensions = (ArrayList<Map<String, Object>>) dimension.get("subdimensions");
 
-            LOGGER.info("subDimensions: " + subDimensions);
+            //LOGGER.info("subDimensions: " + subDimensions);
 
             if (subDimensions != null) {
 
                 /* Fetch codes for each sub-dimension. */
                 for (Map<String, Object> m : subDimensions) {
-
-                    LOGGER.info("subDimension: " + m);
 
                     /* Define options to fetch codes. */
                     MetadataBean subDimensionOptions = new MetadataBean();
@@ -1326,7 +1314,7 @@ public class FAOSTATAPICore {
             }
             dimensions.add(groups);
 
-            LOGGER.info("DIMENSIONS:" + dimensions);
+            //LOGGER.info("DIMENSIONS:" + dimensions);
 
             /* Return output. */
             return dimensions;
@@ -1368,8 +1356,8 @@ public class FAOSTATAPICore {
 
     private boolean isAdmissibleDBRow(Map<String, Object> row, MetadataBean o) {
 
-//        LOGGER.info(row);
-//        LOGGER.info(o);
+        LOGGER.info(row);
+        LOGGER.info(o);
         /* Check the blacklist. */
         if (o.getBlackList() != null && o.getBlackList().size() > 0) {
             if (o.getBlackList().contains(row.get("code").toString().toUpperCase())) {
@@ -1391,6 +1379,8 @@ public class FAOSTATAPICore {
 
     public List<Map<String, Object>> createDSD(DatasourceBean datasourceBean, MetadataBean o) {
 
+        LOGGER.info("DSD");
+
         /* Initiate DSD. */
         List<Map<String, Object>> dsd = new ArrayList<Map<String, Object>>();
         JDBCIterable i;
@@ -1400,8 +1390,21 @@ public class FAOSTATAPICore {
         original.put("original", new ArrayList<Map<String, Object>>());
 
         /* Get the first domain code from the metadata bean. */
-        String domain_code = ((List<String>)o.getProcedureParameters().get("domain_codes")).get(0);
+        // TODO: check if domain_code or domain_codes
+        String domain_code = "";
+        if (o.getProcedureParameters().containsKey("domain_codes")) {
+            domain_code = ((List<String>)o.getProcedureParameters().get("domain_codes")).get(0);
+        }
+        else if (o.getProcedureParameters().containsKey("domain_code")) {
+            domain_code = String.valueOf(o.getProcedureParameters().get("domain_code"));
+        }
+        else{
+            LOGGER.error("No domain_code or domain_codes found: " + o.getProcedureParameters());
+            throw new Error("createDSD. Mo domain_code or domain_codes found:");
+        }
+
         o.addParameter("domain_code", domain_code);
+
 
         Boolean addCodes = true;
         if ( o.getProcedureParameters().get("show_codes") != null) {
@@ -1439,7 +1442,6 @@ public class FAOSTATAPICore {
                 ((ArrayList<Map<String, Object>>)original.get("original")).add(row);
 
                 //LOGGER.info(row);
-
 
                 /* Create descriptors for code and label columns. */
                 if (!row.get("Col").toString().equalsIgnoreCase("Unit") && !row.get("Col").toString().equalsIgnoreCase("Flag") && !row.get("Col").toString().equalsIgnoreCase("Value")) {
@@ -1581,9 +1583,12 @@ public class FAOSTATAPICore {
 
         long t0 = System.currentTimeMillis();
 
+        LOGGER.info("getJDBCIterable.queryCode: " + queryCode);
+        LOGGER.info("getJDBCIterable.getJDBCIterable: " + o.getProcedureParameters());
+
         String query = this.getQueries().getQuery(queryCode, o.getProcedureParameters());
 
-        LOGGER.info("QUERY: " + query);
+        LOGGER.info("getJDBCIterable.QUERY: " + query);
         JDBCIterable i = new JDBCIterable();
         try {
             i.query(datasourceBean, query);
@@ -1592,7 +1597,7 @@ public class FAOSTATAPICore {
         }
 
         long tf = System.currentTimeMillis();
-        LOGGER.info("Query time: " + (tf - t0));
+       // LOGGER.info("Query time: " + (tf - t0));
 
         return i;
     }

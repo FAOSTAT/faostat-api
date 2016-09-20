@@ -11,29 +11,48 @@
         <artifactId>faostat-api</artifactId>
         <version>1.6-SNAPSHOT</version>
     </parent>
+    <properties>
+        <handlebars.version>4.0.6</handlebars.version>
+        <opencsv.version>2.3</opencsv.version>
+        <json-simple.version>1.1</json-simple.version>
+        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <apache-commons.version>3.0</apache-commons.version>
+    </properties>
     <name>FAOSTAT Core</name>
     <dependencies>
 
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>2.3</version>
+            <version>${opencsv.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1</version>
+            <version>${json-simple.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.0</version>
+            <version>${apache-commons.version}</version>
         </dependency>
           <dependency>
               <groupId>com.microsoft.sqlserver</groupId>
               <artifactId>sqljdbc4</artifactId>
-              <version>4.0</version>
+              <version>${sqljdbc4.version}</version>
           </dependency>
+        <!--<dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars.java</artifactId>
+            &lt;!&ndash;<version>${handlebars.version}</version>&ndash;&gt;
+            <version>0.5.2</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.github.jknack/handlebars.java -->
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>${handlebars.version}</version>
+        </dependency>
 
 
         <!--Not used anymore. To be removed. -->

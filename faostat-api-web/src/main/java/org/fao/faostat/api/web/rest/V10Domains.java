@@ -412,10 +412,12 @@ public class V10Domains {
 
         /* Store procedure parameters. */
         metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("group_code", group_code);
+        if ( group_code != null) {
+            metadataBean.addParameter("group_code", group_code);
+        }
 
         // TODO: move to an ENUM (if really needed to set a default. This should be hold in the DB)
-        metadataBean.addParameter("section", "download");
+        //metadataBean.addParameter("section", "download");
 
        /* Set white/blacklist. */
         metadataBean.setBlackList(parseArrayRequest(blacklist));

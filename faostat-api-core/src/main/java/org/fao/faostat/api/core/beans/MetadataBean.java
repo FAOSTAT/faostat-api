@@ -419,6 +419,10 @@ public class MetadataBean {
         this.getProcedureParameters().put(key, value);
     }
 
+    public void addParameters(Map<String, Object> params) {
+        this.getProcedureParameters().putAll(params);
+    }
+
     public DATASOURCE getDatasource() {
         return datasource;
     }

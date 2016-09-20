@@ -353,10 +353,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -445,6 +442,66 @@ public class V10ReportHeaders {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
+    }
+
+    // get filters to be passed to the core
+    private  Map<String, Object> getFilters(MultivaluedMap<String, String> params, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        Integer paramCounter = 1;
+
+          /* getting domain dimensions */
+        OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
+        Map<String, Object> filters = new HashMap<>();
+
+        /* for each dimension tries to map to a filter */
+        boolean validFilter = false;
+        final String defaultCode = "_1";
+        while (ob.getData().hasNext()) {
+
+            Map<String, Object> dimension = ob.getData().next();
+
+            String id = dimension.get("id").toString();
+
+            // the "[]" is for the arrays passed on the GET ajax call
+            List<String> codes = params.get(id) != null? params.get(id): params.get(id + "[]");
+
+            // alternate coding system
+            List<String> altCS = params.get(id + "_cs");
+
+            String parameterVarType = "List"+ paramCounter +"VarType";
+            String parameterListCodes = "List"+ paramCounter +"Codes";
+            String parameterAltCodes = "List"+ paramCounter +"AltCodes";
+
+            List<String> c = new ArrayList<String>() {{add(defaultCode);}};
+            if (codes != null && !codes.isEmpty()) {
+                for(String v : codes) {
+                    if (!v.equals("")) {
+                        c.addAll(Arrays.asList(v.split(",")));
+                        validFilter = true;
+                        c.remove(defaultCode);
+                    }
+                }
+            }
+
+            filters.put(parameterVarType, id);
+            filters.put(parameterListCodes, c);
+
+            if (altCS != null) {
+                filters.put(parameterAltCodes, altCS.get(0));
+            }
+
+            paramCounter++;
+        }
+
+        if (!validFilter) {
+            LOGGER.warn("Invalid request. Please add at least one filter.");
+            throw new Exception("Please add at least one filter.");
+        }
+
+        LOGGER.info("Filters: "  + filters);
+
+        return filters;
     }
 
 }

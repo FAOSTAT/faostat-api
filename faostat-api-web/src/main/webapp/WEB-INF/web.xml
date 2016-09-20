@@ -7,14 +7,14 @@
     <!-- General information -->
     <display-name>faostat-api</display-name>
 
-    <filter>
+<!--    <filter>
         <filter-name>tracingFilter</filter-name>
         <filter-class>org.fao.faostat.api.web.filter.TraceFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>tracingFilter</filter-name>
         <url-pattern>/v1/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
