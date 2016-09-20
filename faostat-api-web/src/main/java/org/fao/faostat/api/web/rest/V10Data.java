@@ -352,6 +352,7 @@ import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.fao.faostat.api.core.constants.QUERIES;
 //import org.fao.faostat.api.core.constants.ERROR;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
+import org.fao.faostat.api.web.utils.FAOSTATAPIUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
@@ -557,10 +558,6 @@ public class V10Data {
         /* Init Core library. */
         FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
-        /* Type */
-        // TODO: switch properly to CSV Produce Type;
-        String produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-
         /* Store user preferences. */
         final MetadataBean metadataBean = new MetadataBean();
         metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
@@ -598,17 +595,6 @@ public class V10Data {
 
         // setting pivot
         metadataBean.setPivot(Boolean.valueOf(pivot));
-
-        /* Type */
-        // TODO: switch properly to CSV Produce Type;
-        if (metadataBean.getOutputType().equals(OUTPUTTYPE.CSV)) {
-            produceType = MediaType.APPLICATION_OCTET_STREAM + ";charset=utf-8";
-        }else{
-            /* Type */
-            produceType = MediaType.APPLICATION_JSON + ";charset=utf-8";
-        }
-
-        LOGGER.info(metadataBean);
 
         /* Query the DB and return the results. */
         try {
@@ -666,7 +652,7 @@ public class V10Data {
             };
 
             /* Stream result */
-            return Response.ok(stream).type(produceType).build();
+            return Response.ok(stream).type(FAOSTATAPIUtils.outputType(metadataBean)).build();
 
         } catch (WebApplicationException e) {
             LOGGER.error(uri.getRequestUri());
@@ -726,187 +712,130 @@ public class V10Data {
 
     }
 
+
     @GET
     @Path("/{domain}")
-    public Response getDataAlternative(@PathParam("lang") String lang,
-                                       @PathParam("domain") final String domainCode,
-                                       @QueryParam("datasource") @DefaultValue("production") String datasource,
-                                       @QueryParam("api_key") String api_key,
-                                       @QueryParam("client_key") String client_key,
-                                       @QueryParam("output_type") String output_type,
-                                       @QueryParam("group_by") String group_by,
-                                       @QueryParam("order_by") String order_by,
-                                       @QueryParam("operator") String operator,
-                                       @QueryParam("page_size") Integer page_size,
-                                       @QueryParam("decimal_places") Integer decimal_places,
-                                       @QueryParam("page_number") Integer page_number,
-                                       @QueryParam("limit") Integer limit,
-                                       // TODO: convert it all to boolean and convert it into string?
-                                       @QueryParam("null_values") Boolean null_values,
-                                       @QueryParam("show_codes") Integer show_codes,
-                                       @QueryParam("show_flags") Integer show_flags,
-                                       @QueryParam("show_unit") Integer show_unit,
-                                       @QueryParam("pivot") Boolean pivot,
-                                       @Context UriInfo uriInfo) {
-
-        /* Logger. */
-        StringBuilder log = new StringBuilder();
-        log.append("getDataAlternative\t").append("DataBean\t").append("").append("\n");
-
-        /* Init Core library. */
-        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
-
-        /* Store user preferences. */
-        MetadataBean metadataBean = new MetadataBean();
-        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
-
-        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
-        metadataBean.addParameter("domain_codes", new ArrayList<String>(){{add(domainCode);}});
-        metadataBean.addParameter("domain_code", domainCode); /* Get the first domain code, to get the dimensions later on. */
-        metadataBean.addParameter("report_code", "download"); // TODO: this should be removed.
-
-        metadataBean.setFull(true);
-
-        /* Init filters. */
-        Map<String, List<String>> filters = new HashMap<>();
-        filters.put("List1Codes", new ArrayList<String>() {{add("_1");}});
-        filters.put("List2Codes", new ArrayList<String>() {{add("_1");}});
-        filters.put("List3Codes", new ArrayList<String>() {{add("_1");}});
-        filters.put("List4Codes", new ArrayList<String>() {{add("_1");}});
-        /*filters.put("List1Codes", new ArrayList<String>());
-        filters.put("List2Codes", new ArrayList<String>());
-        filters.put("List3Codes", new ArrayList<String>());
-        filters.put("List4Codes", new ArrayList<String>());*/
-        filters.put("List5Codes", new ArrayList<String>());
-        filters.put("List6Codes", new ArrayList<String>());
-        filters.put("List7Codes", new ArrayList<String>());
-
-        /* Init filters. Conding Systems */
-        /* TODO: to be implemented with the mapping */
-        Map<String, String> filtersCS = new HashMap<>();
-        filtersCS.put("List1AltCodes", "");
-        filtersCS.put("List2AltCodes", "");
-        filtersCS.put("List3AltCodes", "");
-        filtersCS.put("List4AltCodes", "");
-        filtersCS.put("List5AltCodes", "");
-        filtersCS.put("List6AltCodes", "");
-        filtersCS.put("List7AltCodes", "");
-
-        LOGGER.info("domain:" + domainCode);
-        String queryURI = uriInfo.getRequestUri().getQuery();
-        // LOGGER.info("query: " + query);
-        LOGGER.info("metadataBean: " + metadataBean);
-        LOGGER.info("queryURI: " + queryURI);
-        MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
-        LOGGER.info("params: " + params);
-        LOGGER.info("pivot: " + pivot);
-
-        /* Datasource bean. */
-        DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+    public Response getData(@PathParam("lang") String lang,
+                            @PathParam("domain") final String domainCode,
+                            @QueryParam("datasource") @DefaultValue("production") String datasource,
+                            @QueryParam("api_key") String api_key,
+                            @QueryParam("client_key") String client_key,
+                            @QueryParam("output_type") String output_type,
+                            @QueryParam("group_by") @DefaultValue("") String group_by,
+                            @QueryParam("order_by") @DefaultValue("") String order_by,
+                            @QueryParam("operator") @DefaultValue("") String operator,
+                            @QueryParam("decimal_places") Integer decimal_places,
+                            @QueryParam("page_size") @DefaultValue("0") Integer page_size,
+                            @QueryParam("page_number") @DefaultValue("0") Integer page_number,
+                            @QueryParam("limit") @DefaultValue("-1") Integer limit,
+                            // TODO: convert it all to boolean and convert it into string?
+                            @QueryParam("null_values") @DefaultValue("false") Boolean null_values,
+                            @QueryParam("show_codes") @DefaultValue("true") Boolean show_codes,
+                            @QueryParam("show_flags") @DefaultValue("true") Boolean show_flags,
+                            @QueryParam("show_unit") @DefaultValue("true") Boolean show_unit,
+                            @QueryParam("pivot") @DefaultValue("false") Boolean pivot,
+                            @QueryParam("no_records") @DefaultValue("false") Boolean no_records,
+                            @Context UriInfo uriInfo) {
 
         try {
 
-             /* getting domain dimensions */
-            OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
+            long t0 = System.currentTimeMillis();
 
-            /* for each dimension tries to map to a filter */
-            boolean validFilter = false;
-            while (ob.getData().hasNext()) {
+            FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
 
-                Map<String, Object> m = ob.getData().next();
-                String id = m.get("id").toString();
-                String parameter = m.get("parameter").toString();
+            // Getting DomainCodes (in theory should be one)
+            List<String> domainCodes = new ArrayList<String>() {{addAll(Arrays.asList(domainCode.split(",")));}};
 
-                // the "[]" is for the arrays passed on the GET ajax call
-                List<String> p = params.get(id) != null? params.get(id): params.get(id + "[]");
+            // setting the dimensions request bean
+            MetadataBean dimensionsBean = new MetadataBean();
+            dimensionsBean.storeUserOptions(datasource, api_key, client_key, output_type);
+            dimensionsBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+            dimensionsBean.addParameter("domain_code", domainCodes.get(0)); /* Get the first domain code, to get the dimensions later on. */
 
-                if (p != null) {
-                    filters.get(parameter).clear();
-                    for(String v :p) {
-                        List<String> items = Arrays.asList(v.split(","));
-                        LOGGER.info("----adding: " + items);
-                        filters.get(parameter).addAll(items);
-                        validFilter = true;
+            // setting the data request bean
+            final MetadataBean metadataBean = new MetadataBean();
+            metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+            metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+            metadataBean.addParameter("domain_code", domainCodes.get(0)); /* Get the first domain code, to get the dimensions later on. */
+            //metadataBean.addParameter("domain_codes", domainCodes);
+            metadataBean.addParameter("group_by", group_by);
+            metadataBean.addParameter("order_by", order_by);
+            metadataBean.addParameter("operator", operator);
+            metadataBean.addParameter("page_size", page_size);
+            if (decimal_places != null) {
+                metadataBean.addParameter("decimal_places", decimal_places);
+            }
+            metadataBean.addParameter("page_number", page_number);
+            metadataBean.addParameter("limit", limit);
+            // this is because the procedure takes 0 and 1
+            metadataBean.addParameter("show_codes", show_codes.booleanValue()? 1 : 0);
+            metadataBean.addParameter("show_flags", show_flags.booleanValue()? 1 : 0);
+            metadataBean.addParameter("show_unit", show_unit.booleanValue()? 1 : 0);
+            metadataBean.addParameter("null_values", null_values);
+            metadataBean.setPivot(pivot);
+
+            // used for size
+            metadataBean.addParameter("no_records", no_records.booleanValue()? 1 : 0);
+
+            LOGGER.info("MetadataBean: " + metadataBean);
+
+            // add filters parameters
+            metadataBean.addParameters(getFilters(uriInfo.getQueryParameters(), datasourceBean, dimensionsBean));
+
+            /* Stream builder. */
+            final StreamBuilder sb = new StreamBuilder();
+
+            // get DSD
+            final List<Map<String, Object>> dsd = faostatapiCore.createDSD(datasourceBean, metadataBean);
+
+            /* Query the DB and create an output stream. */
+            String query = new QUERIES().getQuery("data_new", metadataBean.getProcedureParameters());
+
+            final JDBCIterable it = new JDBCIterable();
+            it.query(datasourceBean, query);
+
+            // filter DSD
+            final List<Map<String, Object>> dsdFiltered = FAOSTATAPIUtils.filterDSD(dsd, it.getColumnNames(), it.getColumnTypes());
+
+            // statistics
+            long tf = System.currentTimeMillis();
+            metadataBean.setProcessingTime(tf - t0);
+
+            StreamingOutput stream = new StreamingOutput() {
+
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Generate an array of objects of arrays. */
+                    switch (metadataBean.getOutputType()) {
+                        case CSV:
+
+                            writeCSV(it, writer);
+                            break;
+
+                        default:
+
+                            writeJSON(sb, metadataBean, dsdFiltered, it, writer);
+                            break;
+
                     }
 
-                }else{
-                    LOGGER.info("----is null:"  + id + " -> " + p);
+                    /* Flush the writer. */
+                    writer.flush();
+
+                    /* Close the writer. */
+                    writer.close();
+
                 }
 
-            }
+            };
 
-            if (!validFilter) {
-                LOGGER.warn("Invalid request. Please add at least one filter.");
-                throw new Exception("Please add at least one filter.");
-            }
-
-            // TODO: set the bean with values from query parameters. At the moment the defaults are passed to the Data method.
-            DataBean b = new DataBean();
-            if (group_by != null) {
-                b.setGroup_by(group_by);
-            }
-            if (order_by != null) {
-                b.setOrder_by(order_by);
-            }
-            if (operator != null) {
-                b.setOperator(operator);
-            }
-            if (page_size != null) {
-                b.setPage_size(page_size);
-            }
-            if (decimal_places != null) {
-                b.setDecimal_places(decimal_places);
-            }
-            if (page_number != null) {
-                b.setPage_number(page_number);
-            }
-            if (limit != null) {
-                b.setLimit(limit);
-            }
-            if (null_values != null) {
-                b.setNull_values(null_values);
-            }
-            if (show_codes != null) {
-                b.setShow_codes(show_codes);
-            }
-            if (show_flags != null) {
-                b.setShow_flags(show_flags);
-            }
-            if (show_unit != null) {
-                b.setShow_unit(show_unit);
-            }
-            if (pivot != null) {
-                b.setPivot(pivot);
-            }
-
-            return getData(lang, new ArrayList<String>(){{add(domainCode);}},
-                    datasource,
-                    api_key,
-                    client_key,
-                    output_type,
-                    filters.get("List1Codes"),
-                    filters.get("List2Codes"),
-                    filters.get("List3Codes"),
-                    filters.get("List4Codes"),
-                    filters.get("List5Codes"),
-                    filters.get("List6Codes"),
-                    filters.get("List7Codes"),
-                    filtersCS.get("List1AltCodes"),
-                    filtersCS.get("List2AltCodes"),
-                    filtersCS.get("List3AltCodes"),
-                    filtersCS.get("List4AltCodes"),
-                    filtersCS.get("List5AltCodes"),
-                    filtersCS.get("List6AltCodes"),
-                    filtersCS.get("List7AltCodes"),
-                    // TODO: this should be set in the request
-                   /* group_by, order_by, operator,
-                    page_size, decimal_places, page_number, limit,
-                    null_values, show_codes, show_flags, show_unit,*/
-                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
-                    b.getPage_size(),  b.getDecimal_places(), b.getPage_number(), b.getLimit(),
-                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
-                    b.isPivot()
-            );
+            /* Stream result */
+            return Response.ok(stream).type(FAOSTATAPIUtils.outputType(metadataBean)).build();
 
 
         } catch (WebApplicationException e) {
@@ -917,4 +846,63 @@ public class V10Data {
 
     }
 
+    // get filters to be passed to the core
+    private  Map<String, Object> getFilters(MultivaluedMap<String, String> params, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+        Integer paramCounter = 1;
+
+          /* getting domain dimensions */
+        OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
+        Map<String, Object> filters = new HashMap<>();
+
+        /* for each dimension tries to map to a filter */
+        boolean validFilter = false;
+        final String defaultCode = "_1";
+        while (ob.getData().hasNext()) {
+
+            Map<String, Object> dimension = ob.getData().next();
+
+            String id = dimension.get("id").toString();
+
+            // the "[]" is for the arrays passed on the GET ajax call
+            List<String> codes = params.get(id) != null? params.get(id): params.get(id + "[]");
+
+            // alternate coding system
+            List<String> altCS = params.get(id + "_cs");
+
+            String parameterVarType = "List"+ paramCounter +"VarType";
+            String parameterListCodes = "List"+ paramCounter +"Codes";
+            String parameterAltCodes = "List"+ paramCounter +"AltCodes";
+
+            List<String> c = new ArrayList<String>() {{add(defaultCode);}};
+            if (codes != null && !codes.isEmpty()) {
+                for(String v : codes) {
+                    if (!v.equals("")) {
+                        c.addAll(Arrays.asList(v.split(",")));
+                        validFilter = true;
+                        c.remove(defaultCode);
+                    }
+                }
+            }
+
+            filters.put(parameterVarType, id);
+            filters.put(parameterListCodes, c);
+
+            if (altCS != null) {
+                filters.put(parameterAltCodes, altCS.get(0));
+            }
+
+            paramCounter++;
+        }
+
+        if (!validFilter) {
+            LOGGER.warn("Invalid request. Please add at least one filter.");
+            throw new Exception("Please add at least one filter.");
+        }
+
+        LOGGER.info("Filters: "  + filters);
+
+        return filters;
+    }
 }

@@ -341,10 +341,13 @@
  */
 package org.fao.faostat.api.core.constants;
 
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -360,10 +363,33 @@ public class QUERIES {
     public QUERIES() {
         this.setQueries(new HashMap<String, String>());
 
-        this.getQueries().put("groupsdomains", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}', @Section='{{section}}' ");
-        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}', @ReportCode = N'{{report_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}', @ReportCode = N'{{report_code}}', @Lang = N'{{lang}}', @ListBoxNO = {{dimension}}, @TabOrder = {{subdimension}}");
+        this.getQueries().put("groupsdomains", "EXEC Warehouse.dbo.usp_GetDomainSection @lang='{{lang}}' {{#if section}} ,@Section='{{section}}' {{/if}}");
+        this.getQueries().put("dimensions", "EXEC Warehouse.dbo.usp_GetDomainListBoxes @DomainCode = N'{{domain_code}}' {{#if report_code}} ,@ReportCode = N'{{report_code}}' {{/if}} ,@Lang = N'{{lang}}'");
+        this.getQueries().put("codes", "EXEC Warehouse.dbo.usp_GetListBox @DomainCode = N'{{domain_code}}' {{#if report_code}} ,@ReportCode = N'{{report_code}}' {{/if}} ,@Lang = N'{{lang}}' ,@ListBoxNO = {{dimension}} ,@TabOrder = {{subdimension}}");
 
+        this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @Limit={{limit}}, @DecPlaces={{decimal_places}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NullValues = {{null_values}}, @GroupVarType = '{{group_by}}', @Operator = '{{operator}}', @OrderBy = '{{order_by}}', @PageSize = {{page_size}}, @Page = {{page_number}}, @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
+        this.getQueries().put("data_size", "EXEC Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NoRecords={{no_records}}, @NullValues = {{null_values}}");
+        this.getQueries().put("rankings", "EXEC Warehouse.dbo.usp_Rank @DomainCode='{{domain_codes}}', @lang='{{lang}}', @List1Codes='{{List1Codes}}', @List2Codes='{{List2Codes}}', @List3Codes='{{List3Codes}}', @List4Codes='{{List4Codes}}' {{#if List5Codes}}, @List5Codes='{{List5Codes}}' {{/if}} {{#if List6Codes}} ,@List6Codes='{{List6Codes}}' {{/if}} {{#if List7Codes}} ,@List7Codes='{{List7Codes}}' {{/if}} ,@FilterList={{filter_list}}, @RankType='{{rank_type}}', @NoResults={{results}}");
+        this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
+        this.getQueries().put("data_new", "EXEC Warehouse.dbo.usp_GetData_VarType @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @Limit={{limit}} {{#if decimal_places}} ,@DecPlaces={{decimal_places}} {{/if}}, @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1VarType = '{{List1VarType}}', @List2VarType = '{{List2VarType}}', @List3VarType = '{{List3VarType}}', @List4VarType = '{{List4VarType}}' {{#if List5VarType}} ,@List5VarType = '{{List5VarType}}' {{/if}} {{#if List6VarType}} ,@List6VarType = '{{List6VarType}}' {{/if}} {{#if List7VarType}} ,@List7VarType = '{{List7VarType}}' {{/if}} ,@NullValues = {{null_values}}, @GroupVarType = '{{group_by}}', @Operator = '{{operator}}', @OrderBy = '{{order_by}}', @PageSize = {{page_size}}, @Page = {{page_number}} ,@List1Codes = '{{List1Codes}}' ,@List2Codes = '{{List2Codes}}' ,@List3Codes = '{{List3Codes}}' ,@List4Codes = '{{List4Codes}}' {{#if List5Codes}} ,@List5Codes = '{{List5Codes}}' {{/if}} {{#if List6Codes}} ,@List6Codes = '{{List6Codes}}' {{/if}} {{#if List7Codes}} ,@List7Codes = '{{List7Codes}}' {{/if}} {{#if List1AltCodes}} ,@List1AltCodes = '{{List1AltCodes}}' {{/if}} {{#if List2AltCodes}} ,@List2AltCodes = '{{List2AltCodes}}' {{/if}} {{#if List3AltCodes}} ,@List3AltCodes = '{{List3AltCodes}}' {{/if}} {{#if List4AltCodes}} ,@List4AltCodes = '{{List4AltCodes}}' {{/if}} {{#if List5AltCodes}} ,@List5AltCodes = '{{List5AltCodes}}' {{/if}} {{#if List6AltCodes}} ,@List6AltCodes = '{{List6AltCodes}}' {{/if}} {{#if List7AltCodes}} ,@List7AltCodes = '{{List7AltCodes}}' {{/if}} {{#if NoRecords}} @NoRecords = {{NoRecords}} {{/if}} {{#if no_records}} ,@NoRecords = {{no_records}} {{/if}}");
+
+        this.getQueries().put("suggestions", "EXEC Warehouse.dbo.usp_SearchSuggestions @query = '{{query}}', @lang = '{{lang}}'");
+        this.getQueries().put("search", "EXEC Warehouse.dbo.usp_SearchResults @query = '{{query}}', @lang = '{{lang}}'");
+
+        this.getQueries().put("reportheaders", "EXEC Warehouse.dbo.usp_GetReportHead @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
+        this.getQueries().put("reportdata", "EXEC Warehouse.dbo.usp_GetReportData @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
+
+        this.getQueries().put("metadata", "EXEC Warehouse.dbo.usp_GetMetadataDomain @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
+
+        this.getQueries().put("bulkdownloads", "EXEC Warehouse.dbo.usp_GetBulkDownloads @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
+        this.getQueries().put("documents", "EXEC Warehouse.dbo.usp_GetFAOSTATFiles @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
+
+        this.getQueries().put("definitions", "EXEC Warehouse.dbo.usp_GetDefinitionTables @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_by_type", "EXEC Warehouse.dbo.usp_GetDefinition @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_domain", "EXEC Warehouse.dbo.usp_GetDomainDefinitionTables @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
+        this.getQueries().put("definitions_domain_by_type", "EXEC Warehouse.dbo.usp_GetDomainDefinition @DomainCode = '{{domain_code}}', @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
+
+        // currently not used
         this.getQueries().put("methodologies", "SELECT M.MethodologyCode AS code, M.MethodologyTitle{{lang}} AS label FROM Metadata_Methodology AS M GROUP BY M.MethodologyCode, M.MethodologyTitle{{lang}} ORDER BY M.MethodologyTitle{{lang}} ASC");
         this.getQueries().put("methodology", "SELECT M.MethodologyNote{{lang}} AS note, M.MethodologyCoverage{{lang}} AS coverage, M.MethodologyReferences{{lang}} AS reference, M.MethodologyCollection{{lang}} AS collection, M.MethodologyEstimation{{lang}} AS estimation FROM Metadata_Methodology AS M WHERE M.MethodologyCode='{{methodology_code}}'");
         this.getQueries().put("classifications", "SELECT M.ItemCode AS code, M.ItemName{{lang}} AS label, M.ItemDescription{{lang}} AS description FROM Metadata_Item AS M WHERE M.domaincode = '{{domain_code}}' ORDER BY M.ItemName{{lang}} ASC");
@@ -371,36 +397,13 @@ public class QUERIES {
         this.getQueries().put("glossary", "SELECT M.GlossaryName{{lang}} AS code, M.GlossaryDefinition{{lang}} AS label, M.GlossarySource{{lang}} AS source FROM Metadata_Glossary AS M ORDER BY M.GlossaryName{{lang}} ASC");
         this.getQueries().put("abbreviations", "SELECT M.AbbreviationTitle{{lang}} AS code, AbbreviationDefinition{{lang}} AS label FROM Metadata_Abbreviation AS M ORDER BY AbbreviationTitle{{lang}} ASC");
 
-        this.getQueries().put("bulkdownloads", "EXEC Warehouse.dbo.usp_GetBulkDownloads @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-        this.getQueries().put("documents", "EXEC Warehouse.dbo.usp_GetFAOSTATFiles @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-
-        this.getQueries().put("data", "EXECUTE Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @Limit={{limit}}, @DecPlaces={{decimal_places}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NullValues = {{null_values}}, @GroupVarType = '{{group_by}}', @Operator = '{{operator}}', @OrderBy = '{{order_by}}', @PageSize = {{page_size}}, @Page = {{page_number}}, @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
-        this.getQueries().put("data_size", "EXECUTE Warehouse.dbo.usp_GetData @ShowCodes={{show_codes}}, @ShowFlag={{show_flags}}, @ShowUnit={{show_unit}}, @DomainCode = '{{domain_codes}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @NoRecords={{no_records}}, @NullValues = {{null_values}}");
-        this.getQueries().put("rankings", "EXEC Warehouse.dbo.usp_Rank @DomainCode='{{domain_codes}}', @lang='{{lang}}', @List1Codes='{{List1Codes}}', @List2Codes='{{List2Codes}}', @List3Codes='{{List3Codes}}', @List4Codes='{{List4Codes}}', @List5Codes='{{List5Codes}}', @List6Codes='{{List6Codes}}', @List7Codes='{{List7Codes}}', @FilterList={{filter_list}}, @RankType='{{rank_type}}', @NoResults={{results}}");
-        this.getQueries().put("data_structure", "EXEC Warehouse.dbo.usp_GetDataSchema @DomainCode = N'{{domain_code}}', @Lang = N'{{lang}}'");
-
-        this.getQueries().put("suggestions", "EXEC Warehouse.dbo.usp_SearchSuggestions @query = '{{query}}', @lang = '{{lang}}'");
-        this.getQueries().put("search", "EXEC Warehouse.dbo.usp_SearchResults @query = '{{query}}', @lang = '{{lang}}'");
-
-        this.getQueries().put("reportheaders", "EXECUTE Warehouse.dbo.usp_GetReportHead @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
-        this.getQueries().put("reportdata", "EXECUTE Warehouse.dbo.usp_GetReportData @ReportCode = '{{report_code}}', @DomainCode = '{{domain_code}}', @lang = '{{lang}}', @List1Codes = '{{List1Codes}}', @List2Codes = '{{List2Codes}}', @List3Codes = '{{List3Codes}}', @List4Codes = '{{List4Codes}}', @List5Codes = '{{List5Codes}}', @List6Codes = '{{List6Codes}}', @List7Codes = '{{List7Codes}}', @List1AltCodes = '{{List1AltCodes}}', @List2AltCodes = '{{List2AltCodes}}', @List3AltCodes = '{{List3AltCodes}}', @List4AltCodes = '{{List4AltCodes}}', @List5AltCodes = '{{List5AltCodes}}', @List6AltCodes = '{{List6AltCodes}}', @List7AltCodes = '{{List7AltCodes}}' ");
-
-        this.getQueries().put("metadata", "EXEC Warehouse.dbo.usp_GetMetadataDomain @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
-
-        this.getQueries().put("definitions", "EXEC Warehouse.dbo.usp_GetDefinitionTables @Lang = '{{lang}}'");
-        this.getQueries().put("definitions_by_type", "EXEC Warehouse.dbo.usp_GetDefinition @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
-        this.getQueries().put("definitions_domain", "EXEC Warehouse.dbo.usp_GetDomainDefinitionTables @DomainCode = '{{domain_code}}', @Lang = '{{lang}}'");
-        this.getQueries().put("definitions_domain_by_type", "EXEC Warehouse.dbo.usp_GetDomainDefinition @DomainCode = '{{domain_code}}', @Definitiontype = '{{definition_type}}', @Lang = '{{lang}}'");
-
-
-        // currently not used
         this.getQueries().put("domaintabs", "EXEC Warehouse.dbo.usp_GetDomainTabs @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
         this.getQueries().put("domainreports", "EXEC Warehouse.dbo.usp_GetDomainReports @lang='{{lang}}', @DomainCode='{{domain_code}}' ");
         this.getQueries().put("authentication", "SELECT id AS code, username AS label FROM Warehouse.dbo.Metadata_User WHERE username='{{username}}' AND password='{{password}}' ");
 
     }
 
-    public String getQuery(String id, Map<String, Object> procedureParameters) {
+    public String getQueryOLD(String id, Map<String, Object> procedureParameters) {
         try {
             String query = this.getQueries().get(id.toLowerCase());
             for (String key : procedureParameters.keySet()) {
@@ -445,6 +448,53 @@ public class QUERIES {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getQuery(String id, Map<String, Object> procedureParameters) {
+        Handlebars handlebars = new Handlebars();
+        Map<String, Object> parameters = new LinkedHashMap<String, Object>() {};
+        try {
+            String query = this.getQueries().get(id.toLowerCase());
+            Template template = handlebars.compileInline(query);
+            for (String key : procedureParameters.keySet()) {
+                // TODO: review the search condition
+                Boolean escape = (id == "search" || id == "suggestions")? true: false;
+                String queryCondition = createQueryCondition(procedureParameters.get(key), escape);
+                parameters.put(key, new Handlebars.SafeString(queryCondition));
+            }
+            LOGGER.info("getQuery; parameters: " + parameters);
+            query = template.apply(parameters);
+            LOGGER.info("getQuery; Query: " + query);
+            return query;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String createQueryCondition(Object v, Boolean escape) {
+        if (v instanceof List) {
+            List<String> l = (List<String>)v;
+            String s = "";
+            if (l != null && l.size() > 0 && l.get(0).length() > 0) {
+                s = "(";
+                for (int z = 0; z < l.size(); z += 1) {
+                    s += "''" + l.get(z) + "''";
+                    if (z < l.size() - 1)
+                        s += ",";
+                }
+                s += ")";
+            } else {
+                s = "";
+            }
+            v = s;
+        }
+
+        String r = String.valueOf(v);
+        if (escape) {
+            r = escapeSpecialCharacters(r);
+        }
+        return r;
     }
 
     private String escapeSpecialCharacters(String s) {

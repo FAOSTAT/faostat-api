@@ -390,6 +390,9 @@ public class DatasourceBean {
                 LOGGER.info("DATASOURCE.properties already set " +  properties);
             }
 
+            LOGGER.info("DATASOURCE: " +  datasource);
+            LOGGER.info("properties.getProperty(datasource + \".url\")" +  properties.getProperty(datasource + ".url"));
+
             this.setDbName(properties.getProperty(datasource + ".dbname"));
             this.setDriver(properties.getProperty(datasource + ".driver"));
             this.setPassword(properties.getProperty(datasource + ".pwd"));

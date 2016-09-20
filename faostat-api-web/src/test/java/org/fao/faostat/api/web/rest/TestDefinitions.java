@@ -339,445 +339,93 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.jdbc;
+package org.fao.faostat.api.web.rest;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.constants.DRIVER;
-import org.json.simple.JSONObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
 
-import java.io.IOException;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- */
-public class JDBCIterable implements Iterator<List<String>> {
+@RunWith(Parameterized.class)
+public class TestDefinitions extends JerseyTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JDBCIterable.class);
+    @Parameterized.Parameter
+    public String language;
 
-    private Connection connection;
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
+    }
 
-    private Statement statement;
+    public TestDefinitions() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+    }
 
-    private ResultSet resultSet;
+    // Definitions
+    @Test
+    public void testDefinitionsTypesAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/types/");
+        String response =  ws.get(String.class);
 
-    private boolean hasNext;
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        JsonObject oData =  a.get(0).getAsJsonObject();
 
-    private int columns;
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("label"));
+    }
 
-    public void query(DatasourceBean db, String sql) throws Exception {
-        DRIVER d = DRIVER.valueOf(db.getDriver().toUpperCase());
-        switch (d) {
-            case SQLSERVER2000:
-                try {
-                    querySQLServer(db, sql);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new Exception(e.getMessage());
-                }
-                break;
+    @Test
+    public void testDefinitionsTypesByTypeAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/types/abbreviation");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testDefinitionsDomainAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC");
+        String response =  ws.get(String.class);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+
+        // TODO: how to check also id and subdimension_id?
+        for(int i = 0; i < a.size(); i++) {
+            JsonObject oData =  a.get(i).getAsJsonObject();
+            assertEquals(true, oData.has("code"));
+            assertEquals(true, oData.has("label"));
+            assertEquals(true, oData.has("id"));
+            assertEquals(true, oData.has("subdimension_id"));
         }
     }
 
-    public void querySQLServer(DatasourceBean db, String sql) throws Exception {
-
-        try {
-
-            //LOGGER.info("db.getUrl(): " + db.getUrl());
-
-            /* Open connections. */
-            SQLServerDriver.class.newInstance();
-            this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
-            this.setStatement(this.getConnection().createStatement());
-
-            this.getStatement().executeQuery(sql);
-            this.setResultSet(this.getStatement().getResultSet());
-
-            this.setColumns(this.getResultSet().getMetaData().getColumnCount());
-
-        }catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new Exception(e.getMessage());
-        }
-
-    }
-
-    @Override
-    public boolean hasNext() {
-        return this.isHasNext();
-    }
-
-    public List<String> getColumnNames() {
-        List<String> l = new ArrayList<String>();
-        try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                l.add(this.getResultSet().getMetaData().getColumnLabel(i));
-            }
-        } catch (NullPointerException ignored) {
-
-        } catch (SQLException ignored) {
-
-        }
-        return l;
-    }
-
-    public List<String> getColumnTypes() {
-        List<String> l = new ArrayList<String>();
-        try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                l.add(this.getResultSet().getMetaData().getColumnClassName(i));
-            }
-        } catch (NullPointerException ignored) {
-
-        } catch (SQLException ignored) {
-
-        }
-        return l;
-    }
-
-    @Override
-    public List<String> next() {
-
-        List<String> l = null;
-
-        if (this.isHasNext()) {
-            l = new ArrayList<String>();
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        l.add(this.getResultSet().getString(i).trim());
-                    } catch (NullPointerException ignored) {
-
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return l;
-    }
-
-    public String nextJSON() {
-
-        /*JSONObject obj = new JSONObject();
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-
-                    try {
-
-                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), this.getResultSet().getObject(i));
-
-                    } catch (NullPointerException ignored) {
-
-                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), null);
-
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return obj.toString();*/
-
-        Gson gson = new Gson();
-        return gson.toJson(nextMap());
-
-    }
-
-    public Map<String, Object> nextMap() {
-
-        Map<String, Object> out = new LinkedHashMap<String, Object>();
-        String value;
-        String columnType;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Double(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Integer(value));
-                        } else if (columnType.endsWith("Long")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Long(value));
-                        } else if (columnType.endsWith("Date")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Date(value));
-                        } else {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), value.toString());
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), null);
-                        }
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return out;
-
-    }
-
-    public String nextCSV() {
-
-        StringBuilder sb= new StringBuilder();
-        String columnType;
-        String value;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            sb.append(Double.parseDouble(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            sb.append(Integer.parseInt(value));
-                        } else if (columnType.endsWith("Long")) {
-                            sb.append(Long.parseLong(value));
-                        } else if (columnType.endsWith("Date")) {
-                            sb.append(StringEscapeUtils.escapeCsv(value));
-                            //sb.append("\"").append(new Date(value).toString()).append("\"");
-                        } else {
-                            // TODO: check if there are "" in the string
-                            sb.append(StringEscapeUtils.escapeCsv(value));
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            sb.append(",");
-                        }else{
-                            sb.append("\n");
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            sb.append("");
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            sb.append(",");
-                        }else{
-                            sb.append("\n");
-                        }
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        } else {
-            //sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-
-    public String[] nextCSV2() {
-
-        String[] sb = new String[0];
-        try {
-            sb = new String[this.getResultSet().getMetaData().getColumnCount()];
-            String columnType;
-            String value;
-
-            if (this.isHasNext()) {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            sb[i-1] = String.valueOf(Double.parseDouble(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            sb[i-1] = String.valueOf(Integer.parseInt(value));
-                        } else if (columnType.endsWith("Long")) {
-                            sb[i-1] = String.valueOf(Long.parseLong(value));
-                        } else if (columnType.endsWith("Date")) {
-                            sb[i-1] = new Date(value).toString();
-                        } else {
-                            sb[i-1] = String.valueOf(value);
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            sb[i-1] = "";
-                        }
-                    }
-                }
-            }
-            this.setHasNext(this.getResultSet().next());
-        } catch(SQLException ignored) {
-
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        } else {
-            //sb.append("\n");
-        }
-
-        return sb;
-    }
-
-    /* @Deprecated */
-    public String nextArray() {
-
-        String s = "[";
-        String columnType;
-        String value;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            s += Double.parseDouble(value);
-                        } else if (columnType.endsWith("Integer")) {
-                            s += Integer.parseInt(value);
-                        } else if (columnType.endsWith("Long")) {
-                            s += Long.parseLong(value);
-                        } else if (columnType.endsWith("Date")) {
-                            s += new Date(value).toString();
-                        } else {
-                            s += "\"" + value + "\"";
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
-                            s += ",";
-                    } catch (NullPointerException ignored) {
-                        if (i > 0)
-                            s += null;
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
-                            s += ",";
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        s += "]";
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return s;
-
-    }
-
-    @Override
-    public void remove() {
-
-    }
-
-    public ResultSet getResultSet() {
-        return this.resultSet;
-    }
-
-    public void setResultSet(ResultSet resultSet) {
-        this.resultSet = resultSet;
-        try {
-            this.setHasNext(this.getResultSet().next());
-        } catch (SQLException ignored) {
-
-        }
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public Statement getStatement() {
-        return statement;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public void setStatement(Statement statement) {
-        this.statement = statement;
-    }
-
-    public boolean isHasNext() {
-        return hasNext;
-    }
-
-    public void setHasNext(boolean hasNext) {
-        this.hasNext = hasNext;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
+    @Test
+    public void testDefinitionsDomainByTypeAPI(){
+        WebResource ws = resource().path("/" + language + "/definitions/domain/QC/item");
+        ClientResponse response = ws.get(ClientResponse.class);
+        assertEquals(200, response.getStatus());
+        String out = response.getEntity(String.class);
+        assertNotNull(out);
     }
 
 }

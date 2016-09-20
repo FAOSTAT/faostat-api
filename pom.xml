@@ -21,6 +21,7 @@
         <spring.version>4.1.6.RELEASE</spring.version>
         <jersey.version>1.19</jersey.version>
         <jaxrs.version>2.5</jaxrs.version>
+        <runSuite>**/FAOSTATAPITestSuite.class</runSuite>
     </properties>
 
     <profiles>
@@ -195,6 +196,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>${runSuite}</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>

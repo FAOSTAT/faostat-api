@@ -342,6 +342,7 @@
 package org.fao.faostat.api.core.beans;
 
 import junit.framework.TestCase;
+import org.fao.faostat.api.core.constants.QUERIES;
 
 /**
  * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
@@ -354,6 +355,10 @@ public class TestDatasourceBean extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 //        b = new DatasourceBean();
+    }
+
+    public void testHandlebars() {
+       // QUERIES.handlebars();
     }
 
     public void testSetters() {

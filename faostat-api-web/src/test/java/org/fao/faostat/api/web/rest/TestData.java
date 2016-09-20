@@ -339,445 +339,230 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.core.jdbc;
+package org.fao.faostat.api.web.rest;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.fao.faostat.api.core.beans.DatasourceBean;
-import org.fao.faostat.api.core.constants.DRIVER;
-import org.json.simple.JSONObject;
+import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
 
-import java.io.IOException;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
-/**
- * @author <a href="mailto:guido.barbaglia@gmail.com">Guido Barbaglia</a>
- */
-public class JDBCIterable implements Iterator<List<String>> {
+import java.util.Map;
+import java.util.Set;
 
-    private static final Logger LOGGER = Logger.getLogger(JDBCIterable.class);
+import static org.junit.Assert.assertEquals;
 
-    private Connection connection;
+@RunWith(Parameterized.class)
+public class TestData extends JerseyTest {
 
-    private Statement statement;
+    @Parameterized.Parameter
+    public String language;
 
-    private ResultSet resultSet;
+    @Parameterized.Parameters
+    public static Object[] data() {
+        return new Object[] { "en", "fr", "es" };
+    }
 
-    private boolean hasNext;
+    public TestData() {
+        super(new WebAppDescriptor.Builder("org.fao.faostat.api.web.rest").contextPath("testing")
+                .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
+                .contextListenerClass(ContextLoaderListener.class).servletClass(SpringServlet.class)
+                .requestListenerClass(RequestContextListener.class).build());
+    }
 
-    private int columns;
 
-    public void query(DatasourceBean db, String sql) throws Exception {
-        DRIVER d = DRIVER.valueOf(db.getDriver().toUpperCase());
-        switch (d) {
-            case SQLSERVER2000:
-                try {
-                    querySQLServer(db, sql);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new Exception(e.getMessage());
-                }
-                break;
+    @Test
+    public void testDataAPISchema(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("item", "27");
+        params.add("element", "2510");
+
+        WebResource ws = resource()
+                .path("/" + language + "/data/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray data = o.get("data").getAsJsonArray();
+
+        // check dsd and data columns for each row
+        JsonArray dsd = o.get("metadata").getAsJsonObject().get("dsd").getAsJsonArray();
+        for(int i=0; i < dsd.size(); i++) {
+            JsonObject dsdColumn = dsd.get(i).getAsJsonObject();
+            for(int j=0; j < data.size(); j++) {
+                JsonObject row = data.get(j).getAsJsonObject();
+                assertEquals(true, row.has(dsdColumn.get("key").getAsString()));
+            }
         }
     }
 
-    public void querySQLServer(DatasourceBean db, String sql) throws Exception {
+    @Test
+    public void testDataAPISize(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("item", "27");
+        params.add("element", "2510");
+        params.add("year", "2010,2011");
 
-        try {
+        WebResource ws = resource()
+                .path("/" + language + "/data/QC")
+                .queryParams(params);
 
-            //LOGGER.info("db.getUrl(): " + db.getUrl());
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray data = o.get("data").getAsJsonArray();
 
-            /* Open connections. */
-            SQLServerDriver.class.newInstance();
-            this.setConnection(DriverManager.getConnection(db.getUrl(), db.getUsername(), db.getPassword()));
-            this.setStatement(this.getConnection().createStatement());
-
-            this.getStatement().executeQuery(sql);
-            this.setResultSet(this.getStatement().getResultSet());
-
-            this.setColumns(this.getResultSet().getMetaData().getColumnCount());
-
-        }catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new Exception(e.getMessage());
-        }
-
+        // get data size
+        assertEquals(2, data.size());
     }
 
-    @Override
-    public boolean hasNext() {
-        return this.isHasNext();
-    }
+    @Test
+    public void testDataAPIAlternateCS(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("item", "27");
+        params.add("element", "2510");
+        params.add("year", "2010,2011");
+        params.add("area_cs", "ISO3");
 
-    public List<String> getColumnNames() {
-        List<String> l = new ArrayList<String>();
-        try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                l.add(this.getResultSet().getMetaData().getColumnLabel(i));
-            }
-        } catch (NullPointerException ignored) {
+        WebResource ws = resource()
+                .path("/" + language + "/data/QC")
+                .queryParams(params);
 
-        } catch (SQLException ignored) {
+        String response =  ws.get(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray data = o.get("data").getAsJsonArray();
+        JsonArray dsd = o.get("metadata").getAsJsonObject().get("dsd").getAsJsonArray();
 
-        }
-        return l;
-    }
-
-    public List<String> getColumnTypes() {
-        List<String> l = new ArrayList<String>();
-        try {
-            for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                l.add(this.getResultSet().getMetaData().getColumnClassName(i));
-            }
-        } catch (NullPointerException ignored) {
-
-        } catch (SQLException ignored) {
-
-        }
-        return l;
-    }
-
-    @Override
-    public List<String> next() {
-
-        List<String> l = null;
-
-        if (this.isHasNext()) {
-            l = new ArrayList<String>();
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        l.add(this.getResultSet().getString(i).trim());
-                    } catch (NullPointerException ignored) {
-
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return l;
-    }
-
-    public String nextJSON() {
-
-        /*JSONObject obj = new JSONObject();
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-
-                    try {
-
-                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), this.getResultSet().getObject(i));
-
-                    } catch (NullPointerException ignored) {
-
-                        obj.put(this.getResultSet().getMetaData().getColumnLabel(i).trim(), null);
-
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return obj.toString();*/
-
-        Gson gson = new Gson();
-        return gson.toJson(nextMap());
-
-    }
-
-    public Map<String, Object> nextMap() {
-
-        Map<String, Object> out = new LinkedHashMap<String, Object>();
-        String value;
-        String columnType;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Double(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Integer(value));
-                        } else if (columnType.endsWith("Long")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Long(value));
-                        } else if (columnType.endsWith("Date")) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), new Date(value));
-                        } else {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), value.toString());
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            out.put(this.getResultSet().getMetaData().getColumnLabel(i), null);
-                        }
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return out;
-
-    }
-
-    public String nextCSV() {
-
-        StringBuilder sb= new StringBuilder();
-        String columnType;
-        String value;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            sb.append(Double.parseDouble(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            sb.append(Integer.parseInt(value));
-                        } else if (columnType.endsWith("Long")) {
-                            sb.append(Long.parseLong(value));
-                        } else if (columnType.endsWith("Date")) {
-                            sb.append(StringEscapeUtils.escapeCsv(value));
-                            //sb.append("\"").append(new Date(value).toString()).append("\"");
-                        } else {
-                            // TODO: check if there are "" in the string
-                            sb.append(StringEscapeUtils.escapeCsv(value));
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            sb.append(",");
-                        }else{
-                            sb.append("\n");
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            sb.append("");
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1) {
-                            sb.append(",");
-                        }else{
-                            sb.append("\n");
-                        }
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        } else {
-            //sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-
-    public String[] nextCSV2() {
-
-        String[] sb = new String[0];
-        try {
-            sb = new String[this.getResultSet().getMetaData().getColumnCount()];
-            String columnType;
-            String value;
-
-            if (this.isHasNext()) {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            sb[i-1] = String.valueOf(Double.parseDouble(value));
-                        } else if (columnType.endsWith("Integer")) {
-                            sb[i-1] = String.valueOf(Integer.parseInt(value));
-                        } else if (columnType.endsWith("Long")) {
-                            sb[i-1] = String.valueOf(Long.parseLong(value));
-                        } else if (columnType.endsWith("Date")) {
-                            sb[i-1] = new Date(value).toString();
-                        } else {
-                            sb[i-1] = String.valueOf(value);
-                        }
-                    } catch (NullPointerException ignored) {
-                        if (i > 0) {
-                            sb[i-1] = "";
-                        }
-                    }
+        // check dsd and data columns for each row
+        for(int i=0; i < dsd.size(); i++) {
+            JsonObject dsdColumn = dsd.get(i).getAsJsonObject();
+            // check for each language, otherwise wouldn't work
+            if (dsdColumn.has("dimension_id") && dsdColumn.get("dimension_id").equals("area") && dsdColumn.get("type").equals("code")) {
+                String key = dsdColumn.get("key").getAsString();
+                for(int j=0; j < data.size(); j++) {
+                    JsonObject row = data.get(j).getAsJsonObject();
+                    assertEquals("AFG",row.get(key).getAsString());
                 }
             }
-            this.setHasNext(this.getResultSet().next());
-        } catch(SQLException ignored) {
-
-        }
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        } else {
-            //sb.append("\n");
-        }
-
-        return sb;
-    }
-
-    /* @Deprecated */
-    public String nextArray() {
-
-        String s = "[";
-        String columnType;
-        String value;
-
-        if (this.isHasNext()) {
-            try {
-                for (int i = 1 ; i <= this.getResultSet().getMetaData().getColumnCount() ; i++) {
-                    try {
-                        columnType = this.getResultSet().getMetaData().getColumnClassName(i);
-                        value = this.getResultSet().getString(i).trim();
-                        if (columnType.endsWith("Double")) {
-                            s += Double.parseDouble(value);
-                        } else if (columnType.endsWith("Integer")) {
-                            s += Integer.parseInt(value);
-                        } else if (columnType.endsWith("Long")) {
-                            s += Long.parseLong(value);
-                        } else if (columnType.endsWith("Date")) {
-                            s += new Date(value).toString();
-                        } else {
-                            s += "\"" + value + "\"";
-                        }
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
-                            s += ",";
-                    } catch (NullPointerException ignored) {
-                        if (i > 0)
-                            s += null;
-                        if (i <= this.getResultSet().getMetaData().getColumnCount() - 1)
-                            s += ",";
-                    }
-                }
-                this.setHasNext(this.getResultSet().next());
-            } catch(SQLException ignored) {
-
-            }
-        }
-
-        s += "]";
-
-        if (!this.isHasNext()) {
-            try {
-                this.getResultSet().close();
-                this.getStatement().close();
-                this.getConnection().close();
-            } catch (SQLException ignored) {
-
-            }
-        }
-
-        return s;
-
-    }
-
-    @Override
-    public void remove() {
-
-    }
-
-    public ResultSet getResultSet() {
-        return this.resultSet;
-    }
-
-    public void setResultSet(ResultSet resultSet) {
-        this.resultSet = resultSet;
-        try {
-            this.setHasNext(this.getResultSet().next());
-        } catch (SQLException ignored) {
-
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    // Data
+    @Test
+    public void testDataBeanAPI(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("domain_codes", "QC");
+        params.add("List1Codes", "2");
+        params.add("List2Codes", "2510");
+        params.add("List3Codes", "515");
+        params.add("List4Codes", "2013");
+        params.add("List5Codes", "");
+        params.add("List6Codes", "");
+        params.add("List7Codes", "");
+        params.add("List1AltCodes", "FAO");
+        params.add("List2AltCodes", "");
+        params.add("List3AltCodes", "FAO");
+        params.add("List4AltCodes", "");
+        params.add("List5AltCodes", "");
+        params.add("List6AltCodes", "");
+        params.add("List7AltCodes", "");
+        params.add("null_values", "false");
+        params.add("group_by", "");
+        params.add("order_by", "");
+        params.add("operator", "");
+        params.add("page_size", "100");
+        params.add("limit", "-1");
+        params.add("page_number", "1");
+        params.add("show_codes", "1");
+        params.add("show_flags", "1");
+        params.add("show_unit", "1");
+
+        /*datasource:production
+        output_type:objects
+        api_key:n.a.
+         client_key:n.a.
+        pivot:false
+        domain_codes:QC
+        decimal_places:2
+        List1Codes:2
+        List2Codes:2510
+        List3Codes:515
+        List4Codes:2013
+        List5Codes:
+        List6Codes:
+        List7Codes:
+        List1AltCodes:FAO
+        List2AltCodes:
+        List3AltCodes:FAO
+        List4AltCodes:
+        List5AltCodes:
+        List6AltCodes:
+        List7AltCodes:
+        null_values:false
+        group_by:
+        order_by:
+        operator:
+        page_size:100
+        limit:-1
+        page_number:1
+        show_codes:1
+        show_flags:1
+        show_unit:1*/
+
+//        WebResource ws = resource().path("/en/data/bean");
+        WebResource ws = resource().path("/" + language + "/data/bean");
+
+        String response =  ws.type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+                .post(String.class, params);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
     }
 
-    public Statement getStatement() {
-        return statement;
-    }
+    /*@Test
+    public void testDataAPI(){
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
+        String payload ="{\"datasource\":\"production\",\"domain_codes\":[\"QV\"],\"filters\":{\"item\":[\"15\"]}}";
 
-    public void setStatement(Statement statement) {
-        this.statement = statement;
-    }
+        Form f = new Form();
+        f.add("datasource", "production");
+        f.add("domain_codes", "[\"QV\"]");
+//        f.add("filters", "{\"item\":[\"15\"]}}");
 
-    public boolean isHasNext() {
-        return hasNext;
-    }
 
-    public void setHasNext(boolean hasNext) {
-        this.hasNext = hasNext;
-    }
 
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
+        WebResource ws = resource().path("/" + language + "/data");
+
+        String response =  ws.type(MediaType.APPLICATION_JSON)
+                             .post(String.class, f);
+
+        System.out.println(response);
+
+        JsonParser parser = new JsonParser();
+        JsonObject o = parser.parse(response).getAsJsonObject();
+        JsonArray a = o.get("data").getAsJsonArray();
+        assertEquals(1, a.size());
+
+    }*/
+
 
 }

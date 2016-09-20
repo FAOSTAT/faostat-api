@@ -11,6 +11,9 @@
         <artifactId>faostat-api</artifactId>
         <version>1.6-SNAPSHOT</version>
     </parent>
+    <properties>
+        <handlebars.version>4.0.6</handlebars.version>
+    </properties>
     <name>FAOSTAT Core</name>
     <dependencies>
 
@@ -34,6 +37,18 @@
               <artifactId>sqljdbc4</artifactId>
               <version>4.0</version>
           </dependency>
+        <!--<dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars.java</artifactId>
+            &lt;!&ndash;<version>${handlebars.version}</version>&ndash;&gt;
+            <version>0.5.2</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.github.jknack/handlebars.java -->
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>${handlebars.version}</version>
+        </dependency>
 
 
         <!--Not used anymore. To be removed. -->
