@@ -396,7 +396,7 @@ public class V10Search {
             DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
 
             /* Query the DB and create an output stream. */
-            StreamingOutput stream = sb.createOutputStream("search", datasourceBean, metadataBean);
+            StreamingOutput stream = sb.createOutputSearch("search", datasourceBean, metadataBean);
 
             /* Stream result */
             return Response.ok(stream).build();

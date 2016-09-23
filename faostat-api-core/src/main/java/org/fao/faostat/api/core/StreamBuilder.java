@@ -382,6 +382,28 @@ public class StreamBuilder {
 
     }
 
+    public StreamingOutput createOutputSearch(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
+
+        /* Log. */
+        final StringBuilder log = new StringBuilder();
+
+        /* Initiate core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        try {
+
+            /* Query FAOSTAT. */
+            final OutputBean out = faostatapiCore.querySearch(queryCode, datasourceBean, metadataBean);
+
+            /* Switch the output format. */
+            return formatOutput(out);
+
+        } catch (final Exception e) {
+            return exceptionHandler(e, log);
+        }
+
+    }
+
     public StreamingOutput createOutputStreamRankings(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws WebApplicationException {
 
         /* Log. */

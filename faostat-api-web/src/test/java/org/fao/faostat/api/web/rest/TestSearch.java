@@ -387,10 +387,9 @@ public class TestSearch extends JerseyTest {
 
         assertEquals(true, oData.has("id"));
         assertEquals(true, oData.has("rank"));
-        // TODO: this should be "label" in lowercase
-        assertEquals(true, oData.has("Label"));
-        assertEquals(true, oData.has("Code"));
-        assertEquals(true, oData.has("DomainCode"));
+        assertEquals(true, oData.has("label"));
+        assertEquals(true, oData.has("code"));
+        assertEquals(true, oData.has("domain_code"));
     }
 
     // Suggestions
