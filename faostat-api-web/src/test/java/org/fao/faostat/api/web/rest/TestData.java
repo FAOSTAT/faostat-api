@@ -464,6 +464,33 @@ public class TestData extends JerseyTest {
         }
     }
 
+    @Test
+    public void testDataAPICSV(){
+        MultivaluedMap params = new MultivaluedMapImpl();
+        params.add("area", "2");
+        params.add("item", "27");
+        params.add("element", "2510");
+        params.add("year", "2010");
+        params.add("output_type", "csv");
+
+        WebResource ws = resource()
+                .path("/"+ language +"/data/QC")
+                .queryParams(params);
+
+        String response =  ws.get(String.class);
+
+        if (language.equals("en")) {
+            assertEquals(response, "Domain Code,Domain,Country Code,Country,Element Code,Element,Item Code,Item,Year Code,Year,Unit,Value,Flag,Flag Description\nQC,Crops,2,Afghanistan,5510,Production,27,\"Rice, paddy\",2010,2010,tonnes,672000.0,,Official data\n");
+        }
+        else if(language.equals("es")) {
+            assertEquals(response, "Código Ámbito,Ámbito,Código País,País,Código Elemento,Elemento,Código Producto,Producto,Código Año,Año,Unidad,Valor,Símbolo,Descripción del Símbolo\nQC,Cultivos,2,Afganistán,5510,Producción,27,\"Arroz, cascara\",2010,2010,tonnes,672000.0,,Datos oficiales\n");
+        }
+        else if(language.equals("fr")) {
+            assertEquals(response, "Code Domaine,Domaine,Code Pays,Pays,Code Élément,Élément,Code Produit,Produit,Code Année,Année,Unité,Valeur,Symbole,Description du Symbole\nQC,Cultures,2,Afghanistan,5510,Production,27,\"Riz, paddy\",2010,2010,tonnes,672000.0,,Donnée officielle\n");
+        }
+
+    }
+
     // Data
     @Test
     public void testDataBeanAPI(){

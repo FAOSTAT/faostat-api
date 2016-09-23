@@ -341,6 +341,7 @@
  */
 package org.fao.faostat.api.web.rest;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.fao.faostat.api.core.beans.DataBean;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
@@ -348,21 +349,16 @@ import org.fao.faostat.api.core.FAOSTATAPICore;
 import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.DATASOURCE;
-import org.fao.faostat.api.core.constants.OUTPUTTYPE;
 import org.fao.faostat.api.core.constants.QUERIES;
-//import org.fao.faostat.api.core.constants.ERROR;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 import org.fao.faostat.api.web.utils.FAOSTATAPIUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
-import org.fao.faostat.api.web.rest.V10DataSize;
-
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.*;
 
@@ -671,7 +667,7 @@ public class V10Data {
 
         /* write headers */
         for (int i = 0; i < headers.size(); i += 1) {
-            writer.write("\"" + headers.get(i) + "\"");
+            writer.write(StringEscapeUtils.escapeCsv(headers.get(i)));
             if (i < headers.size() - 1)
                 writer.write(",");
             else

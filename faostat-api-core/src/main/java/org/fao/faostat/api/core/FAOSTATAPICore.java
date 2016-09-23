@@ -413,6 +413,53 @@ public class FAOSTATAPICore {
 
     }
 
+    public OutputBean querySearch(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
+
+        /* Logs. */
+        StringBuilder log = new StringBuilder();
+
+        try {
+
+           /* Statistics. */
+            long t0 = System.currentTimeMillis();
+
+            /* Initiate output. */
+            OutputBean out = new OutputBean();
+
+            /* Add metadata. */
+            out.setMetadata(metadataBean);
+
+            /* Query the DB. */
+            JDBCIterable i = getJDBCIterable(queryCode, datasourceBean, metadataBean);
+
+            /* Add column names. */
+            out.setColumnNames(i.getColumnNames());
+
+            while (i.hasNext()) {
+                Map<String, Object> dbRow = i.nextMap();
+                Map<String, Object> o = new LinkedHashMap<String, Object>();
+                o.put("id", dbRow.get("id"));
+                o.put("domain_code", dbRow.get("DomainCode"));
+                o.put("code", dbRow.get("Code"));
+                o.put("label", dbRow.get("Label"));
+                o.put("rank", dbRow.get("rank"));
+                out.getData().add(o);
+            }
+
+            /* Statistics. */
+            long tf = System.currentTimeMillis();
+            out.getMetadata().setProcessingTime(tf - t0);
+
+            return out;
+
+        } catch (Exception e) {
+            //throw new Exception(log.toString());
+            LOGGER.error(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
+
+    }
+
     public OutputBean queryRankings(String queryCode, DatasourceBean datasourceBean, MetadataBean metadataBean) throws Exception {
 
         /* Logs. */
