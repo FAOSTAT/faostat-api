@@ -403,53 +403,6 @@ public class QUERIES {
 
     }
 
-    public String getQueryOLD(String id, Map<String, Object> procedureParameters) {
-        try {
-            String query = this.getQueries().get(id.toLowerCase());
-            for (String key : procedureParameters.keySet()) {
-                String tmp = "\\{\\{" + key + "\\}\\}";
-                if (procedureParameters.get(key) != null) {
-
-/*                    LOGGER.info("-----------");
-                    LOGGER.info(query);
-                    LOGGER.info(tmp);
-                    LOGGER.info(key);
-                    LOGGER.info(procedureParameters.get(key));*/
-
-
-                    if (procedureParameters.get(key) instanceof List) {
-                        List<String> l = (List<String>)procedureParameters.get(key);
-                        String s = "";
-                        if (l != null && l.size() > 0 && l.get(0).length() > 0) {
-                            s = "(";
-                            for (int z = 0; z < l.size(); z += 1) {
-                                s += "''" + this.escapeSpecialCharacters(l.get(z)) + "''";
-                                if (z < l.size() - 1)
-                                    s += ",";
-                            }
-                            s += ")";
-                        } else {
-                            s = "";
-                        }
-
-//                        LOGGER.info(s);
-
-                        query = query.replaceAll(tmp, s);
-                    } else {
-                        String v = this.escapeSpecialCharacters(procedureParameters.get(key).toString());
-                        query = query.replaceAll(tmp, v);
-                    }
-                } else {
-                    query = query.replaceAll(tmp, "null");
-                }
-            }
-            return query;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public String getQuery(String id, Map<String, Object> procedureParameters) {
         Handlebars handlebars = new Handlebars();
         Map<String, Object> parameters = new LinkedHashMap<String, Object>() {};
@@ -497,8 +450,55 @@ public class QUERIES {
         return r;
     }
 
+    public String getQueryOLD(String id, Map<String, Object> procedureParameters) {
+        try {
+            String query = this.getQueries().get(id.toLowerCase());
+            for (String key : procedureParameters.keySet()) {
+                String tmp = "\\{\\{" + key + "\\}\\}";
+                if (procedureParameters.get(key) != null) {
+
+/*                    LOGGER.info("-----------");
+                    LOGGER.info(query);
+                    LOGGER.info(tmp);
+                    LOGGER.info(key);
+                    LOGGER.info(procedureParameters.get(key));*/
+
+                    if (procedureParameters.get(key) instanceof List) {
+                        List<String> l = (List<String>)procedureParameters.get(key);
+                        String s = "";
+                        if (l != null && l.size() > 0 && l.get(0).length() > 0) {
+                            s = "(";
+                            for (int z = 0; z < l.size(); z += 1) {
+                                s += "''" + this.escapeSpecialCharacters(l.get(z)) + "''";
+                                if (z < l.size() - 1)
+                                    s += ",";
+                            }
+                            s += ")";
+                        } else {
+                            s = "";
+                        }
+
+//                        LOGGER.info(s);
+
+                        query = query.replaceAll(tmp, s);
+                    } else {
+                        String v = this.escapeSpecialCharacters(procedureParameters.get(key).toString());
+                        query = query.replaceAll(tmp, v);
+                    }
+                } else {
+                    query = query.replaceAll(tmp, "null");
+                }
+            }
+            return query;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private String escapeSpecialCharacters(String s) {
-        return s.replaceAll("(?=[]\\[+$&|!(){}^\"~*?:\\\\-])", "\\\\");
+        String q = s.replaceAll("(?=[]\\[+$&|!(){}^\"~*?:\\\\-])", "\\\\");
+        return q.replaceAll("'", " ");
     }
 
     public Map<String, String> getQueries() {

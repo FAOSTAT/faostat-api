@@ -18,8 +18,7 @@
       "description": "Name code of the FAOSTAT website section.",
       "enum": [
         "download", "browse", "compare"
-      ],
-      "default": "download"
+      ]
     },
     "output_type": {
       "type": "string",
