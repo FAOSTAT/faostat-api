@@ -124,9 +124,6 @@
       "title": "Metadata",
       "description": "Meta information about the request.",
       "properties": {
-        "datasource": {
-          "$ref": "#/definitions/datasource"
-        },
         "output_type": {
           "$ref": "#/definitions/output_type"
         },
@@ -182,9 +179,6 @@
       "description": "FAOSTAT Rankings.",
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -318,9 +312,6 @@
             "title": "Data Bean",
             "description": "Configuration bean.",
             "properties": {
-              "datasource": {
-                "$ref": "#/definitions/datasource"
-              },
               "output_type": {
                 "$ref": "#/definitions/output_type"
               },
@@ -458,9 +449,6 @@
       "cache": false,
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -682,9 +670,6 @@
       "cache": false,
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -784,9 +769,6 @@
       "description": "FAOSTAT Report Headers.",
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -948,9 +930,6 @@
       "description": "FAOSTAT Report Data.",
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -1137,9 +1116,6 @@
       "description": "Size of the query.",
       "schema": {
         "properties": {
-          "datasource": {
-            "$ref": "#/definitions/datasource"
-          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },

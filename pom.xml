@@ -45,11 +45,10 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>src/main/resources/default</directory>
-                                    <targetPath>WEB-INF/classes/</targetPath>
+                                    <directory>resources/prod/default</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
-                                        <include>datasources.properties</include>
-                                        <include>log4j.properties</include>
+                                        <include>*.properties</include>
                                     </includes>
                                 </resource>
                             </webResources>
@@ -73,11 +72,10 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>src/main/resources/default</directory>
-                                    <targetPath>WEB-INF/classes/</targetPath>
+                                    <directory>resources/prod/default</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
-                                        <include>datasources.properties</include>
-                                        <include>log4j.properties</include>
+                                        <include>*.properties</include>
                                     </includes>
                                 </resource>
                             </webResources>
@@ -101,11 +99,10 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>src/main/resources/default</directory>
-                                    <targetPath>WEB-INF/classes/</targetPath>
+                                    <directory>resources/prod/default</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
-                                        <include>datasources.properties</include>
-                                        <include>log4j.properties</include>
+                                        <include>*.properties</include>
                                     </includes>
                                 </resource>
                             </webResources>
@@ -129,11 +126,10 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>src/main/resources/prod/db3</directory>
-                                    <targetPath>WEB-INF/classes/</targetPath>
+                                    <directory>resources/prod/db3</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
-                                        <include>datasources.properties</include>
-                                        <include>log4j.properties</include>
+                                        <include>*.properties</include>
                                     </includes>
                                 </resource>
                             </webResources>
@@ -157,11 +153,10 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>src/main/resources/prod/db4</directory>
-                                    <targetPath>WEB-INF/classes/</targetPath>
+                                    <directory>resources/prod/db4</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
-                                        <include>datasources.properties</include>
-                                        <include>log4j.properties</include>
+                                        <include>*.properties</include>
                                     </includes>
                                 </resource>
                             </webResources>
