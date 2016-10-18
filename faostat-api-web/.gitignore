@@ -1,4 +1,4 @@
 /target/
-/resources/
+resources/
 *.log
 *bk.xml
