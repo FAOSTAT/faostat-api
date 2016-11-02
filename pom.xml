@@ -45,7 +45,7 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>resources/prod/default</directory>
+                                    <directory>resources/default</directory>
                                     <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
                                         <include>*.properties</include>
@@ -72,7 +72,7 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>resources/prod/default</directory>
+                                    <directory>resources/default</directory>
                                     <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
                                         <include>*.properties</include>
@@ -99,7 +99,7 @@
                             <warName>${rp.build.warname}</warName>
                             <webResources>
                                 <resource>
-                                    <directory>resources/prod/default</directory>
+                                    <directory>resources/default</directory>
                                     <targetPath>WEB-INF/classes</targetPath>
                                     <includes>
                                         <include>*.properties</include>
