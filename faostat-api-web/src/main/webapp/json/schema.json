@@ -769,6 +769,9 @@
       "description": "FAOSTAT Report Headers.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -930,6 +933,9 @@
       "description": "FAOSTAT Report Data.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
