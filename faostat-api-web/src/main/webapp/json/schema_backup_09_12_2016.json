@@ -297,6 +297,471 @@
       }
     },
     {
+      "href": "{lang}/data/",
+      "method": "POST",
+      "rel": "data_old",
+      "title": "Data",
+      "description": "Alternative service to fetch FAOSTAT data through the use of a configuration bean.",
+      "schema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "data_bean": {
+            "type": "object",
+            "title": "Data Bean",
+            "description": "Configuration bean.",
+            "properties": {
+              "output_type": {
+                "$ref": "#/definitions/output_type"
+              },
+              "pivot": {
+                "$ref": "#/definitions/pivot"
+              },
+              "domain_codes": {
+                "title": "Domain code",
+                "description": "FAOSTAT domain code.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/code"
+                }
+              },
+              "decimal_places": {
+                "title": "Decimal Places",
+                "description": "Number of decimal places for the values of the output.",
+                "type": "integer",
+                "default": 2
+              },
+              "filters": {
+                "type": "object",
+                "title": "Query filters",
+                "description": "Map containing the query filters.",
+                "patternProperties": {
+                  ".{1,}": {
+                    "type": "array",
+                    "title": "Filter",
+                    "description": "Definition of a filter for the data.",
+                    "items": {
+                      "$ref": "#/definitions/code"
+                    }
+                  }
+                }
+              },
+              "null_values": {
+                "type": "boolean",
+                "title": "Null Values",
+                "description": "Flag to determine whether null values will be shown or not.",
+                "default": false
+              },
+              "group_by": {
+                "type": "string",
+                "title": "Group By",
+                "description": "Comma separated string of the dimensions used to group the result of the query.",
+                "default": ""
+              },
+              "order_by": {
+                "type": "string",
+                "title": "Order By",
+                "description": "Comma separated string of the dimensions used to order the result of the query.",
+                "default": ""
+              },
+              "operator": {
+                "type": "string",
+                "enum": [
+                  "",
+                  "SUM",
+                  "AVG"
+                ],
+                "title": "Operator",
+                "description": "Function to aggregate the result of the query.",
+                "default": ""
+              },
+              "page_size": {
+                "type": "integer",
+                "title": "Page Size",
+                "description": "Size of the page.",
+                "default": 100
+              },
+              "limit": {
+                "type": "integer",
+                "title": "Limit",
+                "description": "Maximium number of rows returned by the query.",
+                "default": -1
+              },
+              "page_number": {
+                "type": "integer",
+                "title": "Page Number",
+                "description": "Number of the page to be retrieved.",
+                "default": 1
+              },
+              "show_codes": {
+                "type": "integer",
+                "title": "Show Codes",
+                "description": "Flag that determines whether codes are shown or not.",
+                "default": 1
+              },
+              "show_flags": {
+                "type": "integer",
+                "title": "Show Flags",
+                "description": "Flag that determines whether flags are shown or not.",
+                "default": 1
+              },
+              "show_unit": {
+                "type": "integer",
+                "title": "Show Units",
+                "description": "Flag that determines whether units are shown or not.",
+                "default": 1
+              }
+            }
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Abbreviations Output",
+        "description": "Output of 'abbreviations' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Abbreviations",
+            "description": "FAOSTAT abbreviations.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/data/bean/",
+      "method": "POST",
+      "rel": "databean",
+      "title": "Data direct",
+      "description": "FAOSTAT Data.",
+      "cache": false,
+      "schema": {
+        "properties": {
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "pivot": {
+            "$ref": "#/definitions/pivot"
+          },
+          "domain_codes": {
+            "title": "Domain codes",
+            "description": "FAOSTAT domain codes.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "decimal_places": {
+            "title": "Decimal Places",
+            "description": "Number of decimal places for the values of the output.",
+            "type": "integer",
+            "default": 2
+          },
+          "List1Codes": {
+            "type": "array",
+            "title": "Dimension 1 codes",
+            "description": "List of codes for dimension 1.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List2Codes": {
+            "type": "array",
+            "title": "Dimension 2 codes",
+            "description": "List of codes for dimension 2.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List3Codes": {
+            "type": "array",
+            "title": "Dimension 3 codes",
+            "description": "List of codes for dimension 3.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List4Codes": {
+            "type": "array",
+            "title": "Dimension 4 codes",
+            "description": "List of codes for dimension 4.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List5Codes": {
+            "type": "array",
+            "title": "Dimension 5 codes",
+            "description": "List of codes for dimension 5.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List6Codes": {
+            "type": "array",
+            "title": "Dimension 6 codes",
+            "description": "List of codes for dimension 6.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List7Codes": {
+            "type": "array",
+            "title": "Dimension 7 codes",
+            "description": "List of codes for dimension 7.",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "List1AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 1.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List2AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 2.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List3AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 3.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List4AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 4.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List5AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 5.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List6AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 6.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "List7AltCodes": {
+            "type": "string",
+            "title": "Alternative coding system",
+            "description": "Alternative coding system to be used for dimension 7.",
+            "$ref": "#/definitions/coding_system"
+          },
+          "null_values": {
+            "type": "boolean",
+            "title": "Null Values",
+            "description": "Flag to determine whether null values will be shown or not.",
+            "default": false
+          },
+          "group_by": {
+            "type": "string",
+            "title": "Group By",
+            "description": "Comma separated string of the dimensions used to group the result of the query.",
+            "default": ""
+          },
+          "order_by": {
+            "type": "string",
+            "title": "Order By",
+            "description": "Comma separated string of the dimensions used to order the result of the query.",
+            "default": ""
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "",
+              "SUM",
+              "AVG"
+            ],
+            "title": "Operator",
+            "description": "Function to aggregate the result of the query.",
+            "default": ""
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "description": "Size of the page.",
+            "default": 100
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximium number of rows returned by the query.",
+            "default": -1
+          },
+          "page_number": {
+            "type": "integer",
+            "title": "Page Number",
+            "description": "Number of the page to be retrieved.",
+            "default": 1
+          },
+          "show_codes": {
+            "type": "integer",
+            "title": "Show Codes",
+            "description": "Flag that determines whether codes are shown or not.",
+            "default": 1
+          },
+          "show_flags": {
+            "type": "integer",
+            "title": "Show Flags",
+            "description": "Flag that determines whether flags are shown or not.",
+            "default": 1
+          },
+          "show_unit": {
+            "type": "integer",
+            "title": "Show Units",
+            "description": "Flag that determines whether units are shown or not.",
+            "default": 1
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "object",
+        "name": "Abbreviations Output",
+        "description": "Output of 'abbreviations' service.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "data": {
+            "type": "object",
+            "title": "Abbreviations",
+            "description": "FAOSTAT abbreviations.",
+            "properties": {
+              "code": {
+                "$ref": "#/definitions/code"
+              },
+              "label": {
+                "$ref": "#/definitions/label"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "href": "{lang}/data/{domain}/",
+      "method": "GET",
+      "rel": "data_get",
+      "title": "Data direct",
+      "description": "FAOSTAT Data.",
+      "cache": false,
+      "schema": {
+        "properties": {
+          "output_type": {
+            "$ref": "#/definitions/output_type"
+          },
+          "lang": {
+            "$ref": "#/definitions/lang"
+          },
+          "pivot": {
+            "$ref": "#/definitions/pivot"
+          },
+          "domain_codes": {
+            "title": "Domain codes",
+            "description": "FAOSTAT domain codes.",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/code"
+            }
+          },
+          "decimal_places": {
+            "title": "Decimal Places",
+            "description": "Number of decimal places for the values of the output.",
+            "type": "integer",
+            "default": 2
+          },
+          "null_values": {
+            "type": "boolean",
+            "title": "Null Values",
+            "description": "Flag to determine whether null values will be shown or not.",
+            "default": false
+          },
+          "group_by": {
+            "type": "string",
+            "title": "Group By",
+            "description": "Comma separated string of the dimensions used to group the result of the query.",
+            "default": ""
+          },
+          "order_by": {
+            "type": "string",
+            "title": "Order By",
+            "description": "Comma separated string of the dimensions used to order the result of the query.",
+            "default": ""
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "",
+              "SUM",
+              "AVG"
+            ],
+            "title": "Operator",
+            "description": "Function to aggregate the result of the query.",
+            "default": ""
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "description": "Size of the page.",
+            "default": 100
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximium number of rows returned by the query.",
+            "default": -1
+          },
+          "page_number": {
+            "type": "integer",
+            "title": "Page Number",
+            "description": "Number of the page to be retrieved.",
+            "default": 1
+          },
+          "show_codes": {
+            "type": "integer",
+            "title": "Show Codes",
+            "description": "Flag that determines whether codes are shown or not.",
+            "default": 1
+          },
+          "show_flags": {
+            "type": "integer",
+            "title": "Show Flags",
+            "description": "Flag that determines whether flags are shown or not.",
+            "default": 1
+          },
+          "show_unit": {
+            "type": "integer",
+            "title": "Show Units",
+            "description": "Flag that determines whether units are shown or not.",
+            "default": 1
+          }
+        }
+      }
+    },
+    {
       "href": "{lang}/report/headers/",
       "method": "POST",
       "rel": "reportheaders",
@@ -304,6 +769,9 @@
       "description": "FAOSTAT Report Headers.",
       "schema": {
         "properties": {
+          "datasource": {
+            "$ref": "#/definitions/datasource"
+          },
           "output_type": {
             "$ref": "#/definitions/output_type"
           },
@@ -404,8 +872,7 @@
             "title": "Alternative coding system",
             "description": "Alternative coding system to be used for dimension 7."
           }
-        },
-        "required": ["lang", "domain_code", "report_code", "List1Codes", "List2Codes", "List3Codes", "List4Codes", "List5Codes", "List6Codes", "List7Codes"]
+        }
       },
       "targetSchema": {
         "type": "object",
@@ -572,8 +1039,7 @@
             "title": "Alternative coding system",
             "description": "Alternative coding system to be used for dimension 7."
           }
-        },
-        "required": ["lang", "domain_code", "report_code", "List1Codes", "List2Codes", "List3Codes", "List4Codes", "List5Codes", "List6Codes", "List7Codes"]
+        }
       },
       "targetSchema": {
         "type": "object",

@@ -339,23 +339,21 @@
  * library.  If this is what you want to do, use the GNU Lesser General
  * Public License instead of this License.
  */
-package org.fao.faostat.api.web.rest;
+package org.fao.faostat.api.legacy;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.Logger;
+import org.fao.faostat.api.core.FAOSTATAPICore;
+import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.DataBean;
 import org.fao.faostat.api.core.beans.DatasourceBean;
 import org.fao.faostat.api.core.beans.MetadataBean;
-import org.fao.faostat.api.core.FAOSTATAPICore;
-import org.fao.faostat.api.core.StreamBuilder;
 import org.fao.faostat.api.core.beans.OutputBean;
 import org.fao.faostat.api.core.constants.DATASOURCE;
 import org.fao.faostat.api.core.constants.QUERIES;
 import org.fao.faostat.api.core.jdbc.JDBCIterable;
 import org.fao.faostat.api.web.utils.FAOSTATAPIUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
-import org.apache.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -374,6 +372,340 @@ public class V10Data {
 
     @Context
     UriInfo uri;
+
+    @POST
+    //    @Path("/bean/")
+    public Response getDataFromBean(@PathParam("lang") String lang, DataBean b) {
+
+        /* Logger. */
+        StringBuilder log = new StringBuilder();
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Datasource bean. */
+        DatasourceBean datasourceBean = new DatasourceBean(DATASOURCE.valueOf(b.getDatasource().toUpperCase()));
+
+        /* Store user preferences. */
+        MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type());
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_codes", b.getDomain_codes());
+        metadataBean.addParameter("domain_code", b.getDomain_codes().get(0)); /* Get the first domain code, to get the dimensions later on. */
+
+        /* Init filters. */
+        Map<String, List<String>> filters = new HashMap<>();
+        filters.put("List1Codes", new ArrayList<String>());
+        filters.put("List2Codes", new ArrayList<String>());
+        filters.put("List3Codes", new ArrayList<String>());
+        filters.put("List4Codes", new ArrayList<String>());
+        filters.put("List5Codes", new ArrayList<String>());
+        filters.put("List6Codes", new ArrayList<String>());
+        filters.put("List7Codes", new ArrayList<String>());
+
+        /* Init filters. Conding Systems */
+        /* TODO: to be implemented with the mapping */
+        Map<String, String> filtersCS = new HashMap<>();
+        filtersCS.put("List1AltCodes", "");
+        filtersCS.put("List2AltCodes", "");
+        filtersCS.put("List3AltCodes", "");
+        filtersCS.put("List4AltCodes", "");
+        filtersCS.put("List5AltCodes", "");
+        filtersCS.put("List6AltCodes", "");
+        filtersCS.put("List7AltCodes", "");
+
+        /* Get user dimensions. */
+        List<String> dimensions = new ArrayList<>();
+        for (String key : b.getFilters().keySet()) {
+            LOGGER.info("Filter:" + key);
+            dimensions.add(key);
+        }
+
+        /* Get dimensions. */
+        try {
+
+            /* add report_code dimension (this is used for the query) */
+            metadataBean.addParameter("report_code", "download");
+            metadataBean.setFull(true);
+
+            // TODO: this should be checked with performance
+            /* if a dimension is not passed, all the other codes are taken */
+            List<String> defaultCodes = new ArrayList<String>();
+            defaultCodes.add("_1");
+
+            /* getting domain dimensions */
+            OutputBean ob = faostatapiCore.queryDimensions("dimensions", datasourceBean, metadataBean);
+
+            /* Check if at least one filter is passed */
+            boolean validFilter = false;
+
+            /* for each dimension tries to map to a filter */
+            while (ob.getData().hasNext()) {
+
+                Map<String, Object> m = ob.getData().next();
+                String id = m.get("id").toString();
+                String parameter = m.get("parameter").toString();
+
+                LOGGER.info("ID: " + id + " - Parameter: " + parameter);
+
+                /* check mapping filter on dimension id */
+                if (b.getFilters().get(id) != null) {
+                    filters.put(parameter, b.getFilters().get(id));
+                    validFilter = true;
+                    continue;
+                } else {
+                    // TODO: this should be checked with performance
+                    /* adding the default codes */
+                    filters.put(parameter, defaultCodes);
+                }
+
+                LOGGER.info("Filters: " + filters);
+
+                /* check mapping filter on subdimension id */
+                if (m.get("subdimensions") != null) {
+
+                    ArrayList<Map<String, Object>> l = (ArrayList<Map<String, Object>>) m.get("subdimensions");
+                    for (Map<String, Object> m2 : l) {
+                        id = m2.get("id").toString();
+                        parameter = m2.get("parameter").toString();
+                        /* append filters */
+                        if (b.getFilters().get(id) != null) {
+                            filters.put(parameter, b.getFilters().get(id));
+                        }
+                    }
+                }
+            }
+
+            if (!validFilter) {
+                LOGGER.warn("Invalid request. Please add at least one filter.");
+                throw new Exception("Please add at least one filter.");
+            }
+
+            LOGGER.info("Calling getData function");
+
+            return getData(lang, b.getDomain_codes(), b.getDatasource(), b.getApi_key(), b.getClient_key(), b.getOutput_type(),
+                    filters.get("List1Codes"),
+                    filters.get("List2Codes"),
+                    filters.get("List3Codes"),
+                    filters.get("List4Codes"),
+                    filters.get("List5Codes"),
+                    filters.get("List6Codes"),
+                    filters.get("List7Codes"),
+                    filtersCS.get("List1AltCodes"),
+                    filtersCS.get("List2AltCodes"),
+                    filtersCS.get("List3AltCodes"),
+                    filtersCS.get("List4AltCodes"),
+                    filtersCS.get("List5AltCodes"),
+                    filtersCS.get("List6AltCodes"),
+                    filtersCS.get("List7AltCodes"),
+                    b.getGroup_by(), b.getOrder_by(), b.getOperator(),
+                    b.getPage_size(), b.getDecimal_places(), b.getPage_number(), b.getLimit(),
+                    b.isNull_values(), b.getShow_codes(), b.getShow_flags(), b.getShow_unit(),
+                    b.isPivot()
+            );
+
+        } catch (WebApplicationException e) {
+            return e.getResponse();
+        } catch (Exception e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("/bean/")
+    public Response getData(@PathParam("lang") String lang,
+                            @FormParam("domain_codes") List<String> domain_codes,
+                            @FormParam("datasource") final String datasource,
+                            @FormParam("api_key") String api_key,
+                            @FormParam("client_key") String client_key,
+                            @FormParam("output_type") String output_type,
+                            @FormParam("List1Codes") List<String> list_1_codes,
+                            @FormParam("List2Codes") List<String> list_2_codes,
+                            @FormParam("List3Codes") List<String> list_3_codes,
+                            @FormParam("List4Codes") List<String> list_4_codes,
+                            @FormParam("List5Codes") List<String> list_5_codes,
+                            @FormParam("List6Codes") List<String> list_6_codes,
+                            @FormParam("List7Codes") List<String> list_7_codes,
+                            @FormParam("List1AltCodes") String list_1_alt_codes,
+                            @FormParam("List2AltCodes") String list_2_alt_codes,
+                            @FormParam("List3AltCodes") String list_3_alt_codes,
+                            @FormParam("List4AltCodes") String list_4_alt_codes,
+                            @FormParam("List5AltCodes") String list_5_alt_codes,
+                            @FormParam("List6AltCodes") String list_6_alt_codes,
+                            @FormParam("List7AltCodes") String list_7_alt_codes,
+                            @FormParam("group_by") String group_by,
+                            @FormParam("order_by") String order_by,
+                            @FormParam("operator") String operator,
+                            @FormParam("page_size") int page_size,
+                            @FormParam("decimal_places") int decimal_places,
+                            @FormParam("page_number") int page_number,
+                            @FormParam("limit") @DefaultValue("-1") int limit,
+                            // TODO: convert it all to boolean and convert it into string?
+                            @FormParam("null_values") boolean null_values,
+                            @FormParam("show_codes") @DefaultValue("1") int show_codes,
+                            @FormParam("show_flags") @DefaultValue("1") int show_flags,
+                            @FormParam("show_unit") @DefaultValue("1") int show_unit,
+                            @FormParam("pivot") @DefaultValue("false") boolean pivot) {
+
+        long t0 = System.currentTimeMillis();
+
+        /* Init Core library. */
+        FAOSTATAPICore faostatapiCore = new FAOSTATAPICore();
+
+        /* Store user preferences. */
+        final MetadataBean metadataBean = new MetadataBean();
+        metadataBean.storeUserOptions(datasource, api_key, client_key, output_type);
+
+        /* Store procedure parameters. */
+        metadataBean.addParameter("lang", faostatapiCore.iso2faostat(lang));
+        metadataBean.addParameter("domain_codes", domain_codes);
+        metadataBean.addParameter("List1Codes", list_1_codes);
+        metadataBean.addParameter("List2Codes", list_2_codes);
+        metadataBean.addParameter("List3Codes", list_3_codes);
+        metadataBean.addParameter("List4Codes", list_4_codes);
+        metadataBean.addParameter("List5Codes", list_5_codes);
+        metadataBean.addParameter("List6Codes", list_6_codes);
+        metadataBean.addParameter("List7Codes", list_7_codes);
+
+        metadataBean.addParameter("List1AltCodes", list_1_alt_codes);
+        metadataBean.addParameter("List2AltCodes", list_2_alt_codes);
+        metadataBean.addParameter("List3AltCodes", list_3_alt_codes);
+        metadataBean.addParameter("List4AltCodes", list_4_alt_codes);
+        metadataBean.addParameter("List5AltCodes", list_5_alt_codes);
+        metadataBean.addParameter("List6AltCodes", list_6_alt_codes);
+        metadataBean.addParameter("List7AltCodes", list_7_alt_codes);
+
+        metadataBean.addParameter("null_values", null_values);
+        metadataBean.addParameter("group_by", group_by);
+        metadataBean.addParameter("order_by", order_by);
+        metadataBean.addParameter("operator", operator);
+        metadataBean.addParameter("page_size", page_size);
+        metadataBean.addParameter("decimal_places", decimal_places);
+        metadataBean.addParameter("page_number", page_number);
+        metadataBean.addParameter("limit", limit);
+        metadataBean.addParameter("show_codes", show_codes);
+        metadataBean.addParameter("show_flags", show_flags);
+        metadataBean.addParameter("show_unit", show_unit);
+
+        // setting pivot
+        metadataBean.setPivot(Boolean.valueOf(pivot));
+
+        /* Query the DB and return the results. */
+        try {
+
+            /* Stream builder. */
+            final StreamBuilder sb = new StreamBuilder();
+
+            /* Datasource bean. */
+            DatasourceBean datasourceBean = new DatasourceBean(metadataBean.getDatasource());
+
+            final List<Map<String, Object>> dsd = faostatapiCore.createDSD(datasourceBean, metadataBean);
+
+            /* Query the DB and create an output stream. */
+//            StreamingOutput stream = sb.createDataOutputStream(datasourceBean, metadataBean);
+
+            String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
+
+            final JDBCIterable it = new JDBCIterable();
+            it.query(datasourceBean, query);
+
+            // statistics
+            long tf = System.currentTimeMillis();
+            metadataBean.setProcessingTime(tf - t0);
+
+            StreamingOutput stream = new StreamingOutput() {
+
+                @Override
+                public void write(OutputStream os) throws IOException, WebApplicationException {
+
+                    /* Initiate the buffer writer. */
+                    Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+
+                    /* Generate an array of objects of arrays. */
+                    switch (metadataBean.getOutputType()) {
+                        case CSV:
+
+                            writeCSV(it, writer);
+                            break;
+
+                        default:
+
+                            writeJSON(sb, metadataBean, dsd, it, writer);
+                            break;
+
+                    }
+
+                    /* Flush the writer. */
+                    writer.flush();
+
+                    /* Close the writer. */
+                    writer.close();
+
+                }
+
+            };
+
+            /* Stream result */
+            return Response.ok(stream).type(FAOSTATAPIUtils.outputType(metadataBean)).build();
+
+        } catch (WebApplicationException e) {
+            LOGGER.error(uri.getRequestUri());
+            return e.getResponse();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+
+    }
+
+    private void writeCSV(JDBCIterable it, Writer writer) throws IOException {
+
+        /* Get Headers from Metadata */
+        List<String> headers = it.getColumnNames();
+
+        /* write headers */
+        for (int i = 0; i < headers.size(); i += 1) {
+            writer.write(StringEscapeUtils.escapeCsv(headers.get(i)));
+            if (i < headers.size() - 1)
+                writer.write(",");
+            else
+                writer.write("\n");
+        }
+
+        /* Add CSV rows. */
+        while (it.hasNext()) {
+            writer.write(it.nextCSV());
+        }
+
+    }
+
+    private void writeJSON(StreamBuilder sb, MetadataBean metadataBean, List<Map<String, Object>> dsd, JDBCIterable it, Writer writer) throws IOException {
+
+        /* Initiate the output. */
+        writer.write("{");
+
+        /* Add metadata. */
+        metadataBean.setDsd(dsd);
+        writer.write(sb.createMetadata(metadataBean));
+
+                            /* Initiate Data the array. */
+        writer.write("\"data\": [");
+
+        while (it.hasNext()) {
+            writer.write(it.nextJSON());
+            if (it.hasNext()) {
+                writer.write(",");
+            }
+        }
+
+        /* Close the array. */
+        writer.write("]");
+
+        /* Close the object. */
+        writer.write("}");
+
+    }
+
 
     @GET
     @Path("/{domain}")
@@ -567,53 +899,4 @@ public class V10Data {
 
         return filters;
     }
-
-    private void writeCSV(JDBCIterable it, Writer writer) throws IOException {
-
-        /* Get Headers from Metadata */
-        List<String> headers = it.getColumnNames();
-
-        /* write headers */
-        for (int i = 0; i < headers.size(); i += 1) {
-            writer.write(StringEscapeUtils.escapeCsv(headers.get(i)));
-            if (i < headers.size() - 1)
-                writer.write(",");
-            else
-                writer.write("\n");
-        }
-
-        /* Add CSV rows. */
-        while (it.hasNext()) {
-            writer.write(it.nextCSV());
-        }
-
-    }
-
-    private void writeJSON(StreamBuilder sb, MetadataBean metadataBean, List<Map<String, Object>> dsd, JDBCIterable it, Writer writer) throws IOException {
-
-        /* Initiate the output. */
-        writer.write("{");
-
-        /* Add metadata. */
-        metadataBean.setDsd(dsd);
-        writer.write(sb.createMetadata(metadataBean));
-
-                            /* Initiate Data the array. */
-        writer.write("\"data\": [");
-
-        while (it.hasNext()) {
-            writer.write(it.nextJSON());
-            if (it.hasNext()) {
-                writer.write(",");
-            }
-        }
-
-        /* Close the array. */
-        writer.write("]");
-
-        /* Close the object. */
-        writer.write("}");
-
-    }
-
 }
