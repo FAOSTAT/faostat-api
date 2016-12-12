@@ -492,7 +492,7 @@ public class TestData extends JerseyTest {
     }
 
     // Data
-    @Test
+ /*   @Test
     public void testDataBeanAPI(){
         MultivaluedMap params = new MultivaluedMapImpl();
         params.add("domain_codes", "QC");
@@ -521,37 +521,37 @@ public class TestData extends JerseyTest {
         params.add("show_flags", "1");
         params.add("show_unit", "1");
 
-        /*datasource:production
-        output_type:objects
-        api_key:n.a.
-         client_key:n.a.
-        pivot:false
-        domain_codes:QC
-        decimal_places:2
-        List1Codes:2
-        List2Codes:2510
-        List3Codes:515
-        List4Codes:2013
-        List5Codes:
-        List6Codes:
-        List7Codes:
-        List1AltCodes:FAO
-        List2AltCodes:
-        List3AltCodes:FAO
-        List4AltCodes:
-        List5AltCodes:
-        List6AltCodes:
-        List7AltCodes:
-        null_values:false
-        group_by:
-        order_by:
-        operator:
-        page_size:100
-        limit:-1
-        page_number:1
-        show_codes:1
-        show_flags:1
-        show_unit:1*/
+//        datasource:production
+//        output_type:objects
+//        api_key:n.a.
+//         client_key:n.a.
+//        pivot:false
+//        domain_codes:QC
+//        decimal_places:2
+//        List1Codes:2
+//        List2Codes:2510
+//        List3Codes:515
+//        List4Codes:2013
+//        List5Codes:
+//        List6Codes:
+//        List7Codes:
+//        List1AltCodes:FAO
+//        List2AltCodes:
+//        List3AltCodes:FAO
+//        List4AltCodes:
+//        List5AltCodes:
+//        List6AltCodes:
+//        List7AltCodes:
+//        null_values:false
+//        group_by:
+//        order_by:
+//        operator:
+//        page_size:100
+//        limit:-1
+//        page_number:1
+//        show_codes:1
+//        show_flags:1
+//        show_unit:1
 
 //        WebResource ws = resource().path("/en/data/bean");
         WebResource ws = resource().path("/" + language + "/data/bean");
@@ -564,7 +564,8 @@ public class TestData extends JerseyTest {
         JsonArray a = o.get("data").getAsJsonArray();
         assertEquals(1, a.size());
     }
-
+*/
+ 
     /*@Test
     public void testDataAPI(){
 

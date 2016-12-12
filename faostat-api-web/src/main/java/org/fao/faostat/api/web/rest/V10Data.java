@@ -447,8 +447,6 @@ public class V10Data {
             // used for size
             metadataBean.addParameter("no_records", no_records.booleanValue()? 1 : 0);
 
-            LOGGER.info("MetadataBean: " + metadataBean);
-
             // add filters parameters
             metadataBean.addParameters(getFilters(uriInfo.getQueryParameters(), datasourceBean, dimensionsBean));
 
