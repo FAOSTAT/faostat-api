@@ -357,6 +357,8 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.*;
@@ -374,6 +376,9 @@ public class V10Data {
 
     @Context
     UriInfo uri;
+
+    @Context
+    HttpServletRequest req;
 
     @GET
     @Path("/{domain}")
@@ -400,6 +405,8 @@ public class V10Data {
                             @Context UriInfo uriInfo) {
 
         try {
+
+            HttpSession session = req.getSession(true);
 
             long t0 = System.currentTimeMillis();
 
@@ -452,7 +459,7 @@ public class V10Data {
             final List<Map<String, Object>> dsd = faostatapiCore.createDSD(datasourceBean, metadataBean);
 
             /* Query the DB and create an output stream. */
-            String query = new QUERIES().getQuery("data_new", metadataBean.getProcedureParameters());
+            String query = new QUERIES().getQuery("data", metadataBean.getProcedureParameters());
 
             final JDBCIterable it = new JDBCIterable();
             it.query(datasourceBean, query);
